@@ -125,8 +125,10 @@
       const savedSubView = localStorage.getItem('treth_calendar_subview_v4');
       this.viewMode = ['week', 'day', 'month', 'agenda'].includes(savedSubView) ? savedSubView : 'month';
 
-      // Ngăn Backlog (Unscheduled Drawer)
-      this.showBacklog = localStorage.getItem('treth_cal_show_backlog_v4') !== 'false';
+      // Ngăn Backlog (Unscheduled Drawer) - Mặc định thu gọn trên màn hình nhỏ di động để không che khuất lưới lịch
+      const isMobileScreen = typeof window !== 'undefined' && window.innerWidth <= 900;
+      const savedBacklogPref = localStorage.getItem('treth_cal_show_backlog_v4');
+      this.showBacklog = isMobileScreen ? false : (savedBacklogPref !== 'false');
       this.backlogActiveTab = 'all_day'; // 'all_day' | 'no_date' | 'overdue'
       this.backlogSearchQuery = '';
 
@@ -1825,7 +1827,10 @@
       const delBtn = modalEl.querySelector('#cal-btn-delete-event');
       if (delBtn && isEdit) {
         delBtn.addEventListener('click', () => {
-          if (confirm(`Bạn có chắc chắn muốn xóa sự kiện:\n"${initialData.title}" không?`)) {
+          const confirmFn = (typeof window !== 'undefined' && typeof window.__trethSafeConfirm === 'function')
+            ? window.__trethSafeConfirm
+            : (msg => typeof confirm === 'function' ? confirm(msg) : true);
+          if (confirmFn(`Bạn có chắc chắn muốn xóa sự kiện:\n"${initialData.title}" không?`)) {
             this._deleteTask(initialData.id);
             closeModal();
           }
@@ -1907,7 +1912,8 @@
         // Bỏ qua nếu Calendar view không hiển thị
         if (!this.container || this.container.offsetParent === null) return;
 
-        const key = e.key.toLowerCase();
+        const key = (e.key || '').toLowerCase();
+        if (!key) return;
         if (key === 't') {
           e.preventDefault();
           this.goToToday();

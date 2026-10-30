@@ -36,9 +36,9 @@
     <meta name="apple-mobile-web-app-title" content="TreTH">
     
     <!-- Hệ thống Stylesheet: Base System + TreTH App-Shell + Cyber Natural v3.1 -->
-    <link rel="stylesheet" href="./style.css">
-    <link rel="stylesheet" href="./styles/treth-ui.css">
-    <link rel="stylesheet" href="./styles/theme-treth-v3.css">
+    <link rel="stylesheet" href="./style.css?v=4.2.0">
+    <link rel="stylesheet" href="./styles/treth-ui.css?v=4.2.0">
+    <link rel="stylesheet" href="./styles/theme-treth-v3.css?v=4.2.0">
     
     <!-- Script Chống Chớp Giao diện Sáng / Tối khi tải trang -->
     <script>
@@ -219,9 +219,6 @@
                                 placeholder="Tìm kiếm nhanh..." 
                                 aria-label="Tìm kiếm theo từ khóa"
                                 autocomplete="off"
-                                autocorrect="off"
-                                autocapitalize="off"
-                                spellcheck="false"
                             >
                         </div>
 
@@ -392,9 +389,6 @@
                             class="form-control quick-add-input" 
                             placeholder="Hôm nay bạn cần làm gì? (VD: Họp 9h-10h30 mai !cao #Họp...)" 
                             autocomplete="off"
-                            autocorrect="off"
-                            autocapitalize="off"
-                            spellcheck="false"
                             required
                         >
                         <!-- Gợi ý phân tích NLP tiếng Việt thời gian thực -->
@@ -489,7 +483,7 @@
                                 <span class="quadrant-count" id="count-q1">0</span>
                             </div>
                             <form class="quadrant-quick-add" data-quadrant="q1" novalidate>
-                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc cần làm ngay..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc cần làm ngay..." autocomplete="off" required>
                                 <button type="submit" class="quadrant-add-btn" title="Thêm vào Ô 1"><i class="ri-add-line"></i></button>
                             </form>
                             <ul id="matrix-list-q1" class="quadrant-task-list" data-quadrant="q1"></ul>
@@ -508,7 +502,7 @@
                                 <span class="quadrant-count" id="count-q2">0</span>
                             </div>
                             <form class="quadrant-quick-add" data-quadrant="q2" novalidate>
-                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc cần lên kế hoạch..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc cần lên kế hoạch..." autocomplete="off" required>
                                 <button type="submit" class="quadrant-add-btn" title="Thêm vào Ô 2"><i class="ri-add-line"></i></button>
                             </form>
                             <ul id="matrix-list-q2" class="quadrant-task-list" data-quadrant="q2"></ul>
@@ -527,7 +521,7 @@
                                 <span class="quadrant-count" id="count-q3">0</span>
                             </div>
                             <form class="quadrant-quick-add" data-quadrant="q3" novalidate>
-                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc ủy quyền / xử lý nhanh..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc ủy quyền / xử lý nhanh..." autocomplete="off" required>
                                 <button type="submit" class="quadrant-add-btn" title="Thêm vào Ô 3"><i class="ri-add-line"></i></button>
                             </form>
                             <ul id="matrix-list-q3" class="quadrant-task-list" data-quadrant="q3"></ul>
@@ -546,7 +540,7 @@
                                 <span class="quadrant-count" id="count-q4">0</span>
                             </div>
                             <form class="quadrant-quick-add" data-quadrant="q4" novalidate>
-                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc vặt / giải trí..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc vặt / giải trí..." autocomplete="off" required>
                                 <button type="submit" class="quadrant-add-btn" title="Thêm vào Ô 4"><i class="ri-add-line"></i></button>
                             </form>
                             <ul id="matrix-list-q4" class="quadrant-task-list" data-quadrant="q4"></ul>
@@ -1070,11 +1064,8 @@
                                 id="cat-icon-input" 
                                 class="form-control cat-emoji-input" 
                                 value="💼" 
-                                maxlength="4" 
+                                maxlength="12" 
                                 autocomplete="off"
-                                autocorrect="off"
-                                autocapitalize="off"
-                                spellcheck="false"
                                 required
                             >
                         </div>
@@ -1087,9 +1078,6 @@
                                 class="form-control cat-name-control" 
                                 placeholder="VD: Dự án, Sức khỏe, Gia đình..." 
                                 autocomplete="off"
-                                autocorrect="off"
-                                autocapitalize="off"
-                                spellcheck="false"
                                 required
                             >
                         </div>
@@ -1221,11 +1209,11 @@
                     </div>
                 </div>
 
-                <!-- NHÓM 3: CÀI ĐẶT ỨNG DỤNG THIẾT BỊ (PWA INSTALLATION) -->
+                <!-- NHÓM 3: CÀI ĐẶT ỨNG DỤNG THIẾT BỊ (PWA INSTALLATION) & LÀM MỚI PHIÊN BẢN -->
                 <div class="settings-group" id="pwa-settings-group">
                     <h3 class="settings-group-title">
                         <i class="ri-smartphone-line"></i>
-                        <span>Cài đặt Ứng dụng Thiết bị (PWA)</span>
+                        <span>Ứng dụng Thiết bị (PWA) &amp; Phiên bản v4.2.0</span>
                     </h3>
                     <div class="settings-theme-row">
                         <div class="settings-theme-info">
@@ -1237,6 +1225,49 @@
                             <span id="btn-install-pwa-text">Cài đặt App</span>
                         </button>
                     </div>
+
+                    <div class="settings-separator-dashed"></div>
+
+                    <div class="settings-theme-row" style="margin-top: 8px;">
+                        <div class="settings-theme-info">
+                            <span class="settings-toggle-main-text">Làm mới phiên bản &amp; Xóa bộ nhớ đệm (v4.2.0)</span>
+                            <span class="settings-toggle-sub-text">Xóa cache giao diện cũ trên điện thoại/trình duyệt để nạp bản sửa lỗi mới nhất (giữ nguyên 100% dữ liệu công việc)</span>
+                        </div>
+                        <button type="button" id="btn-force-update-app" class="btn btn-outline-action btn-sm" style="flex-shrink: 0;">
+                            <i class="ri-refresh-line"></i>
+                            <span>Làm mới ngay</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- NHÓM 4: ĐỒNG BỘ GITHUB & TỰ ĐỘNG BUILD APK -->
+                <div class="settings-group" id="github-sync-group">
+                    <h3 class="settings-group-title">
+                        <i class="ri-github-fill"></i>
+                        <span>Đồng bộ GitHub &amp; Tự động Build APK</span>
+                    </h3>
+                    <p class="settings-toggle-sub-text" style="margin-bottom: 10px;">
+                        Đẩy trực tiếp mã nguồn mới nhất từ đây lên kho lưu trữ GitHub để GitHub Actions tự động đóng gói lại file <strong>TreTH-v4.2.0.apk</strong>.
+                    </p>
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label for="github-repo-input" class="modal-label">Kho lưu trữ GitHub (Owner/Repo)</label>
+                        <input type="text" id="github-repo-input" class="form-control" value="vithao-gihub/treth-vthao" placeholder="vithao-gihub/treth-vthao" autocomplete="off" spellcheck="false">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label for="github-token-input" class="modal-label">GitHub Personal Access Token (quyền <code>repo</code> &amp; <code>workflow</code>)</label>
+                        <input type="password" id="github-token-input" class="form-control" placeholder="Dán mã ghp_... hoặc github_pat_... vào đây" autocomplete="off" spellcheck="false">
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                        <button type="button" id="btn-github-push" class="btn btn-primary btn-sm" style="flex: 1; min-width: 200px; justify-content: center;">
+                            <i class="ri-upload-cloud-2-line"></i>
+                            <span id="btn-github-push-text">Đẩy lên GitHub &amp; Build APK mới</span>
+                        </button>
+                        <a href="https://github.com/vithao-gihub/treth-vthao/releases/latest" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="text-decoration: none; justify-content: center;">
+                            <i class="ri-android-line"></i>
+                            <span>Tải APK trên GitHub</span>
+                        </a>
+                    </div>
+                    <div id="github-sync-status" style="display: none; margin-top: 10px; padding: 10px 12px; border-radius: 10px; font-size: 12.5px; line-height: 1.5; border: 1px solid var(--border-color); background: var(--bg-body);"></div>
                 </div>
 
                 <div class="modal-footer">
@@ -1578,18 +1609,11 @@
     <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
     <!-- Nạp các module dịch vụ CSDL cục bộ và Giao diện Kanban TreTH -->
-    <script src="./services/SyncQueue.js"></script>
-    <script src="./services/CloudSyncService.js"></script>
-    <script src="./services/LocalRepository.js"></script>
-    <script src="./modules/tasks/TasksModule.js"></script>
-    <script src="./modules/pomodoro/PomodoroModule.js"></script>
-    <script src="./modules/habits/HabitsModule.js"></script>
-    <script src="./modules/notes/NotesModule.js"></script>
-    <script src="./modules/stats/StatsModule.js"></script>
-    <script src="./modules/settings/SettingsModule.js"></script>
-    <script src="./ui/KanbanView.js"></script>
-    <script src="./ui/CalendarView.js"></script>
-    <script src="./script.js"></script>
+    <script src="./services/SyncQueue.js?v=4.2.0"></script>
+    <script src="./services/LocalRepository.js?v=4.2.0"></script>
+    <script src="./ui/KanbanView.js?v=4.2.0"></script>
+    <script src="./ui/CalendarView.js?v=4.2.0"></script>
+    <script src="./script.js?v=4.2.0"></script>
 
     <!-- Script điều khiển App-Shell UI (Sidebar toggle, Mobile drawer, Smart Lists counts) -->
     <script>
@@ -1617,10 +1641,17 @@
                 if (sidebar) sidebar.classList.remove('open');
                 if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
             }
+            window.__closeMobileSidebar = closeMobileSidebar;
 
             if (sidebarToggleBtn) sidebarToggleBtn.addEventListener('click', toggleSidebar);
             if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleSidebar);
             if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeMobileSidebar);
+
+            document.querySelectorAll('.module-nav-btn, #btn-open-cat-manager, #btnToggleDataMenu, #btn-open-settings').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (window.innerWidth <= 900) closeMobileSidebar();
+                });
+            });
 
             // 2. Tích hợp Smart Lists (TickTick Style) kết nối trực tiếp với Bộ Lọc
             const smartListItems = document.querySelectorAll('.smart-list-item');

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'treth-v4.0.0';
+const CACHE_NAME = 'treth-v4.2.0';
 const STATIC_ASSETS = [
     './',
     './index.html',
@@ -6,14 +6,7 @@ const STATIC_ASSETS = [
     './styles/treth-ui.css',
     './styles/theme-treth-v3.css',
     './services/SyncQueue.js',
-    './services/CloudSyncService.js',
     './services/LocalRepository.js',
-    './modules/tasks/TasksModule.js',
-    './modules/pomodoro/PomodoroModule.js',
-    './modules/habits/HabitsModule.js',
-    './modules/notes/NotesModule.js',
-    './modules/stats/StatsModule.js',
-    './modules/settings/SettingsModule.js',
     './ui/KanbanView.js',
     './ui/CalendarView.js',
     './script.js',
@@ -58,7 +51,7 @@ self.addEventListener('install', (event) => {
         caches.open(CACHE_NAME).then((cache) => {
             return Promise.allSettled(
                 STATIC_ASSETS.map((url) =>
-                    cache.add(url).catch((err) => {
+                    cache.add(new Request(url, { cache: 'reload' })).catch((err) => {
                         console.warn('[ServiceWorker] Bỏ qua tài nguyên phụ chưa sẵn sàng:', url, err);
                     })
                 )
@@ -67,7 +60,7 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// 2. Kích hoạt và dọn dẹp các cache phiên bản cũ
+// 2. Kích hoạt và dọn dẹp triệt để các cache phiên bản cũ (treth-v4.0.0, v.v.)
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((keys) => {
@@ -83,23 +76,39 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// 3. Xử lý yêu cầu mạng tối ưu:
-// - HTML Navigate: Network-First (fallback về cache index.html / ./)
-// - Static Assets (CSS, JS, Fonts, Icons): Stale-While-Revalidate (mở tức thì & cập nhật nền)
-self.addEventListener('fetch', (event) => {
-    // Chỉ xử lý các yêu cầu GET
-    if (event.request.method !== 'GET') return;
+// Hỗ trợ kích hoạt nóng hoặc xóa cache từ trang cài đặt
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
 
-    // Bỏ qua các scheme đặc biệt (chrome-extension, edge, etc.)
+// 3. Xử lý yêu cầu mạng tối ưu:
+// - HTML, JS, CSS, Manifest: Network-First (luôn lấy bản mới nhất khi có mạng, dự phòng cache khi offline)
+// - Images, Fonts, Icons: Stale-While-Revalidate (mở tức thì & cập nhật nền)
+self.addEventListener('fetch', (event) => {
+    if (event.request.method !== 'GET') return;
     if (!event.request.url.startsWith('http')) return;
+    if (event.request.url.includes('/api/')) return;
+
+    const reqUrl = new URL(event.request.url);
+    const pathname = reqUrl.pathname.toLowerCase();
 
     const isHtmlNavigate = event.request.mode === 'navigate' ||
         (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html'));
 
-    if (isHtmlNavigate) {
-        // Luồng 1: Network-First cho điều hướng trang HTML
+    const isCoreCodeOrStyle = isHtmlNavigate ||
+        pathname.endsWith('.html') ||
+        pathname.endsWith('.js') ||
+        pathname.endsWith('.css') ||
+        pathname.endsWith('manifest.json') ||
+        pathname === '/' ||
+        pathname === '';
+
+    if (isCoreCodeOrStyle) {
+        // Luồng 1: Network-First cho HTML, JS, CSS để bản cài đặt PWA / APK luôn nhận giao diện mới nhất ngay lập tức
         event.respondWith(
-            fetch(event.request)
+            fetch(event.request, { cache: 'no-cache' })
                 .then((networkResponse) => {
                     if (networkResponse && networkResponse.status === 200) {
                         const copy = networkResponse.clone();
@@ -108,18 +117,21 @@ self.addEventListener('fetch', (event) => {
                     return networkResponse;
                 })
                 .catch(() => {
-                    return caches.match(event.request).then((cached) => {
+                    return caches.match(event.request, { ignoreSearch: true }).then((cached) => {
                         if (cached) return cached;
-                        return caches.match('./index.html').then((htmlRes) => {
-                            return htmlRes || caches.match('./');
-                        });
+                        if (isHtmlNavigate) {
+                            return caches.match('./index.html', { ignoreSearch: true }).then((htmlRes) => {
+                                return htmlRes || caches.match('./', { ignoreSearch: true });
+                            });
+                        }
+                        return null;
                     });
                 })
         );
     } else {
-        // Luồng 2: Stale-While-Revalidate cho tài nguyên tĩnh (CSS, JS, Fonts, Images)
+        // Luồng 2: Stale-While-Revalidate cho hình ảnh, biểu tượng, font chữ
         event.respondWith(
-            caches.match(event.request).then((cachedResponse) => {
+            caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
                 const fetchPromise = fetch(event.request)
                     .then((networkResponse) => {
                         if (networkResponse && networkResponse.status === 200 && (networkResponse.type === 'basic' || networkResponse.type === 'cors')) {
@@ -128,12 +140,8 @@ self.addEventListener('fetch', (event) => {
                         }
                         return networkResponse;
                     })
-                    .catch((err) => {
-                        // Lỗi mạng nền không làm gián đoạn bản cache đã trả về
-                        return null;
-                    });
+                    .catch(() => null);
 
-                // Nếu có cache, trả về ngay lập tức không cần chờ mạng; đồng thời fetchPromise cập nhật cache nền
                 return cachedResponse || fetchPromise;
             })
         );

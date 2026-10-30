@@ -6,6 +6,9 @@
   "author": "TreTH Team",
   "license": "MIT",
   "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "node sync-assets.js",
     "build:web": "node sync-assets.js",
     "electron:dev": "node sync-assets.js && electron .",
     "build:win": "node sync-assets.js && electron-builder --win --x64",
@@ -55,11 +58,11 @@
   "dependencies": {
     "@capacitor/android": "^6.2.0",
     "@capacitor/cli": "^6.2.0",
-    "@capacitor/core": "^6.2.0"
+    "@capacitor/core": "^6.2.0",
+    "express": "^5.3.0"
   },
   "devDependencies": {
     "electron": "^31.0.2",
     "electron-builder": "^24.13.3"
   }
 }
-

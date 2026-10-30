@@ -33,25 +33,26 @@
      */
     _setupMobileKeyboardFix() {
       if (typeof window !== 'undefined' && window.visualViewport) {
+        let prevOffset = 0;
         const updateOffset = () => {
           const offset = Math.max(0, window.innerHeight - window.visualViewport.height);
           document.documentElement.style.setProperty('--keyboard-offset', `${offset}px`);
 
-          // Nếu đang focus vào input hoặc contenteditable, cuộn mượt mà để hiển thị ở giữa màn hình
-          if (offset > 0 && document.activeElement) {
+          // Chỉ cuộn nhẹ khi bàn phím ảo vừa bật lên (tránh cuộn lặp khi đang gõ hoặc bấm phím xóa)
+          if (offset > 80 && prevOffset <= 60 && document.activeElement) {
             const el = document.activeElement;
             if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable) {
               setTimeout(() => {
                 try {
-                  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 } catch (e) {}
               }, 60);
             }
           }
+          prevOffset = offset;
         };
 
         window.visualViewport.addEventListener('resize', updateOffset);
-        window.visualViewport.addEventListener('scroll', updateOffset);
       }
     }
 
@@ -93,9 +94,6 @@
                       class="column-quick-input" 
                       placeholder="+ Thêm thẻ..." 
                       autocomplete="off" 
-                      autocorrect="off" 
-                      autocapitalize="off" 
-                      spellcheck="false"
                       required
                     >
                     <button type="submit" class="column-quick-submit" title="Tạo thẻ mới">
@@ -129,8 +127,10 @@
 
       const quadrantDisplay = String(task.quadrant || 'Q2').toUpperCase();
 
+      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 900;
+
       return `
-        <div class="task-card" draggable="true" data-id="${task.id}" data-column="${currentColumnId}">
+        <div class="task-card" draggable="${isMobile ? 'false' : 'true'}" data-id="${task.id}" data-column="${currentColumnId}">
           <div class="card-top-bar">
             <span class="category-tag" style="color: ${catColor}; border-color: ${catColor}33; background: ${catColor}14;">
               ${catEmoji} ${catName}
@@ -141,7 +141,7 @@
             }
           </div>
           
-          <div class="card-title" contenteditable="true" data-inline-id="${task.id}" spellcheck="false" title="Nhấn để sửa trực tiếp">${this._escapeHTML(task.title)}</div>
+          <div class="card-title" contenteditable="true" data-inline-id="${task.id}" title="Nhấn để sửa trực tiếp">${this._escapeHTML(task.title)}</div>
           
           <div class="card-meta">
             <span class="meta-item meta-time" title="Thời gian tập trung Pomodoro">
@@ -152,7 +152,7 @@
             </span>
           </div>
 
-          <!-- Nút chuyển trạng thái nhanh cho thiết bị di động / cảm ứng -->
+          <!-- Nút chuyển trạng thái nhanh & Xóa cho thiết bị di động / cảm ứng -->
           <div class="card-touch-actions">
             ${currentColumnId === 'TODO' ? `
               <button type="button" class="btn-card-move" data-move-to="IN_PROGRESS" title="Chuyển sang Đang làm">
@@ -174,6 +174,9 @@
                 <i class="ri-refresh-line"></i> <span>Mở lại</span>
               </button>
             ` : ''}
+            <button type="button" class="btn-card-move btn-card-delete" data-delete-id="${task.id}" title="Xóa công việc">
+              <i class="ri-delete-bin-line"></i> <span>Xóa</span>
+            </button>
           </div>
         </div>
       `;
@@ -240,7 +243,13 @@
 
         el.addEventListener('focus', () => {
           initialText = el.innerText.trim();
+          const card = el.closest('.task-card');
+          if (card) card.setAttribute('draggable', 'false');
         });
+
+        el.addEventListener('touchstart', e => {
+          e.stopPropagation();
+        }, { passive: true });
 
         el.addEventListener('keydown', e => {
           if (e.key === 'Enter') {
@@ -254,6 +263,10 @@
         });
 
         el.addEventListener('blur', () => {
+          const card = el.closest('.task-card');
+          if (card && typeof window !== 'undefined' && window.innerWidth > 900) {
+            card.setAttribute('draggable', 'true');
+          }
           const taskId = el.dataset.inlineId;
           const newTitle = el.innerText.trim();
           if (newTitle && newTitle !== initialText && this.repo) {
@@ -288,12 +301,26 @@
         });
       });
 
-      // 4. Nút chuyển cột nhanh trên thiết bị cảm ứng / Mobile
+      // 4. Nút chuyển cột nhanh & xóa trên thiết bị cảm ứng / Mobile
       const moveBtns = this.container.querySelectorAll('.btn-card-move');
       moveBtns.forEach(btn => {
         btn.addEventListener('click', e => {
           e.stopPropagation();
           const card = btn.closest('.task-card');
+          const deleteId = btn.dataset.deleteId;
+          if (deleteId) {
+            const confirmFn = (typeof window !== 'undefined' && typeof window.__trethSafeConfirm === 'function')
+              ? window.__trethSafeConfirm
+              : (msg => typeof confirm === 'function' ? confirm(msg) : true);
+            if (confirmFn('Bạn có chắc chắn muốn xóa công việc này không?')) {
+              if (typeof window !== 'undefined' && window.TreTHCore && typeof window.TreTHCore.deleteTask === 'function') {
+                window.TreTHCore.deleteTask(deleteId);
+              } else if (this.repo && typeof this.repo.deleteTask === 'function') {
+                this.repo.deleteTask(deleteId);
+              }
+            }
+            return;
+          }
           const targetStatus = btn.dataset.moveTo;
           if (card && targetStatus && this.repo) {
             const taskId = card.dataset.id;
