@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+package-lock.json.backup
+
+# Android build outputs & local config
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+android/*.iml
+android/app/*.iml
+android/.idea/
+dist-apk/
+
+# Electron build artifacts
+dist/
+dist-electron/
+dist-native/
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*.bak
+*~
+
+# Python cache & logs
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+
+# Old local backup directories (excluded from new clean repo)
+Quanlicanhan2.0/
+Fix Mobile Viewport/
+Kanban & Bàn phím ảo/
+setup_android_project.py
+create_github_repo_and_push.py

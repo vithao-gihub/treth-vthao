@@ -1,0 +1,132 @@
+{
+  "project": "TreTH",
+  "version": "3.1",
+  "themeName": "Cyber Natural UI Kit",
+  "designTokens": {
+    "colors": {
+      "background": {
+        "primary": "#0B0F19",
+        "auroraGradient": "radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.25), rgba(6, 182, 212, 0.15), #090D16 80%)",
+        "cardGlass": "rgba(22, 31, 48, 0.65)"
+      },
+      "accents": {
+        "bambooGreen": "#10B981",
+        "neonGreen": "#00FF87",
+        "cyberCyan": "#00E5FF",
+        "neonPurple": "#A855F7",
+        "warningAmber": "#F59E0B",
+        "dangerRed": "#EF4444",
+        "indigoAction": "#4F46E5"
+      },
+      "text": {
+        "primary": "#FFFFFF",
+        "secondary": "#94A3B8",
+        "muted": "#64748B"
+      }
+    },
+    "effects": {
+      "glassmorphism": "backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12);",
+      "glowGreen": "0 0 20px rgba(16, 185, 129, 0.35), inset 0 0 12px rgba(16, 185, 129, 0.15)",
+      "glowRed": "0 0 20px rgba(239, 68, 68, 0.35), inset 0 0 12px rgba(239, 68, 68, 0.15)",
+      "glowPurpleCyan": "0 0 18px rgba(168, 85, 247, 0.3)"
+    }
+  },
+  "branding": {
+    "name": "TreTH",
+    "badge": "v3.0 ONLINE / OFFLINE",
+    "logoStyle": "Thân tre kết hợp tài liệu điện tử, gradient Xanh lá - Cyan - Tím"
+  },
+  "navigationFeatures": [
+    { "id": "tasks", "label": "Công việc", "style": "neon-cyan-green" },
+    { "id": "time", "label": "Thời gian", "style": "neon-cyan-purple" },
+    { "id": "habits", "label": "Thói quen", "style": "neon-green" },
+    { "id": "notes", "label": "Ghi chú", "style": "neon-cyan" },
+    { "id": "categories", "label": "Quản lý loại việc", "style": "neon-purple" },
+    { "id": "documents", "label": "Công văn", "style": "neon-pink-purple" },
+    { "id": "settings_data", "label": "Dữ liệu & Cài đặt", "style": "neon-purple-slate" }
+  ],
+  "statCards": [
+    {
+      "id": "total_tasks",
+      "label": "Tổng số việc",
+      "sampleValue": "13",
+      "theme": "neonGreen",
+      "icon": "layers",
+      "watermark": "bamboo-leaves-bottom-right"
+    },
+    {
+      "id": "completed_tasks",
+      "label": "Đã hoàn thành",
+      "sampleValue": "09",
+      "theme": "emeraldDark",
+      "icon": "shield-check",
+      "watermark": "shield-leaf-bottom-right"
+    },
+    {
+      "id": "progress",
+      "label": "Tiến độ",
+      "sampleValue": "69%",
+      "theme": "purpleCyanGradient",
+      "progressBar": "bamboo-node-joint",
+      "watermark": "bamboo-corner"
+    },
+    {
+      "id": "urgent_overdue",
+      "label": "Gấp / Quá hạn",
+      "sampleValue": "02",
+      "theme": "dangerRed",
+      "icon": "bell-ringing",
+      "watermark": "fire-flame-bottom-right"
+    }
+  ],
+  "taskCategories": {
+    "v3_1_office_admin": [
+      { "id": "bao_cao", "name": "Báo cáo", "desc": "Biểu đồ cột, biểu đồ tròn trên mặt kính" },
+      { "id": "ke_hoach", "name": "Kế hoạch", "desc": "Lịch bàn kết hợp đồng hồ bấm giờ và tích xanh" },
+      { "id": "cong_van", "name": "Công văn", "desc": "Văn bản đóng dấu đỏ trong phong bì kèm mũi tên" },
+      { "id": "chuong_trinh", "name": "Chương trình", "desc": "Timeline mũi tên, bánh răng, nốt nhạc và bục phát biểu" },
+      { "id": "du_thao", "name": "Dự thảo", "desc": "Tờ giấy viết chì trên nền lưới blueprint" },
+      { "id": "hop_gap_go", "name": "Họp & Gặp gỡ", "desc": "2 khung chat neon xanh lá - xanh dương" },
+      { "id": "y_tuong", "name": "Ý tưởng", "desc": "Bóng đèn phát sáng vàng kèm bánh răng" },
+      { "id": "nghien_cuu", "name": "Nghiên cứu", "desc": "Kính lúp soi chuỗi DNA trên trang sách mở" },
+      { "id": "tai_lieu", "name": "Tài liệu", "desc": "Thư mục trong suốt chứa nhiều tệp hồ sơ màu sắc" },
+      { "id": "kiem_duyet", "name": "Kiểm duyệt", "desc": "Bảng clipboard tích xanh kèm khiên bảo vệ và kính lúp" }
+    ],
+    "v3_0_personal_general": [
+      { "id": "lap_trinh", "name": "Lập trình", "desc": "Cửa sổ code </> kèm tia sét vàng" },
+      { "id": "thiet_ke", "name": "Thiết kế", "desc": "Bảng pha màu và cọ vẽ" },
+      { "id": "hoc_tap", "name": "Học tập", "desc": "Mũ cử nhân trên chồng sách" },
+      { "id": "doi_song", "name": "Đời sống", "desc": "Ngôi nhà mái đỏ" },
+      { "id": "suc_khoe", "name": "Sức khỏe", "desc": "Cánh tay nâng tạ kèm trái tim" },
+      { "id": "tai_chinh", "name": "Tài chính", "desc": "Túi tiền xanh lá và đồng xu vàng" },
+      { "id": "quan_trong", "name": "Quan trọng", "desc": "Ngọn lửa đỏ cam" },
+      { "id": "giai_tri", "name": "Giải trí", "desc": "Tay cầm chơi game" }
+    ]
+  },
+  "interactiveComponents": {
+    "taskFilterModal": {
+      "title": "Bộ lọc công việc",
+      "fields": [
+        { "label": "Loại việc", "default": "Mức ưu tiên", "type": "select" },
+        { "label": "Trạng thái", "default": "Tất cả trạng thái", "type": "select" }
+      ],
+      "actions": [
+        { "label": "Xóa lọc", "variant": "outline-dark", "icon": "rotate-ccw" },
+        { "label": "Xong", "variant": "primary-indigo", "icon": "check" }
+      ]
+    },
+    "eisenhowerDropdown": {
+      "triggerLabel": "Góc ma trận",
+      "options": [
+        { "id": "q1", "label": "Ô 1: Làm ngay", "color": "#EF4444" },
+        { "id": "q2", "label": "Ô 2: Lên lịch", "color": "#3B82F6" },
+        { "id": "q3", "label": "Ô 3: Ủy quyền", "color": "#F59E0B" },
+        { "id": "q4", "label": "Ô 4: Xóa", "color": "#CBD5E1" }
+      ]
+    },
+    "toasts": [
+      { "type": "overdue", "text": "Đã quá hạn!", "badge": "00:02", "theme": "danger-glow" },
+      { "type": "success", "text": "Hoàn thành xuất sắc!", "effect": "confetti", "theme": "success-glow" }
+    ]
+  }
+}

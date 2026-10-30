@@ -1,0 +1,805 @@
+/* ==========================================================================
+   TRETH v3.0 / v3.1 - CYBER NATURAL DESIGN SYSTEM (UI KIT)
+   Hệ thống thiết kế Đột Phá: Aurora Gradient + Glassmorphism + Tre Xanh Neon
+   ========================================================================== */
+
+:root {
+  /* Cyber Natural Palette */
+  --cyber-bg: #0B0F19;
+  --cyber-card-bg: rgba(22, 31, 48, 0.65);
+  --cyber-card-solid: #161F30;
+  --cyber-card-border: rgba(255, 255, 255, 0.12);
+  --cyber-card-blur: blur(16px);
+  --cyber-radius: 16px;
+
+  /* Neon & Bamboo Accents */
+  --neon-green: #00FF87;
+  --neon-green-glow: rgba(0, 255, 135, 0.35);
+
+  --bamboo-green: #10B981;
+  --bamboo-jade: #059669;
+  --bamboo-glow: rgba(16, 185, 129, 0.35);
+
+  --cyber-cyan: #06B6D4;
+  --cyber-cyan-glow: rgba(6, 182, 212, 0.35);
+
+  --cyber-purple: #7C3AED;
+  --cyber-purple-glow: rgba(124, 58, 237, 0.35);
+
+  --urgent-red: #EF4444;
+  --urgent-red-glow: rgba(239, 68, 68, 0.4);
+
+  --amber-gold: #F59E0B;
+  --amber-gold-glow: rgba(245, 158, 11, 0.35);
+
+  /* Quadrant Colors */
+  --q1-color: #EF4444;
+  --q1-bg: rgba(239, 68, 68, 0.15);
+  --q1-border: rgba(239, 68, 68, 0.4);
+
+  --q2-color: #3B82F6;
+  --q2-bg: rgba(59, 130, 246, 0.15);
+  --q2-border: rgba(59, 130, 246, 0.4);
+
+  --q3-color: #F59E0B;
+  --q3-bg: rgba(245, 158, 11, 0.15);
+  --q3-border: rgba(245, 158, 11, 0.4);
+
+  --q4-color: #94A3B8;
+  --q4-bg: rgba(148, 163, 184, 0.12);
+  --q4-border: rgba(148, 163, 184, 0.35);
+}
+
+/* ==========================================================================
+   1. AURORA GRADIENT BACKGROUND & DEEP SPACE TONE (GPU-OPTIMIZED FIXED LAYER)
+   ========================================================================== */
+html[data-theme="dark"] body {
+  background-color: #0B0F19 !important;
+  color: #F8FAFC !important;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+html[data-theme="dark"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(circle at 12% 14%, rgba(124, 58, 237, 0.22) 0%, transparent 45%),
+    radial-gradient(circle at 88% 18%, rgba(6, 182, 212, 0.18) 0%, transparent 42%),
+    radial-gradient(circle at 50% 82%, rgba(16, 185, 129, 0.18) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(0, 255, 135, 0.08) 0%, transparent 35%);
+}
+
+html[data-theme="light"] body {
+  background-color: var(--bg-body, #F8FAFC) !important;
+  color: var(--text-main, #0F172A) !important;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+html[data-theme="light"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(circle at 12% 14%, rgba(124, 58, 237, 0.04) 0%, transparent 45%),
+    radial-gradient(circle at 88% 18%, rgba(6, 182, 212, 0.04) 0%, transparent 42%),
+    radial-gradient(circle at 50% 82%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+}
+
+.treth-app {
+  background: transparent !important;
+}
+
+/* ==========================================================================
+   2. GLASSMORPHISM CARDS & CONTAINERS (OPTIMIZED WITHOUT GPU BLUR)
+   ========================================================================== */
+html[data-theme="dark"] .card, 
+html[data-theme="dark"] .modal-card, 
+html[data-theme="dark"] .stat-card, 
+html[data-theme="dark"] .kanban-column, 
+html[data-theme="dark"] .quadrant-card,
+html[data-theme="dark"] .calendar-view-container,
+html[data-theme="dark"] .filter-dropdown-panel,
+html[data-theme="dark"] .data-dropdown-panel {
+  background: rgba(18, 26, 42, 0.96) !important;
+  /* backdrop-filter: blur(16px) */
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: var(--cyber-radius, 16px) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+html[data-theme="light"] .card, 
+html[data-theme="light"] .modal-card, 
+html[data-theme="light"] .stat-card, 
+html[data-theme="light"] .kanban-column, 
+html[data-theme="light"] .quadrant-card,
+html[data-theme="light"] .calendar-view-container,
+html[data-theme="light"] .filter-dropdown-panel,
+html[data-theme="light"] .data-dropdown-panel {
+  background: var(--bg-surface, #FFFFFF) !important;
+  /* backdrop-filter: blur(16px) */
+  border: 1px solid var(--border-color, #E2E8F0) !important;
+  border-radius: var(--cyber-radius, 16px) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+  position: relative;
+  overflow: hidden;
+  color: var(--text-main, #0F172A);
+}
+
+/* Họa tiết lá tre góc thẻ (Bamboo Leaf Watermark) */
+.card::after,
+.quadrant-card::after,
+.modal-card::after {
+  content: "";
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+  width: 90px;
+  height: 90px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%2310B981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20,90 Q50,60 80,20 Q60,50 20,90 Z' fill='%2310B981' fill-opacity='0.16'/%3E%3Cpath d='M40,85 Q65,65 90,45 Q75,70 40,85 Z' fill='%2310B981' fill-opacity='0.16'/%3E%3Cpath d='M25,65 Q45,35 65,10 Q50,40 25,65 Z' fill='%2310B981' fill-opacity='0.12'/%3E%3Cpath d='M20,90 Q55,55 90,20' stroke='%2300FF87' stroke-opacity='0.3' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Sidebar & Topbar Optimized */
+html[data-theme="dark"] .treth-sidebar {
+  background: rgba(15, 23, 42, 0.98) !important;
+  /* backdrop-filter: blur(20px) */
+  border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+html[data-theme="light"] .treth-sidebar {
+  background: var(--bg-surface, #FFFFFF) !important;
+  /* backdrop-filter: blur(20px) */
+  border-right: 1px solid var(--border-color, #E2E8F0) !important;
+}
+
+html[data-theme="dark"] .treth-topbar {
+  background: rgba(15, 23, 42, 0.98) !important;
+  /* backdrop-filter: blur(20px) */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+html[data-theme="light"] .treth-topbar {
+  background: var(--bg-surface, #FFFFFF) !important;
+  /* backdrop-filter: blur(20px) */
+  border-bottom: 1px solid var(--border-color, #E2E8F0) !important;
+}
+
+html[data-theme="dark"] .treth-quick-add-section {
+  background: rgba(22, 31, 48, 0.96) !important;
+  /* backdrop-filter: blur(16px) */
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+html[data-theme="light"] .treth-quick-add-section {
+  background: var(--bg-surface, #FFFFFF) !important;
+  /* backdrop-filter: blur(16px) */
+  border: 1px solid var(--border-color, #E2E8F0) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+html[data-theme="light"] .treth-quick-input {
+  color: var(--text-main, #0F172A) !important;
+}
+
+.treth-quick-add-section:focus-within {
+  border-color: var(--neon-green) !important;
+  box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.2), 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ==========================================================================
+   3. 4 CARD CHỈ SỐ CYBER NATURAL & THANH TIẾN ĐỘ ĐỐT TRE
+   ========================================================================== */
+
+/* 1. Tổng số việc: Viền & Glow Xanh Lá Neon (#00FF87), Watermark Lá Tre */
+.stat-card:nth-child(1),
+.stat-card.stat-card-total {
+  border: 1px solid rgba(0, 255, 135, 0.45) !important;
+  box-shadow: 0 0 24px rgba(0, 255, 135, 0.16), inset 0 0 16px rgba(0, 255, 135, 0.05) !important;
+}
+
+.stat-card:nth-child(1) .stat-icon,
+.stat-card.stat-card-total .stat-icon {
+  background: rgba(0, 255, 135, 0.15) !important;
+  color: var(--neon-green) !important;
+  border: 1px solid rgba(0, 255, 135, 0.3) !important;
+  box-shadow: 0 0 12px rgba(0, 255, 135, 0.3) !important;
+}
+
+.stat-card:nth-child(1) .stat-value,
+.stat-card.stat-card-total .stat-value {
+  color: var(--neon-green) !important;
+  text-shadow: 0 0 12px rgba(0, 255, 135, 0.45) !important;
+  font-family: 'Inter', monospace;
+  font-size: 2rem !important;
+}
+
+/* Watermark Lá tre riêng cho thẻ 1 */
+.stat-card:nth-child(1)::after {
+  content: "";
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 85px;
+  height: 85px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none'%3E%3Cpath d='M20,95 Q50,60 85,15 Q60,55 20,95 Z' fill='%2300FF87' fill-opacity='0.2'/%3E%3Cpath d='M45,90 Q70,65 95,40 Q80,70 45,90 Z' fill='%2300FF87' fill-opacity='0.2'/%3E%3Cpath d='M20,95 Q60,55 90,15' stroke='%2300FF87' stroke-opacity='0.4' stroke-width='2'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 2. Đã hoàn thành: Tone Xanh Ngọc Trầm (#10B981), Icon Khiên Tích Xanh, Watermark Khiên Lá */
+.stat-card:nth-child(2),
+.stat-card.stat-card-completed {
+  border: 1px solid rgba(16, 185, 129, 0.45) !important;
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.16), inset 0 0 16px rgba(16, 185, 129, 0.05) !important;
+}
+
+.stat-card:nth-child(2) .stat-icon,
+.stat-card.stat-card-completed .stat-icon {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: var(--bamboo-green) !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3) !important;
+}
+
+.stat-card:nth-child(2) .stat-value,
+.stat-card.stat-card-completed .stat-value {
+  color: var(--bamboo-green) !important;
+  text-shadow: 0 0 12px rgba(16, 185, 129, 0.4) !important;
+  font-family: 'Inter', monospace;
+  font-size: 2rem !important;
+}
+
+/* Watermark Khiên Lá cho thẻ 2 */
+.stat-card:nth-child(2)::after {
+  content: "";
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 85px;
+  height: 85px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none'%3E%3Cpath d='M50,15 L80,25 C80,60 50,85 50,85 C50,85 20,60 20,25 Z' fill='%2310B981' fill-opacity='0.16' stroke='%2310B981' stroke-opacity='0.35' stroke-width='2'/%3E%3Cpath d='M38,48 L46,56 L64,36' stroke='%2310B981' stroke-opacity='0.45' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.32;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 3. Tiến độ (%): Thanh Progress Bar Tím -> Cyan -> Vàng cam + Biểu tượng Đốt tre */
+.stat-card.stat-card-progress {
+  border: 1px solid rgba(124, 58, 237, 0.4) !important;
+  box-shadow: 0 0 24px rgba(124, 58, 237, 0.15), inset 0 0 16px rgba(124, 58, 237, 0.05) !important;
+}
+
+.stat-percent-value {
+  color: var(--cyber-cyan) !important;
+  font-family: 'Inter', monospace;
+  font-size: 1.5rem !important;
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.4) !important;
+}
+
+/* Track và Fill thanh tiến độ đốt tre */
+.progress-bar-track {
+  background: rgba(11, 15, 25, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  height: 14px !important;
+  border-radius: 999px !important;
+  position: relative !important;
+  overflow: visible !important;
+  padding: 1px;
+}
+
+.progress-bar-fill {
+  background: linear-gradient(90deg, #7C3AED 0%, #06B6D4 50%, #F59E0B 100%) !important;
+  height: 100% !important;
+  border-radius: 999px !important;
+  position: relative !important;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.5) !important;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Biểu tượng đốt tre / mầm tre ở điểm cuối thanh tiến độ */
+.bamboo-sprout-node {
+  position: absolute;
+  right: -9px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #00FF87 30%, #06B6D4 80%);
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 0 10px #00FF87, 0 0 16px #06B6D4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  pointer-events: none;
+  animation: sproutPulse 2s infinite ease-in-out;
+  z-index: 2;
+}
+
+@keyframes sproutPulse {
+  0%, 100% {
+    transform: translateY(-50%) scale(1);
+    box-shadow: 0 0 10px #00FF87, 0 0 16px #06B6D4;
+  }
+  50% {
+    transform: translateY(-50%) scale(1.15);
+    box-shadow: 0 0 16px #00FF87, 0 0 24px #06B6D4;
+  }
+}
+
+/* 4. Gấp / Quá hạn: Viền & Glow Đỏ Cam (#EF4444), Icon Chuông Rung, Watermark Ngọn Lửa */
+.stat-card:nth-child(4),
+.stat-card.stat-card-urgent {
+  border: 1px solid rgba(239, 68, 68, 0.5) !important;
+  box-shadow: 0 0 24px rgba(239, 68, 68, 0.2), inset 0 0 16px rgba(239, 68, 68, 0.08) !important;
+}
+
+.stat-card:nth-child(4) .stat-icon,
+.stat-card.stat-card-urgent .stat-icon {
+  background: rgba(239, 68, 68, 0.16) !important;
+  color: var(--urgent-red) !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.35) !important;
+  animation: bellRing 3s infinite ease-in-out;
+}
+
+@keyframes bellRing {
+  0%, 80%, 100% { transform: rotate(0deg); }
+  85% { transform: rotate(14deg); }
+  90% { transform: rotate(-14deg); }
+  95% { transform: rotate(10deg); }
+}
+
+.stat-card:nth-child(4) .stat-value,
+.stat-card.stat-card-urgent .stat-value {
+  color: var(--urgent-red) !important;
+  text-shadow: 0 0 12px rgba(239, 68, 68, 0.5) !important;
+  font-family: 'Inter', monospace;
+  font-size: 2rem !important;
+}
+
+/* Watermark Ngọn Lửa cho thẻ 4 */
+.stat-card:nth-child(4)::after {
+  content: "";
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 85px;
+  height: 85px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none'%3E%3Cpath d='M50,15 Q65,40 60,60 Q75,45 80,65 Q85,85 50,90 Q15,85 20,65 Q25,45 40,60 Q35,40 50,15 Z' fill='%23EF4444' fill-opacity='0.18' stroke='%23EF4444' stroke-opacity='0.4' stroke-width='2'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.32;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ==========================================================================
+   4. DROPDOWN GÓC MA TRẬN EISENHOWER & QUADRANT CARDS
+   ========================================================================== */
+.quadrant-card.quadrant-q1 {
+  border-top: 3px solid var(--q1-color) !important;
+}
+.quadrant-card.quadrant-q2 {
+  border-top: 3px solid var(--q2-color) !important;
+}
+.quadrant-card.quadrant-q3 {
+  border-top: 3px solid var(--q3-color) !important;
+}
+.quadrant-card.quadrant-q4 {
+  border-top: 3px solid var(--q4-color) !important;
+}
+
+/* Badge Góc Ma Trận */
+.badge-quadrant.q1,
+.quadrant-dot.q1 {
+  background: var(--q1-bg) !important;
+  color: var(--q1-color) !important;
+  border: 1px solid var(--q1-border) !important;
+}
+
+.badge-quadrant.q2,
+.quadrant-dot.q2 {
+  background: var(--q2-bg) !important;
+  color: var(--q2-color) !important;
+  border: 1px solid var(--q2-border) !important;
+}
+
+.badge-quadrant.q3,
+.quadrant-dot.q3 {
+  background: var(--q3-bg) !important;
+  color: var(--q3-color) !important;
+  border: 1px solid var(--q3-border) !important;
+}
+
+.badge-quadrant.q4,
+.quadrant-dot.q4 {
+  background: var(--q4-bg) !important;
+  color: var(--q4-color) !important;
+  border: 1px solid var(--q4-border) !important;
+}
+
+/* ==========================================================================
+   5. TOAST NOTIFICATIONS (QUÁ HẠN & HOÀN THÀNH XUẤT SẮC)
+   ========================================================================== */
+.app-toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.app-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  /* backdrop-filter: blur(20px) */
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 300px;
+  max-width: 440px;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.app-toast.toast-hide {
+  opacity: 0;
+  transform: translateY(-15px) scale(0.95);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Toast 1: Quá hạn - Viền đỏ phát sáng + Đồng hồ đếm ngược 00:02 */
+.app-toast.toast-overdue,
+.app-toast.toast-urgent {
+  background: rgba(28, 16, 22, 0.92) !important;
+  border: 1.5px solid #EF4444 !important;
+  box-shadow: 0 0 24px rgba(239, 68, 68, 0.45) !important;
+  color: #F87171 !important;
+}
+
+.app-toast.toast-overdue .toast-countdown-badge {
+  margin-left: auto;
+  background: rgba(239, 68, 68, 0.25);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+}
+
+/* Toast 2: Hoàn thành xuất sắc! - Viền xanh lá + Hiệu ứng pháo giấy confetti */
+.app-toast.toast-celebration,
+.app-toast.toast-success {
+  background: rgba(14, 30, 24, 0.92) !important;
+  border: 1.5px solid #00FF87 !important;
+  box-shadow: 0 0 24px rgba(0, 255, 135, 0.35) !important;
+  color: #00FF87 !important;
+}
+
+.app-toast.toast-celebration i,
+.app-toast.toast-success i {
+  color: #00FF87 !important;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 135, 0.6));
+}
+
+/* ==========================================================================
+   6. ICON HÌNH ẢNH 18 LOẠI VIỆC (CYBER NATURAL ICON THUMBNAILS)
+   ========================================================================== */
+.cat-img-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  vertical-align: middle;
+  flex-shrink: 0;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.cat-item-with-img {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.category-tag img.cat-img-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 2px;
+}
+
+/* Nâng cấp nút bấm và pill trong giao diện Cyber Natural */
+.btn-primary {
+  background: linear-gradient(135deg, #10B981 0%, #06B6D4 100%) !important;
+  border: none !important;
+  color: #0B0F19 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35) !important;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #00FF87 0%, #06B6D4 100%) !important;
+  box-shadow: 0 6px 20px rgba(0, 255, 135, 0.45) !important;
+}
+
+.module-nav-btn.active {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: var(--neon-green) !important;
+  border-color: rgba(0, 255, 135, 0.3) !important;
+  box-shadow: 0 0 12px rgba(0, 255, 135, 0.15) !important;
+}
+
+.smart-list-item.active {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: var(--neon-green) !important;
+}
+
+/* TreTH Brand Logo */
+.treth-brand-logo {
+  background: transparent !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.treth-brand-logo img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 135, 0.4));
+}
+
+/* ==========================================================================
+   7. CYBER NATURAL MODAL BỘ LỌC CÔNG VIỆC & DROPDOWNS
+   ========================================================================== */
+.filter-dropdown-panel {
+  background: rgba(18, 25, 40, 0.98) !important;
+  /* backdrop-filter: blur(20px) */
+  border: 1px solid rgba(0, 255, 135, 0.3) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6) !important;
+  border-radius: 16px !important;
+}
+
+.filter-panel-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding-bottom: 12px !important;
+}
+
+.filter-panel-title {
+  color: var(--neon-green) !important;
+  font-weight: 700 !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-shadow: 0 0 10px rgba(0, 255, 135, 0.3);
+}
+
+.filter-group .filter-label {
+  color: #94A3B8 !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+.filter-select-control,
+.quick-pill-select,
+.form-control {
+  background: rgba(11, 15, 25, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: #F8FAFC !important;
+  border-radius: 10px !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.filter-select-control:focus,
+.quick-pill-select:focus,
+.form-control:focus {
+  border-color: var(--neon-green) !important;
+  box-shadow: 0 0 12px rgba(0, 255, 135, 0.35) !important;
+  outline: none !important;
+}
+
+.filter-select-control option,
+.quick-pill-select option,
+.form-control option {
+  background: #161F30 !important;
+  color: #F8FAFC !important;
+}
+
+/* ==========================================================================
+   8. CHẾ ĐỘ SÁNG HOÀN HẢO (LIGHT MODE HIGH-CONTRAST & CYBER NATURAL THEME)
+   ========================================================================== */
+html[data-theme="light"] {
+  --text-main: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --bg-body: #F8FAFC;
+  --bg-surface: #FFFFFF;
+  --bg-subtle: #F1F5F9;
+  --border-color: #E2E8F0;
+}
+
+html[data-theme="light"] body {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+html[data-theme="light"] .module-nav-btn {
+  color: #475569 !important;
+}
+
+html[data-theme="light"] .module-nav-btn:hover {
+  background: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+
+html[data-theme="light"] .module-nav-btn.active {
+  background: #EEF2FF !important;
+  color: #4F46E5 !important;
+  border-color: rgba(79, 70, 229, 0.4) !important;
+  box-shadow: 0 0 10px rgba(79, 70, 229, 0.15) !important;
+}
+
+html[data-theme="light"] .smart-list-item {
+  color: #475569 !important;
+}
+
+html[data-theme="light"] .smart-list-item:hover {
+  background: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+
+html[data-theme="light"] .smart-list-item.active {
+  background: #EEF2FF !important;
+  color: #4F46E5 !important;
+}
+
+html[data-theme="light"] .smart-badge-count {
+  background: #E2E8F0 !important;
+  color: #475569 !important;
+}
+
+html[data-theme="light"] .stat-card {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+html[data-theme="light"] .stat-card.stat-card-total {
+  border-color: rgba(16, 185, 129, 0.4) !important;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.1) !important;
+}
+
+html[data-theme="light"] .stat-card.stat-card-total .stat-value {
+  color: #059669 !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .stat-card.stat-card-completed {
+  border-color: rgba(16, 185, 129, 0.4) !important;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.1) !important;
+}
+
+html[data-theme="light"] .stat-card.stat-card-completed .stat-value {
+  color: #059669 !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .stat-card.stat-card-progress {
+  border-color: rgba(124, 58, 237, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.08) !important;
+}
+
+html[data-theme="light"] .stat-card.stat-card-progress .stat-percent-value {
+  color: #4F46E5 !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .progress-bar-track {
+  background: #E2E8F0 !important;
+}
+
+html[data-theme="light"] .stat-card.stat-card-urgent {
+  border-color: rgba(239, 68, 68, 0.35) !important;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.1) !important;
+}
+
+html[data-theme="light"] .stat-card.stat-card-urgent .stat-value {
+  color: #DC2626 !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .stat-card .stat-label {
+  color: #475569 !important;
+}
+
+html[data-theme="light"] .stat-card .stat-subtext {
+  color: #94A3B8 !important;
+}
+
+html[data-theme="light"] .filter-dropdown-panel {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12) !important;
+}
+
+html[data-theme="light"] .filter-panel-title {
+  color: #4F46E5 !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] .filter-group .filter-label {
+  color: #475569 !important;
+}
+
+html[data-theme="light"] .filter-select-control,
+html[data-theme="light"] .quick-pill-select,
+html[data-theme="light"] .form-control {
+  background: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+  color: #0F172A !important;
+}
+
+html[data-theme="light"] .filter-select-control option,
+html[data-theme="light"] .quick-pill-select option,
+html[data-theme="light"] .form-control option {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+}
+
+html[data-theme="light"] .app-title {
+  color: #0F172A !important;
+}
+
+html[data-theme="light"] .app-slogan {
+  color: #475569 !important;
+}
+
+html[data-theme="light"] .treth-brand-title {
+  color: #0F172A !important;
+}
+
+html[data-theme="light"] .card-title,
+html[data-theme="light"] .task-name {
+  color: #0F172A !important;
+}
+
+
+

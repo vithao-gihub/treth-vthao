@@ -1,0 +1,105 @@
+name: 📱 Build TreTH Android APK
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: 🤖 Đóng gói Android APK (Capacitor)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Tải mã nguồn dự án (Checkout)
+        uses: actions/checkout@v4
+
+      - name: ☕ Cài đặt Java 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: 🟢 Cài đặt Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Cài đặt thư viện Node (npm)
+        run: |
+          npm ci || npm install
+
+      - name: 🔄 Đồng bộ tài nguyên Web vào www/
+        run: |
+          node sync-assets.js
+
+      - name: 🤖 Đồng bộ Capacitor sang thư mục Android
+        run: |
+          npx cap sync android
+
+      - name: 🔑 Cấp quyền thực thi cho Gradle Wrapper
+        run: |
+          chmod +x ./android/gradlew
+
+      - name: 🏗️ Biên dịch APK với Gradle
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon
+
+      - name: 📦 Chuẩn bị file APK cài đặt
+        run: |
+          mkdir -p dist-apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist-apk/TreTH-v3.1.0.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist-apk/TreTH-latest.apk
+          echo "Danh sách file APK đã tạo:"
+          ls -lh dist-apk/
+
+      - name: 📤 Lưu trữ APK vào GitHub Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: TreTH-Android-APK
+          path: dist-apk/*.apk
+          retention-days: 90
+
+      - name: 🚀 Tạo GitHub Release v3.1.0 & Đính kèm file APK
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        with:
+          tag_name: v3.1.0
+          name: "TreTH v3.1.0 - Bản cài đặt Android (APK)"
+          body: |
+            ## 📱 TreTH - Ứng dụng Quản lý công việc, Pomodoro, Thói quen & Ghi chú
+
+            Chào bạn! File cài đặt APK chính thức của **TreTH v3.1.0** đã được tự động đóng gói sẵn sàng để tải về và sử dụng lâu dài trên điện thoại Android.
+
+            ### 📥 Tải về trực tiếp (Tải trong mục Assets bên dưới):
+            - 📲 **`TreTH-v3.1.0.apk`**: Bản cài đặt ổn định cho mọi thiết bị Android.
+            - 🚀 **`TreTH-latest.apk`**: Bản cài đặt mới nhất.
+
+            ---
+
+            ### 🛠️ Hướng dẫn cài đặt trên Android:
+            1. Mở trang này trên trình duyệt điện thoại Android hoặc tải về máy tính rồi chép sang điện thoại.
+            2. Nhấp vào file **`TreTH-v3.1.0.apk`** ở mục **Assets** bên dưới để tải về máy.
+            3. Nhấp mở file APK vừa tải -> Chọn **Cài đặt**.
+               *(Nếu điện thoại hiển thị cảnh báo "Cho phép cài đặt từ nguồn này", bạn hãy bật công tắc Cho phép để tiếp tục)*.
+            4. Khởi chạy ứng dụng **TreTH** từ màn hình chính và bắt đầu quản lý công việc!
+
+            ---
+
+            ### ✨ Tính năng nổi bật:
+            - **100% Hoạt động Offline:** Toàn bộ dữ liệu công việc, thói quen, ghi chú được lưu an toàn trực tiếp trên điện thoại của bạn.
+            - **Giao diện hiện đại & Siêu mượt:** Tối ưu hóa rendering, cuộn trang 60fps không giật lag.
+            - **Đầy đủ 4 chế độ xem:** Danh sách, Ma trận Eisenhower, Kanban và Lịch (Calendar).
+            - **Đồng hồ Pomodoro & Bộ theo dõi thói quen (Habit Tracker).**
+            - **Module Thống kê chuyên sâu:** 3 biểu đồ trực quan kèm lọc theo thời gian.
+            - **Sao lưu & Phục hồi:** Xuất/nhập JSON và Excel tiện lợi.
+          files: dist-apk/*.apk
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

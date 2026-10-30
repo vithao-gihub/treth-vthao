@@ -1,0 +1,13 @@
+{
+  "appId": "com.treth.app",
+  "appName": "TreTH",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": true
+  }
+}

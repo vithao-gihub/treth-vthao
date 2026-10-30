@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TreTH - Quản lý công việc & Hiệu suất</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- RemixIcon v4.2.0 (Offline local font first, CDN fallback) -->
+    <link rel="stylesheet" href="./fonts/remixicon.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- SheetJS để Xuất/Nhập Excel (.xlsx / .csv) -->
+    <script src="./xlsx.full.min.js"></script>
+    <script>
+        if (typeof XLSX === 'undefined') {
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"><\/script>');
+        }
+    </script>
+    
+    <!-- PWA Icons & Manifest -->
+    <link rel="icon" type="image/svg+xml" href="./icon.svg">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#4F46E5">
+    
+    <!-- Web App & iOS Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TreTH">
+    
+    <!-- Hệ thống Stylesheet: Base System + TreTH App-Shell + Cyber Natural v3.1 -->
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./styles/treth-ui.css">
+    <link rel="stylesheet" href="./styles/theme-treth-v3.css">
+    
+    <!-- Script Chống Chớp Giao diện Sáng / Tối khi tải trang -->
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('personal_workspace_theme_v1');
+                if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
+            } catch(e) {}
+        })();
+    </script>
+</head>
+<body>
+
+    <!-- =========================================================================
+         TRETH MODERN APP-SHELL (SIDEBAR ĐIỀU HƯỚNG + MAIN WORKSPACE RỘNG RÃI)
+         ========================================================================= -->
+    <div class="treth-app" id="treth-app">
+
+        <!-- 1. SIDEBAR ĐIỀU HƯỚNG HIỆN ĐẠI (TICKTICK + TRELLO HYBRID) -->
+        <aside class="treth-sidebar" id="treth-sidebar" aria-label="Thanh điều hướng chính">
+            <!-- Header thương hiệu TreTH -->
+            <div class="treth-sidebar-header">
+                <div class="treth-brand">
+                    <div class="treth-brand-logo">
+                        <img src="./assets/logo-treth.png" alt="TreTH Logo">
+                    </div>
+                    <div class="treth-brand-info">
+                        <span class="treth-brand-title">TreTH</span>
+                        <div class="treth-brand-meta">
+                            <span class="treth-version-badge">v3.1</span>
+                            <span class="treth-offline-indicator" title="Sẵn sàng hoạt động ngoại tuyến (Offline-First)">
+                                <i class="ri-wifi-line"></i> Offline
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" id="sidebar-toggle-btn" class="treth-sidebar-toggle" title="Thu gọn / Mở rộng Sidebar">
+                    <i class="ri-menu-fold-line" id="sidebar-toggle-icon"></i>
+                </button>
+            </div>
+
+            <!-- CỤM 4 THÀNH PHẦN CHÍNH (ĐẢM BẢO TƯƠNG THÍCH 100% QA & EVENT LISTENERS) -->
+            <div class="header-right-actions treth-sidebar-nav-container">
+                <!-- Nhóm 1: Thanh điều hướng Module (Tab Bar) -->
+                <nav class="module-nav" aria-label="Điều hướng Module">
+                    <button type="button" id="nav-btn-tasks" class="module-nav-btn active" data-module="tasks">
+                        <i class="ri-task-line"></i>
+                        <span>Công việc</span>
+                    </button>
+                    <button type="button" id="nav-btn-calendar" class="module-nav-btn" data-module="calendar">
+                        <i class="ri-calendar-todo-line"></i>
+                        <span>Lịch biểu</span>
+                    </button>
+                    <button type="button" id="nav-btn-time" class="module-nav-btn" data-module="time">
+                        <i class="ri-timer-line"></i>
+                        <span>Thời gian</span>
+                    </button>
+                    <button type="button" id="nav-btn-habits" class="module-nav-btn" data-module="habits">
+                        <i class="ri-plant-line"></i>
+                        <span>Thói quen</span>
+                    </button>
+                    <button type="button" id="nav-btn-notes" class="module-nav-btn" data-module="notes">
+                        <i class="ri-sticky-note-line"></i>
+                        <span>Ghi chú</span>
+                    </button>
+                    <button type="button" id="nav-btn-analytics" class="module-nav-btn" data-module="analytics">
+                        <i class="ri-pie-chart-2-line"></i>
+                        <span>Thống kê</span>
+                    </button>
+                </nav>
+
+                <!-- Nhóm 2: Nút mở Cửa sổ Quản lý Loại việc -->
+                <button type="button" id="btn-open-cat-manager" class="btn btn-outline-cat" title="Quản lý loại việc">
+                    <i class="ri-price-tag-3-line"></i>
+                    <span>Quản lý loại việc</span>
+                </button>
+
+                <!-- Nhóm 3: Menu Popover / Nút mở Modal Dữ liệu (Sao lưu JSON & Bảng tính Excel) -->
+                <div class="data-menu-popover-container">
+                    <button type="button" id="btnToggleDataMenu" class="btn btn-outline-action" aria-expanded="false" title="Quản lý dữ liệu sao lưu & bảng tính">
+                        <i class="ri-database-2-line"></i>
+                        <span>Dữ liệu</span>
+                        <i class="ri-arrow-down-s-line arrow-icon" id="dataMenuArrow"></i>
+                    </button>
+
+                    <!-- Thẻ input file ẩn phục vụ khôi phục JSON và nhập Excel -->
+                    <input type="file" id="importJsonInput" accept=".json" class="hidden" style="display: none;">
+                    <input type="file" id="importExcelInput" accept=".xlsx, .xls, .csv" class="hidden" style="display: none;">
+                </div>
+
+                <!-- Nhóm 4: Nút mở Modal Cài đặt Hệ thống & Pomodoro -->
+                <button type="button" id="btn-open-settings" class="btn btn-outline-action" title="Cài đặt Hệ thống & Pomodoro">
+                    <i class="ri-settings-3-line"></i>
+                    <span>Cài đặt</span>
+                </button>
+            </div>
+
+            <!-- Cụm Smart Lists kiểu TickTick (Danh sách thông minh) -->
+            <div class="treth-sidebar-section treth-smart-lists-section" id="treth-smart-lists">
+                <div class="sidebar-section-header">
+                    <span class="sidebar-section-title">DANH SÁCH THÔNG MINH</span>
+                </div>
+                <ul class="treth-smart-list-items" role="tablist">
+                    <li class="smart-list-item active" data-smart-filter="all" role="tab" tabindex="0">
+                        <i class="ri-inbox-archive-line"></i>
+                        <span>Tất cả công việc</span>
+                        <span class="smart-badge-count" id="smart-count-all">0</span>
+                    </li>
+                    <li class="smart-list-item" data-smart-filter="today" role="tab" tabindex="0">
+                        <i class="ri-calendar-check-line"></i>
+                        <span>Hôm nay</span>
+                        <span class="smart-badge-count" id="smart-count-today">0</span>
+                    </li>
+                    <li class="smart-list-item" data-smart-filter="this_week" role="tab" tabindex="0">
+                        <i class="ri-calendar-2-line"></i>
+                        <span>7 ngày tới</span>
+                        <span class="smart-badge-count" id="smart-count-week">0</span>
+                    </li>
+                    <li class="smart-list-item" data-smart-filter="urgent" role="tab" tabindex="0">
+                        <i class="ri-alarm-warning-line"></i>
+                        <span>Gấp &amp; Quá hạn</span>
+                        <span class="smart-badge-count" id="smart-count-urgent">0</span>
+                    </li>
+                    <li class="smart-list-item" data-smart-filter="completed" role="tab" tabindex="0">
+                        <i class="ri-checkbox-circle-line"></i>
+                        <span>Đã hoàn thành</span>
+                        <span class="smart-badge-count" id="smart-count-completed">0</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Đáy Sidebar: Theme Switcher -->
+            <div class="treth-sidebar-footer">
+                <div class="treth-footer-bottom">
+                    <button type="button" id="btn-toggle-theme" class="btn btn-theme-pill" title="Chuyển đổi giao diện Sáng / Tối">
+                        <i class="ri-moon-line" id="theme-toggle-icon"></i>
+                        <span id="theme-toggle-text">Tối</span>
+                    </button>
+                    <span class="treth-brand-meta" style="font-size: 11px; color: var(--text-muted);">
+                        TreTH Offline-First
+                    </span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Lớp phủ mờ Backdrop cho Mobile Drawer -->
+        <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+        <!-- 2. MAIN WORKSPACE HIỆN ĐẠI (TOPBAR + CONTENT VÙNG RỘNG) -->
+        <main class="treth-main" id="treth-main">
+            <!-- TOPBAR: HEADER APP & ĐIỀU KHIỂN TÌM KIẾM / SẮP XẾP / VIEW SWITCHER -->
+            <header class="app-header treth-topbar header-flex">
+                <div class="treth-topbar-left">
+                    <button type="button" id="mobile-menu-btn" class="mobile-menu-trigger" aria-label="Mở Menu điều hướng">
+                        <i class="ri-menu-line"></i>
+                    </button>
+
+                    <div class="header-content">
+                        <div class="brand-badge" id="header-module-badge" style="display: none;"></div>
+                        <h1 class="app-title" id="header-module-title">Công việc</h1>
+                        <p class="app-slogan" id="header-module-slogan">Tập trung vào điều quan trọng, hoàn thành từng mục tiêu nhỏ mỗi ngày.</p>
+                    </div>
+                </div>
+
+                <div class="treth-topbar-right">
+                    <!-- Thanh Tìm kiếm từ khóa & Bộ lọc Popover gom gọn -->
+                    <div class="filter-search-group" id="unifiedFilterPanel">
+                        <div class="search-box-wrapper">
+                            <i class="ri-search-2-line search-box-icon"></i>
+                            <input 
+                                type="search" 
+                                id="filterKeywordInput" 
+                                class="search-box-input" 
+                                placeholder="Tìm kiếm nhanh..." 
+                                aria-label="Tìm kiếm theo từ khóa"
+                                autocomplete="off"
+                                autocorrect="off"
+                                autocapitalize="off"
+                                spellcheck="false"
+                            >
+                        </div>
+
+                        <!-- Nút chức năng mở Bảng Bộ Lọc Đa Năng -->
+                        <div class="filter-popover-container" id="filterPopoverContainer">
+                            <button type="button" id="btnToggleFilterDropdown" class="btn btn-filter-toggle" aria-expanded="false" title="Mở tùy chọn lọc công việc">
+                                <i class="ri-filter-3-line"></i>
+                                <span>Bộ lọc</span>
+                                <span id="activeFiltersBadge" class="filter-active-count-badge" style="display: none;">0</span>
+                                <i class="ri-arrow-down-s-line arrow-icon"></i>
+                            </button>
+
+                            <!-- Panel Bộ Lọc Popover bung ra khi nhấn nút -->
+                            <div id="filterDropdownPanel" class="filter-dropdown-panel" style="display: none;" role="dialog" aria-label="Tùy chọn lọc công việc">
+                                <div class="filter-panel-header">
+                                    <div class="filter-panel-title">
+                                        <i class="ri-sound-module-line"></i>
+                                        <span>Bộ lọc công việc</span>
+                                    </div>
+                                    <button type="button" id="btnCloseFilterPanel" class="btn-close-filter" title="Đóng bảng lọc">
+                                        <i class="ri-close-line"></i>
+                                    </button>
+                                </div>
+
+                                <div class="filter-panel-body">
+                                    <!-- Tiêu chí 1: Loại việc -->
+                                    <div class="filter-group">
+                                        <label for="filterCategorySelect" class="filter-label">
+                                            <i class="ri-price-tag-3-line"></i>
+                                            <span>Loại việc</span>
+                                        </label>
+                                        <div class="filter-select-wrapper">
+                                            <select id="filterCategorySelect" class="filter-select-control">
+                                                <option value="all">Tất cả loại việc</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tiêu chí 2: Mức ưu tiên -->
+                                    <div class="filter-group">
+                                        <label for="filterPrioritySelect" class="filter-label">
+                                            <i class="ri-flag-line"></i>
+                                            <span>Mức ưu tiên</span>
+                                        </label>
+                                        <div class="filter-select-wrapper">
+                                            <select id="filterPrioritySelect" class="filter-select-control">
+                                                <option value="all">Tất cả mức ưu tiên</option>
+                                                <option value="high">🔥 Ưu tiên cao</option>
+                                                <option value="medium">🟡 Trung bình</option>
+                                                <option value="low">🟢 Ưu tiên thấp</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tiêu chí 3: Thời hạn hoàn thành -->
+                                    <div class="filter-group">
+                                        <label for="filterDueDateSelect" class="filter-label">
+                                            <i class="ri-calendar-event-line"></i>
+                                            <span>Thời hạn</span>
+                                        </label>
+                                        <div class="filter-select-wrapper">
+                                            <select id="filterDueDateSelect" class="filter-select-control">
+                                                <option value="all">Tất cả thời hạn</option>
+                                                <option value="overdue">🔴 Quá hạn</option>
+                                                <option value="today">⏰ Đến hạn hôm nay</option>
+                                                <option value="this_week">📅 Trong tuần này</option>
+                                                <option value="future">🟢 Còn nhiều thời gian</option>
+                                                <option value="no_date">⚪ Chưa đặt hạn</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tiêu chí 4: Trạng thái thực hiện -->
+                                    <div class="filter-group">
+                                        <label for="filterStatusSelect" class="filter-label">
+                                            <i class="ri-checkbox-circle-line"></i>
+                                            <span>Trạng thái</span>
+                                        </label>
+                                        <div class="filter-select-wrapper">
+                                            <select id="filterStatusSelect" class="filter-select-control">
+                                                <option value="all">Tất cả trạng thái</option>
+                                                <option value="pending">⌛ Cần làm</option>
+                                                <option value="in-progress">🔄 Đang làm</option>
+                                                <option value="completed">✅ Đã xong</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="filter-panel-footer">
+                                    <button type="button" id="resetFiltersBtn" class="btn btn-reset-filters-popover" title="Đưa tất cả tiêu chí về mặc định">
+                                        <i class="ri-refresh-line"></i>
+                                        <span>Xóa lọc</span>
+                                    </button>
+                                    <button type="button" id="btnApplyFilter" class="btn btn-primary btn-apply-filter" title="Đóng bảng và áp dụng">
+                                        <i class="ri-check-line"></i>
+                                        <span>Xong</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Sắp xếp thông minh & Switcher 4 Chế độ xem -->
+                    <div class="filter-actions-right">
+                        <div class="filter-select-wrapper sort-select-wrapper">
+                            <i class="ri-sort-desc sort-inside-icon"></i>
+                            <select id="taskSortSelect" class="filter-select-control sort-select-control" aria-label="Tiêu chí sắp xếp">
+                                <option value="smart" selected>Sắp xếp thông minh</option>
+                                <option value="dueDate">📅 Hạn gần nhất</option>
+                                <option value="priority">🔥 Ưu tiên cao ➔ thấp</option>
+                                <option value="created">🕒 Mới tạo gần đây</option>
+                            </select>
+                        </div>
+
+                        <!-- Nút chuyển đổi 4 chế độ xem: Danh sách vs Ma trận vs Kanban vs Lịch -->
+                        <div class="view-switcher" role="group" aria-label="Chế độ hiển thị">
+                            <button type="button" id="btn-view-list" class="view-btn active" data-view="list" title="Chế độ xem Danh sách">
+                                <i class="ri-list-check-2"></i>
+                                <span>Danh sách</span>
+                            </button>
+                            <button type="button" id="btn-view-matrix" class="view-btn" data-view="matrix" title="Chế độ xem Ma trận Eisenhower 4 ô">
+                                <i class="ri-layout-grid-fill"></i>
+                                <span>Ma trận</span>
+                            </button>
+                            <button type="button" id="btn-view-kanban" class="view-btn" data-view="kanban" title="Chế độ xem Bảng Kanban (TreTH)">
+                                <i class="ri-kanban-view"></i>
+                                <span>Kanban</span>
+                            </button>
+                            <button type="button" id="btn-view-calendar" class="view-btn" data-view="calendar" title="Chế độ xem Lịch biểu (TreTH)">
+                                <i class="ri-calendar-todo-line"></i>
+                                <span>Lịch</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- DẢI FILTER CHIPS KHI TÌM KIẾM / LỌC -->
+            <div class="dashboard-controls treth-dashboard-bar" aria-label="Bộ lọc đang áp dụng">
+                <!-- Dải thẻ bộ lọc đang kích hoạt (Active Filter Chips) -->
+                <div id="activeFilterChipsContainer" class="active-filter-chips-container" style="display: none;" role="region" aria-label="Bộ lọc đang áp dụng">
+                    <div class="active-chips-label">
+                        <i class="ri-filter-2-line"></i>
+                        <span>Đang lọc:</span>
+                    </div>
+                    <div id="activeFilterChipsList" class="active-chips-list"></div>
+                    <button type="button" id="btnClearAllFilterChips" class="btn-clear-all-chips" title="Xóa toàn bộ các bộ lọc đang chọn">
+                        <i class="ri-close-circle-line"></i>
+                        <span>Xóa tất cả</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- =======================================================
+                 MODULE 1: QUẢN LÝ CÔNG VIỆC
+                 ======================================================= -->
+            <div id="module-tasks-view">
+                <!-- THANH QUICK-ADD 1 DÒNG GỌN GÀNG (TICKTICK / TODOIST STYLE) -->
+                <section class="card form-section treth-quick-add-section" aria-label="Thêm công việc nhanh">
+                    <form id="task-form" class="task-form treth-quick-add-form is-collapsed" novalidate>
+                        <i class="ri-add-circle-fill quick-add-leading-icon" aria-hidden="true"></i>
+
+                        <!-- Input Tiêu đề công việc chính -->
+                        <input 
+                            type="text" 
+                            id="task-title" 
+                            class="form-control quick-add-input" 
+                            placeholder="Hôm nay bạn cần làm gì? (VD: Họp 9h-10h30 mai !cao #Họp...)" 
+                            autocomplete="off"
+                            autocorrect="off"
+                            autocapitalize="off"
+                            spellcheck="false"
+                            required
+                        >
+                        <!-- Gợi ý phân tích NLP tiếng Việt thời gian thực -->
+                        <div id="task-nlp-preview" class="task-nlp-preview-strip" style="display: none;"></div>
+
+                        <!-- Dải Pills chọn nhanh thông số ngay trên 1 dòng -->
+                        <div class="quick-add-pills-row">
+                            <!-- Chọn Loại việc -->
+                            <div class="quick-pill-item" title="Chọn loại việc">
+                                <i class="ri-folder-2-line"></i>
+                                <label for="task-category" class="sr-only">Loại việc</label>
+                                <select id="task-category" class="quick-pill-select">
+                                    <option value="" selected>Loại việc</option>
+                                </select>
+                            </div>
+
+                            <!-- Chọn Mức độ ưu tiên -->
+                            <div class="quick-pill-item" title="Chọn mức ưu tiên">
+                                <i class="ri-flag-line"></i>
+                                <label for="task-priority" class="sr-only">Mức độ ưu tiên</label>
+                                <select id="task-priority" class="quick-pill-select">
+                                    <option value="" selected>Ưu tiên</option>
+                                    <option value="high">🔥 Cao</option>
+                                    <option value="medium">🟡 Vừa</option>
+                                    <option value="low">🟢 Thấp</option>
+                                </select>
+                            </div>
+
+                            <!-- Chọn Ngày hạn hoàn thành -->
+                            <div class="quick-pill-item" title="Chọn ngày đến hạn">
+                                <i class="ri-calendar-event-line"></i>
+                                <label for="task-due-date" class="sr-only">Ngày hạn hoàn thành</label>
+                                <input 
+                                    type="date" 
+                                    id="task-due-date" 
+                                    class="quick-pill-date"
+                                >
+                            </div>
+
+                            <!-- Chọn Chu kỳ lặp lại -->
+                            <div class="quick-pill-item" title="Chu kỳ lặp lại">
+                                <i class="ri-repeat-line"></i>
+                                <label for="taskRecurringInput" class="sr-only">Chu kỳ lặp lại</label>
+                                <select id="taskRecurringInput" class="quick-pill-select">
+                                    <option value="none" selected>📌 1 lần</option>
+                                    <option value="daily">🔁 Hằng ngày</option>
+                                    <option value="weekly">📅 Hằng tuần</option>
+                                </select>
+                            </div>
+
+                            <!-- Chọn Góc ma trận Eisenhower -->
+                            <div class="quick-pill-item" title="Góc ma trận Eisenhower">
+                                <i class="ri-layout-grid-line"></i>
+                                <label for="task-quadrant" class="sr-only">Góc ma trận</label>
+                                <select id="task-quadrant" class="quick-pill-select">
+                                    <option value="" selected>⚡ Góc ma trận</option>
+                                    <option value="q1">🔴 Ô 1: Làm ngay</option>
+                                    <option value="q2">🔵 Ô 2: Lên lịch</option>
+                                    <option value="q3">🟡 Ô 3: Ủy quyền</option>
+                                    <option value="q4">⚪ Ô 4: Xóa</option>
+                                </select>
+                            </div>
+
+                            <!-- Nút Thêm công việc -->
+                            <button type="submit" id="btn-add-task" class="btn btn-primary btn-quick-submit" title="Thêm công việc mới">
+                                <i class="ri-add-line"></i>
+                                <span>Thêm việc</span>
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- KHÔNG GIAN LÀM VIỆC RỘNG HIỂN THỊ CÔNG VIỆC -->
+                <section id="tasks-workspace" class="task-list-section treth-workspace-content" aria-label="Không gian làm việc">
+                    <!-- 1. CHẾ ĐỘ XEM DANH SÁCH (LIST VIEW) -->
+                    <div id="list-view-container">
+                        <ul id="task-list" class="task-list"></ul>
+                    </div>
+
+                    <!-- 2. CHẾ ĐỘ XEM MA TRẬN EISENHOWER 4 Ô (MATRIX VIEW - HỖ TRỢ DRAG & DROP) -->
+                    <div id="matrix-view-container" class="eisenhower-grid" style="display: none;">
+                        <!-- Ô 1: Khẩn cấp & Quan trọng (Làm ngay) -->
+                        <div class="quadrant-card quadrant-q1" data-quadrant="q1">
+                            <div class="quadrant-header">
+                                <div class="quadrant-title-group">
+                                    <span class="quadrant-dot"></span>
+                                    <div>
+                                        <h3 class="quadrant-title">Ô 1: Khẩn cấp &amp; Quan trọng</h3>
+                                        <p class="quadrant-subtitle">Làm ngay lập tức (Do First)</p>
+                                    </div>
+                                </div>
+                                <span class="quadrant-count" id="count-q1">0</span>
+                            </div>
+                            <form class="quadrant-quick-add" data-quadrant="q1" novalidate>
+                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc cần làm ngay..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+                                <button type="submit" class="quadrant-add-btn" title="Thêm vào Ô 1"><i class="ri-add-line"></i></button>
+                            </form>
+                            <ul id="matrix-list-q1" class="quadrant-task-list" data-quadrant="q1"></ul>
+                        </div>
+
+                        <!-- Ô 2: Không khẩn cấp & Quan trọng (Lên kế hoạch) -->
+                        <div class="quadrant-card quadrant-q2" data-quadrant="q2">
+                            <div class="quadrant-header">
+                                <div class="quadrant-title-group">
+                                    <span class="quadrant-dot"></span>
+                                    <div>
+                                        <h3 class="quadrant-title">Ô 2: Không khẩn cấp &amp; Quan trọng</h3>
+                                        <p class="quadrant-subtitle">Lên kế hoạch thực hiện (Schedule)</p>
+                                    </div>
+                                </div>
+                                <span class="quadrant-count" id="count-q2">0</span>
+                            </div>
+                            <form class="quadrant-quick-add" data-quadrant="q2" novalidate>
+                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc cần lên kế hoạch..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+                                <button type="submit" class="quadrant-add-btn" title="Thêm vào Ô 2"><i class="ri-add-line"></i></button>
+                            </form>
+                            <ul id="matrix-list-q2" class="quadrant-task-list" data-quadrant="q2"></ul>
+                        </div>
+
+                        <!-- Ô 3: Khẩn cấp & Không quan trọng (Ủy quyền/Làm nhanh) -->
+                        <div class="quadrant-card quadrant-q3" data-quadrant="q3">
+                            <div class="quadrant-header">
+                                <div class="quadrant-title-group">
+                                    <span class="quadrant-dot"></span>
+                                    <div>
+                                        <h3 class="quadrant-title">Ô 3: Khẩn cấp &amp; Ít quan trọng</h3>
+                                        <p class="quadrant-subtitle">Ủy quyền hoặc Làm nhanh (Delegate)</p>
+                                    </div>
+                                </div>
+                                <span class="quadrant-count" id="count-q3">0</span>
+                            </div>
+                            <form class="quadrant-quick-add" data-quadrant="q3" novalidate>
+                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc ủy quyền / xử lý nhanh..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+                                <button type="submit" class="quadrant-add-btn" title="Thêm vào Ô 3"><i class="ri-add-line"></i></button>
+                            </form>
+                            <ul id="matrix-list-q3" class="quadrant-task-list" data-quadrant="q3"></ul>
+                        </div>
+
+                        <!-- Ô 4: Không khẩn cấp & Không quan trọng (Xóa/Tối thiểu) -->
+                        <div class="quadrant-card quadrant-q4" data-quadrant="q4">
+                            <div class="quadrant-header">
+                                <div class="quadrant-title-group">
+                                    <span class="quadrant-dot"></span>
+                                    <div>
+                                        <h3 class="quadrant-title">Ô 4: Không khẩn cấp &amp; Ít quan trọng</h3>
+                                        <p class="quadrant-subtitle">Tối thiểu hóa hoặc Loại bỏ (Eliminate)</p>
+                                    </div>
+                                </div>
+                                <span class="quadrant-count" id="count-q4">0</span>
+                            </div>
+                            <form class="quadrant-quick-add" data-quadrant="q4" novalidate>
+                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc vặt / giải trí..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+                                <button type="submit" class="quadrant-add-btn" title="Thêm vào Ô 4"><i class="ri-add-line"></i></button>
+                            </form>
+                            <ul id="matrix-list-q4" class="quadrant-task-list" data-quadrant="q4"></ul>
+                        </div>
+                    </div>
+
+                    <!-- 3. CHẾ ĐỘ XEM BẢNG KANBAN (KANBAN VIEW - TRETH) -->
+                    <div id="kanban-view-container" class="kanban-view-container" style="display: none;" role="region" aria-label="Bảng Kanban TreTH"></div>
+
+                    <!-- 4. CHẾ ĐỘ XEM LỊCH BIỂU (CALENDAR VIEW - TRETH) -->
+                    <div id="calendar-view-container" class="calendar-view-container" style="display: none;" role="region" aria-label="Lịch công việc TreTH"></div>
+                </section>
+            </div>
+
+            <!-- =======================================================
+                 MODULE 2: QUẢN LÝ THỜI GIAN (POMODORO & FOCUS TRACKING)
+                 ======================================================= -->
+            <section id="module-time-view" class="time-module-section treth-workspace-content" style="display: none;" aria-label="Quản lý thời gian">
+                <!-- 1. THẺ CHỌN CÔNG VIỆC TẬP TRUNG -->
+                <div class="card focus-task-selector-card">
+                    <div class="focus-selector-header">
+                        <div class="focus-selector-label">
+                            <i class="ri-focus-3-line"></i>
+                            <span>Công việc đang tập trung thực hiện:</span>
+                        </div>
+                        <span id="focus-task-time-badge" class="badge-actual-time">
+                            <i class="ri-timer-flash-line"></i>
+                            <span>Đã làm: <strong id="focus-task-minutes">0</strong> phút</span>
+                        </span>
+                    </div>
+
+                    <div class="focus-selector-controls">
+                        <div class="input-with-icon focus-select-wrapper">
+                            <i class="ri-task-line input-icon"></i>
+                            <select id="focus-task-select" class="form-control">
+                                <option value="">-- Chọn một công việc chưa hoàn thành để bắt đầu bấm giờ --</option>
+                            </select>
+                        </div>
+
+                        <button type="button" id="btn-complete-focused-task" class="btn btn-outline-success" title="Đánh dấu hoàn thành công việc này" disabled>
+                            <i class="ri-check-double-line"></i>
+                            <span>Hoàn thành việc</span>
+                        </button>
+                    </div>
+
+                    <!-- Thông tin chi tiết của công việc đang chọn -->
+                    <div id="focus-task-meta-bar" class="focus-task-meta-bar" style="display: none;">
+                        <span id="focus-meta-category" class="badge-category"></span>
+                        <span id="focus-meta-quadrant" class="badge-quadrant"></span>
+                        <span id="focus-meta-priority" class="badge"></span>
+                        <span id="focus-meta-due" class="task-date"></span>
+                    </div>
+                </div>
+
+                <!-- 2. BỐ CỤC CHÍNH MODULE 2: ĐỒNG HỒ POMODORO & THỐNG KÊ THỜI GIAN -->
+                <div class="time-workspace-grid">
+                    <!-- CỘT TRÁI: ĐỒNG HỒ POMODORO LỚN -->
+                    <div class="card pomodoro-card" id="pomodoro-card" data-mode="focus">
+                        <div class="pomo-modes" role="tablist" aria-label="Chế độ đồng hồ Pomodoro">
+                            <button type="button" class="pomo-mode-btn active" data-mode="focus" data-minutes="25">
+                                <i class="ri-brain-line"></i>
+                                <span>Tập trung (25p)</span>
+                            </button>
+                            <button type="button" class="pomo-mode-btn" data-mode="short-break" data-minutes="5">
+                                <i class="ri-cup-line"></i>
+                                <span>Nghỉ ngắn (5p)</span>
+                            </button>
+                            <button type="button" class="pomo-mode-btn" data-mode="long-break" data-minutes="15">
+                                <i class="ri-leaf-line"></i>
+                                <span>Nghỉ dài (15p)</span>
+                            </button>
+                        </div>
+
+                        <div class="pomo-timer-wrapper">
+                            <svg class="pomo-progress-ring" width="260" height="260" viewBox="0 0 260 260">
+                                <circle class="pomo-ring-bg" cx="130" cy="130" r="116"></circle>
+                                <circle class="pomo-ring-progress" id="pomo-ring-progress" cx="130" cy="130" r="116"></circle>
+                            </svg>
+                            <div class="pomo-timer-center">
+                                <span id="pomo-status-badge" class="pomo-status-badge">Sẵn sàng tập trung</span>
+                                <div id="pomo-time-display" class="pomo-time-display">25:00</div>
+                                <span id="pomo-cycle-counter" class="pomo-cycle-counter">Chu kỳ hôm nay: 0</span>
+                            </div>
+                        </div>
+
+                        <div class="pomo-controls">
+                            <button type="button" id="btn-pomo-start" class="btn btn-primary btn-pomo-main">
+                                <i class="ri-play-fill"></i>
+                                <span>Bắt đầu</span>
+                            </button>
+                            <button type="button" id="btn-pomo-pause" class="btn btn-warning btn-pomo-main" disabled>
+                                <i class="ri-pause-fill"></i>
+                                <span>Tạm dừng</span>
+                            </button>
+                            <button type="button" id="btn-pomo-reset" class="btn btn-secondary btn-pomo-reset" title="Làm mới đồng hồ (Reset)">
+                                <i class="ri-refresh-line"></i>
+                                <span>Reset</span>
+                            </button>
+                        </div>
+
+                        <div class="pomo-notif-bar">
+                            <button type="button" id="btn-pomo-notif-toggle" class="btn btn-outline-action btn-sm" title="Quản lý thông báo đẩy trình duyệt khi hết giờ">
+                                <i class="ri-notification-3-line"></i>
+                                <span id="pomo-notif-btn-text">Bật thông báo đẩy</span>
+                            </button>
+                        </div>
+
+                        <!-- BỘ TẠO ÂM THANH TẬP TRUNG TỔNG HỢP (OFFLINE WEB AUDIO AMBIENT SOUNDSCAPE) -->
+                        <div class="pomo-ambient-soundscape" id="pomo-soundscape-panel">
+                            <div class="ambient-sound-header">
+                                <span class="ambient-title"><i class="ri-headphone-line"></i> Âm thanh tập trung (Offline)</span>
+                                <div class="ambient-selector-group">
+                                    <button type="button" class="ambient-sound-btn active" data-sound="none">Tắt</button>
+                                    <button type="button" class="ambient-sound-btn" data-sound="rain">🌧️ Mưa</button>
+                                    <button type="button" class="ambient-sound-btn" data-sound="brown">🌊 Sóng biển</button>
+                                    <button type="button" class="ambient-sound-btn" data-sound="white">💨 Gió ngàn</button>
+                                </div>
+                            </div>
+                            <div class="ambient-volume-row" id="ambient-volume-container" style="display: none;">
+                                <i class="ri-volume-down-line"></i>
+                                <input type="range" id="ambient-volume-slider" min="0" max="100" value="40" class="ambient-slider">
+                                <span id="ambient-volume-label">40%</span>
+                            </div>
+                        </div>
+
+                        <p class="pomo-hint">
+                            <i class="ri-information-line"></i>
+                            <span>Khi <strong>Tạm dừng</strong> hoặc <strong>Hoàn thành chu kỳ</strong>, số phút thực tế sẽ tự động cộng dồn vào công việc đang chọn và thống kê ngày.</span>
+                        </p>
+                    </div>
+
+                    <!-- CỘT PHẢI: THỐNG KÊ POMODORO TRONG NGÀY & THỜI GIAN TỪNG VIỆC -->
+                    <div class="card time-stats-card">
+                        <div class="time-stats-header">
+                            <h3 class="time-stats-title">
+                                <i class="ri-bar-chart-box-line"></i>
+                                <span>Thống kê Pomodoro &amp; Thời gian thực tế</span>
+                            </h3>
+                            <p class="time-stats-subtitle">Lưu trữ đồng bộ trên LocalStorage</p>
+                        </div>
+
+                        <div class="time-summary-boxes time-summary-boxes-4">
+                            <div class="time-summary-item">
+                                <span class="time-summary-label">Chu kỳ xong hôm nay</span>
+                                <strong class="time-summary-value" id="pomo-stat-today-cycles">0 chu kỳ</strong>
+                            </div>
+                            <div class="time-summary-item">
+                                <span class="time-summary-label">Phút tập trung hôm nay</span>
+                                <strong class="time-summary-value" id="pomo-stat-today-minutes">0 phút</strong>
+                            </div>
+                            <div class="time-summary-item">
+                                <span class="time-summary-label">Tổng thời gian các việc</span>
+                                <strong class="time-summary-value" id="total-actual-time-all">0 phút</strong>
+                            </div>
+                            <div class="time-summary-item">
+                                <span class="time-summary-label">Số việc đã ghi nhận giờ</span>
+                                <strong class="time-summary-value" id="total-tracked-tasks">0 việc</strong>
+                            </div>
+                        </div>
+
+                        <div class="tracked-tasks-list-wrapper">
+                            <ul id="time-tracked-list" class="time-tracked-list"></ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =======================================================
+                 MODULE 3: THÓI QUEN (HABIT TRACKER)
+                 ======================================================= -->
+            <section id="module-habits-view" class="habits-module-section treth-workspace-content" style="display: none;" aria-label="Xây dựng thói quen">
+                <!-- BẢN ĐỒ NHIỆT KỶ LUẬT THÓI QUEN (YEARLY CONTRIBUTION HEATMAP) -->
+                <div class="habit-heatmap-card" id="habit-heatmap-container">
+                    <div class="habit-heatmap-header">
+                        <h4><i class="ri-fire-line" style="color: #F59E0B;"></i> Bản đồ nhiệt Kỷ luật Năm (Contribution Heatmap)</h4>
+                        <span id="heatmap-summary-badge" class="cal-badge-pill">Ghi nhận chuỗi kiên trì</span>
+                    </div>
+                    <div class="habit-heatmap-scroll">
+                        <div class="habit-heatmap-grid" id="habit-heatmap-grid"></div>
+                    </div>
+                </div>
+
+                <!-- THANH TÁC VỤ & BỘ LỌC THÓI QUEN -->
+                <div class="habit-toolbar-card card">
+                    <div class="habit-toolbar-left">
+                        <div class="input-with-icon habit-search-wrapper">
+                            <i class="ri-search-line input-icon"></i>
+                            <input type="text" id="habit-search-input" class="form-control" placeholder="Tìm kiếm thói quen..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                        </div>
+                        <div class="habit-filter-pills" role="tablist">
+                            <button type="button" class="habit-filter-pill active" data-filter="all">Tất cả</button>
+                            <button type="button" class="habit-filter-pill" data-filter="pending">Cần làm hôm nay</button>
+                            <button type="button" class="habit-filter-pill" data-filter="completed">Đã xong hôm nay</button>
+                        </div>
+                    </div>
+                    <div class="habit-toolbar-right">
+                        <button type="button" id="btn-add-habit" class="btn btn-primary">
+                            <i class="ri-add-line"></i>
+                            <span>Thêm thói quen mới</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- DANH SÁCH THÓI QUEN -->
+                <div id="habit-cards-grid" class="habit-cards-grid"></div>
+            </section>
+
+            <!-- =======================================================
+                 MODULE 4: GHI CHÚ NHANH (QUICK NOTES & KNOWLEDGE BASE)
+                 ======================================================= -->
+            <section id="module-notes-view" class="notes-module-section treth-workspace-content" style="display: none;" aria-label="Sổ tay và ghi chú nhanh">
+                <!-- THANH TÁC VỤ & TÌM KIẾM GHI CHÚ -->
+                <div class="notes-toolbar-card card">
+                    <div class="notes-toolbar-left">
+                        <div class="input-with-icon notes-search-wrapper">
+                            <i class="ri-search-line input-icon"></i>
+                            <input type="text" id="notes-search-input" class="form-control" placeholder="Tìm kiếm ghi chú theo tiêu đề, nội dung hoặc thẻ tag..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                        </div>
+                        <div id="notes-tag-pills" class="notes-tag-pills">
+                            <button type="button" class="note-tag-pill active" data-tag="all">Tất cả thẻ</button>
+                        </div>
+                    </div>
+                    <div class="notes-toolbar-right">
+                        <button type="button" id="btn-add-note" class="btn btn-primary">
+                            <i class="ri-add-line"></i>
+                            <span>Tạo ghi chú mới</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KHU VỰC HIỂN THỊ GHI CHÚ -->
+                <div class="notes-container">
+                    <!-- Ghi chú được ghim -->
+                    <div id="notes-pinned-section" class="notes-section" style="display: none;">
+                        <h3 class="notes-section-title">
+                            <i class="ri-pushpin-2-fill" style="color: #F59E0B;"></i>
+                            <span>Đã ghim lên đầu</span>
+                        </h3>
+                        <div id="notes-pinned-grid" class="notes-cards-grid"></div>
+                    </div>
+
+                    <!-- Tất cả ghi chú còn lại -->
+                    <div class="notes-section">
+                        <h3 class="notes-section-title" id="notes-all-title">
+                            <i class="ri-file-text-line"></i>
+                            <span>Tất cả ghi chú</span>
+                        </h3>
+                        <div id="notes-cards-grid" class="notes-cards-grid"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =======================================================
+                 MODULE 5: LỊCH CÔNG VIỆC (CALENDAR MODULE)
+                 ======================================================= -->
+            <section id="module-calendar-view" class="calendar-module-section treth-workspace-content" style="display: none;" aria-label="Lịch biểu công việc">
+            </section>
+
+            <!-- =======================================================
+                 MODULE 6: BÁO CÁO & THỐNG KÊ (ANALYTICS DASHBOARD)
+                 ======================================================= -->
+            <section id="module-analytics-view" class="analytics-module-section treth-workspace-content" style="display: none;" aria-label="Báo cáo & Thống kê">
+                <!-- Thanh bộ lọc thời gian -->
+                <div class="analytics-header card">
+                    <div class="analytics-header-info">
+                        <h2 class="analytics-header-title"><i class="ri-pie-chart-2-line"></i> Báo cáo &amp; Thống kê Hiệu suất</h2>
+                        <p class="analytics-header-desc">Trực quan hóa khối lượng công việc, tỷ lệ hoàn thành và thời gian thực hiện.</p>
+                    </div>
+                    <div class="analytics-time-filter" role="tablist" aria-label="Khoảng thời gian thống kê">
+                        <button type="button" class="analytics-filter-btn" data-time-range="today">Hôm nay</button>
+                        <button type="button" class="analytics-filter-btn" data-time-range="week">7 ngày qua</button>
+                        <button type="button" class="analytics-filter-btn" data-time-range="month">Tháng này</button>
+                        <button type="button" class="analytics-filter-btn active" data-time-range="all">Tất cả thời gian</button>
+                    </div>
+                </div>
+
+                <!-- Lưới thẻ chỉ số tổng hợp (Summary Cards) -->
+                <div class="analytics-summary-grid">
+                    <!-- Thẻ 1: Tổng số việc -->
+                    <div class="stat-card stat-card-total">
+                        <div class="stat-icon stat-icon-total">
+                            <i class="ri-stack-line"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Tổng số việc</span>
+                            <strong class="stat-value" id="stat-total">00</strong>
+                        </div>
+                    </div>
+
+                    <!-- Thẻ 2: Đã hoàn thành -->
+                    <div class="stat-card stat-card-completed">
+                        <div class="stat-icon stat-icon-completed">
+                            <i class="ri-shield-check-line"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Đã hoàn thành</span>
+                            <strong class="stat-value" id="stat-completed">00</strong>
+                        </div>
+                    </div>
+
+                    <!-- Thẻ 3: Thanh tiến độ hoàn thành (%) -->
+                    <div class="stat-card stat-card-progress">
+                        <div class="stat-progress-header">
+                            <span class="stat-label">Tiến độ hoàn thành</span>
+                            <strong class="stat-percent-value" id="stat-progress-text">0%</strong>
+                        </div>
+                        <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar-fill" id="stat-progress-bar" style="width: 0%;">
+                                <span class="bamboo-sprout-node" title="Đốt tre tăng trưởng">🎋</span>
+                            </div>
+                        </div>
+                        <span class="stat-subtext">Còn tồn đọng: <strong id="stat-pending">00</strong> việc</span>
+                    </div>
+
+                    <!-- Thẻ 4: Số việc Gấp / Quá hạn -->
+                    <div class="stat-card stat-card-urgent">
+                        <div class="stat-icon stat-icon-urgent">
+                            <i class="ri-alarm-warning-line"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Gấp / Quá hạn</span>
+                            <strong class="stat-value stat-value-danger" id="stat-urgent">00</strong>
+                        </div>
+                    </div>
+
+                    <!-- Thẻ 5: Thời gian tập trung Pomodoro -->
+                    <div class="stat-card stat-card-time">
+                        <div class="stat-icon" style="background: rgba(139, 92, 246, 0.15); color: #8B5CF6;">
+                            <i class="ri-timer-flash-line"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Thời gian tập trung</span>
+                            <strong class="stat-value" id="analytics-focus-minutes">0 phút</strong>
+                            <span class="stat-subtext">Hoàn thành: <strong id="analytics-pomo-cycles">0</strong> chu kỳ</span>
+                        </div>
+                    </div>
+
+                    <!-- Thẻ 6: Thói quen kỷ luật -->
+                    <div class="stat-card stat-card-habits">
+                        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
+                            <i class="ri-plant-line"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Kỷ luật thói quen</span>
+                            <div class="habit-stat-value-group">
+                                <strong class="stat-value" id="habit-stat-today-done">0/0</strong>
+                                <span class="stat-subtext" id="habit-stat-percentage">0%</span>
+                            </div>
+                            <div class="habit-progress-bar-bg" style="margin-top: 4px;">
+                                <div class="habit-progress-bar-fill" id="habit-today-progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <span class="stat-subtext" style="margin-top: 4px;">Chuỗi kỷ lục: <strong id="habit-stat-best-streak">0 ngày</strong> (<span id="habit-stat-total-count">0</span> thói quen, <span id="habit-stat-total-checkins">0</span> điểm danh)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Khu vực 3 Biểu đồ Donut / Pie Charts -->
+                <div class="analytics-charts-grid">
+                    <!-- Biểu đồ 1: Tỷ lệ trạng thái công việc -->
+                    <div class="card analytics-chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-card-title"><i class="ri-pie-chart-line"></i> Trạng thái công việc</h3>
+                        </div>
+                        <div class="chart-card-body">
+                            <div class="chart-visual-wrapper" id="chart-status-visual"></div>
+                            <div class="chart-legend-list" id="chart-status-legend"></div>
+                        </div>
+                    </div>
+
+                    <!-- Biểu đồ 2: Phân bổ theo Loại việc -->
+                    <div class="card analytics-chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-card-title"><i class="ri-price-tag-3-line"></i> Phân bổ theo Loại việc</h3>
+                        </div>
+                        <div class="chart-card-body">
+                            <div class="chart-visual-wrapper" id="chart-category-visual"></div>
+                            <div class="chart-legend-list" id="chart-category-legend"></div>
+                        </div>
+                    </div>
+
+                    <!-- Biểu đồ 3: Phân bổ theo Ma trận Eisenhower -->
+                    <div class="card analytics-chart-card">
+                        <div class="chart-card-header">
+                            <h3 class="chart-card-title"><i class="ri-layout-grid-line"></i> Phân bổ Ma trận Eisenhower</h3>
+                        </div>
+                        <div class="chart-card-body">
+                            <div class="chart-visual-wrapper" id="chart-quadrant-visual"></div>
+                            <div class="chart-legend-list" id="chart-quadrant-legend"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- =======================================================
+         MODAL 1: CẬP NHẬT THÔNG TIN BỔ SUNG KHI THÊM VIỆC NHANH
+         ======================================================= -->
+    <div id="update-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <div class="modal-icon">
+                        <i class="ri-notification-badge-line"></i>
+                    </div>
+                    <h2 id="modal-title" class="modal-title">Cập nhật thông tin công việc</h2>
+                </div>
+                <button type="button" id="btn-close-modal" class="btn-close-modal" title="Đóng cửa sổ">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+
+            <form id="modal-form" class="modal-body">
+                <p class="modal-desc">
+                    Công việc <strong id="modal-task-name" class="highlight-task-name">""</strong> đã được tạo. 
+                    Hệ thống đã gợi ý góc ma trận phù hợp, bạn có thể tinh chỉnh lại dưới đây:
+                </p>
+
+                <div class="modal-form-grid">
+                    <div class="form-group">
+                        <label for="modal-category" class="modal-label">Loại việc</label>
+                        <div class="input-with-icon">
+                            <i class="ri-folder-2-line input-icon"></i>
+                            <select id="modal-category" class="form-control"></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-priority" class="modal-label">Mức độ ưu tiên</label>
+                        <div class="input-with-icon">
+                            <i class="ri-flag-line input-icon"></i>
+                            <select id="modal-priority" class="form-control">
+                                <option value="high">Cao</option>
+                                <option value="medium" selected>Trung bình</option>
+                                <option value="low">Thấp</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-due-date" class="modal-label">Ngày đến hạn</label>
+                        <div class="input-with-icon">
+                            <i class="ri-calendar-event-line input-icon"></i>
+                            <input type="date" id="modal-due-date" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modalRecurringInput" class="modal-label">Chu kỳ lặp lại</label>
+                        <div class="input-with-icon">
+                            <i class="ri-repeat-line input-icon"></i>
+                            <select id="modalRecurringInput" class="form-control">
+                                <option value="none" selected>📌 Làm một lần</option>
+                                <option value="daily">🔁 Hằng ngày</option>
+                                <option value="weekly">📅 Hằng tuần</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-quadrant" class="modal-label">Góc ma trận (Gợi ý)</label>
+                        <div class="input-with-icon">
+                            <i class="ri-layout-grid-line input-icon"></i>
+                            <select id="modal-quadrant" class="form-control">
+                                <option value="q1">🔴 Ô 1: Làm ngay (Khẩn cấp & Quan trọng)</option>
+                                <option value="q2">🔵 Ô 2: Lên lịch (Không khẩn cấp & Quan trọng)</option>
+                                <option value="q3">🟡 Ô 3: Ủy quyền (Khẩn cấp & Ít quan trọng)</option>
+                                <option value="q4">⚪ Ô 4: Xóa (Không khẩn cấp & Ít quan trọng)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="btn-skip-modal" class="btn btn-secondary">
+                        Bỏ qua / Đóng
+                    </button>
+                    <button type="submit" id="btn-save-modal" class="btn btn-primary">
+                        <i class="ri-check-line"></i>
+                        <span>Xác nhận &amp; Lưu</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL 2: TRÌNH QUẢN LÝ LOẠI CÔNG VIỆC (CATEGORY MANAGER)
+         ======================================================= -->
+    <div id="category-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cat-modal-title" aria-hidden="true">
+        <div class="modal-card modal-card-lg">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <div class="modal-icon">
+                        <i class="ri-price-tag-3-fill"></i>
+                    </div>
+                    <div>
+                        <h2 id="cat-modal-title" class="modal-title">Quản lý Loại việc</h2>
+                        <p class="modal-subtitle">Tùy chỉnh danh mục, biểu tượng Emoji và màu sắc hiển thị</p>
+                    </div>
+                </div>
+                <button type="button" id="btn-close-cat-modal" class="btn-close-modal" title="Đóng cửa sổ">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form id="category-form" class="cat-form-box" novalidate>
+                    <div class="cat-form-header">
+                        <span id="cat-form-mode-label" class="cat-form-mode">Thêm loại việc mới</span>
+                        <button type="button" id="btn-cancel-cat-edit" class="btn-text-cancel" style="display: none;">
+                            Hủy chỉnh sửa
+                        </button>
+                    </div>
+
+                    <div class="cat-form-inputs">
+                        <div class="form-group">
+                            <label for="cat-icon-input" class="modal-label">Icon (Emoji)</label>
+                            <input 
+                                type="text" 
+                                id="cat-icon-input" 
+                                class="form-control cat-emoji-input" 
+                                value="💼" 
+                                maxlength="4" 
+                                autocomplete="off"
+                                autocorrect="off"
+                                autocapitalize="off"
+                                spellcheck="false"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cat-name-input" class="modal-label">Tên loại việc</label>
+                            <input 
+                                type="text" 
+                                id="cat-name-input" 
+                                class="form-control cat-name-control" 
+                                placeholder="VD: Dự án, Sức khỏe, Gia đình..." 
+                                autocomplete="off"
+                                autocorrect="off"
+                                autocapitalize="off"
+                                spellcheck="false"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cat-color-input" class="modal-label">Màu sắc</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="cat-color-input" class="cat-color-input" value="#2563EB">
+                            </div>
+                        </div>
+
+                        <div class="form-group cat-submit-col">
+                            <label class="modal-label">&nbsp;</label>
+                            <button type="submit" id="btn-save-category" class="btn btn-primary">
+                                <i class="ri-add-line"></i>
+                                <span>Thêm loại việc</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Xem trước hiển thị Badge Loại việc -->
+                    <div class="cat-preview-wrapper">
+                        <span class="cat-preview-label">Xem trước hiển thị:</span>
+                        <span id="cat-live-preview" class="badge-category" style="background-color: rgba(37, 99, 235, 0.15); color: #2563EB; border: 1px solid rgba(37, 99, 235, 0.35);">
+                            <span id="cat-preview-icon">💼</span>
+                            <span id="cat-preview-name">Loại việc mới</span>
+                        </span>
+                    </div>
+
+                    <div class="cat-quick-picks">
+                        <div class="quick-pick-group">
+                            <span class="quick-pick-label">Emoji nhanh:</span>
+                            <div class="emoji-suggestions" id="emoji-suggestions">
+                                <button type="button" class="emoji-btn" data-emoji="💼">💼</button>
+                                <button type="button" class="emoji-btn" data-emoji="🏠">🏠</button>
+                                <button type="button" class="emoji-btn" data-emoji="📚">📚</button>
+                                <button type="button" class="emoji-btn" data-emoji="💰">💰</button>
+                                <button type="button" class="emoji-btn" data-emoji="🎯">🎯</button>
+                                <button type="button" class="emoji-btn" data-emoji="💻">💻</button>
+                                <button type="button" class="emoji-btn" data-emoji="🏃">🏃</button>
+                                <button type="button" class="emoji-btn" data-emoji="🛒">🛒</button>
+                                <button type="button" class="emoji-btn" data-emoji="🎨">🎨</button>
+                                <button type="button" class="emoji-btn" data-emoji="✈️">✈️</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="cat-list-container">
+                    <h3 class="cat-list-heading">Danh sách hiện tại</h3>
+                    <ul id="category-manager-list" class="category-manager-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL 3: CÀI ĐẶT HỆ THỐNG & POMODORO (SETTINGS MODAL)
+         ======================================================= -->
+    <div id="settingsModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <div class="modal-icon">
+                        <i class="ri-settings-3-fill"></i>
+                    </div>
+                    <div>
+                        <h2 id="settingsModalTitle" class="modal-title">Cài đặt Hệ thống &amp; Pomodoro</h2>
+                        <p class="modal-subtitle">Tùy chỉnh thời lượng Pomodoro và âm thanh chuông báo</p>
+                    </div>
+                </div>
+                <button type="button" id="btn-close-settings-modal" class="btn-close-modal" title="Đóng cửa sổ" aria-label="Đóng">✕</button>
+            </div>
+
+            <form id="settings-form" class="modal-body">
+                <!-- NHÓM 1: THỜI LƯỢNG ĐỒNG HỒ POMODORO -->
+                <div class="settings-group">
+                    <h3 class="settings-group-title">
+                        <i class="ri-timer-line"></i>
+                        <span>Thời lượng Pomodoro (phút)</span>
+                    </h3>
+                    <div class="settings-grid-3">
+                        <div class="form-group">
+                            <label for="setting-focus-time" class="modal-label">Tập trung</label>
+                            <input type="number" id="setting-focus-time" class="form-control text-center" min="1" max="180" value="25" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="setting-short-break" class="modal-label">Nghỉ ngắn</label>
+                            <input type="number" id="setting-short-break" class="form-control text-center" min="1" max="60" value="5" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="setting-long-break" class="modal-label">Nghỉ dài</label>
+                            <input type="number" id="setting-long-break" class="form-control text-center" min="1" max="90" value="15" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NHÓM 2: ÂM THANH & THÔNG BÁO -->
+                <div class="settings-group">
+                    <h3 class="settings-group-title">
+                        <i class="ri-notification-3-line"></i>
+                        <span>Âm thanh &amp; Thông báo</span>
+                    </h3>
+                    <label class="settings-toggle-switch-wrapper" for="setting-enable-sound">
+                        <div class="switch">
+                            <input type="checkbox" id="setting-enable-sound" class="toggle-checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </div>
+                        <div class="settings-toggle-content">
+                            <span class="settings-toggle-main-text">Bật âm thanh chuông báo Pomodoro</span>
+                            <span class="settings-toggle-sub-text">Phát tiếng chuông báo hiệu khi kết thúc phiên tập trung hoặc nghỉ ngơi</span>
+                        </div>
+                    </label>
+
+                    <div class="settings-separator-dashed"></div>
+
+                    <div class="settings-notif-wrapper">
+                        <div class="settings-notif-info">
+                            <span class="settings-toggle-main-text">Thông báo nổi màn hình (Web Notification)</span>
+                            <span class="settings-toggle-sub-text">Bắn thông báo ngay cả khi chuyển tab hoặc thu nhỏ trình duyệt</span>
+                            <div class="notif-status-badge-wrapper">
+                                <span class="notif-badge" id="notif-status-badge">Trạng thái: Đang kiểm tra...</span>
+                            </div>
+                        </div>
+                        <button type="button" id="btn-request-notif" class="btn btn-outline-action btn-sm">
+                            <i class="ri-bell-line"></i>
+                            <span id="btn-request-notif-text">Bật thông báo</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- NHÓM 3: CÀI ĐẶT ỨNG DỤNG THIẾT BỊ (PWA INSTALLATION) -->
+                <div class="settings-group" id="pwa-settings-group">
+                    <h3 class="settings-group-title">
+                        <i class="ri-smartphone-line"></i>
+                        <span>Cài đặt Ứng dụng Thiết bị (PWA)</span>
+                    </h3>
+                    <div class="settings-theme-row">
+                        <div class="settings-theme-info">
+                            <span class="settings-toggle-main-text">Dùng như Ứng dụng độc lập</span>
+                            <span class="settings-toggle-sub-text" id="pwa-status-text">Cài đặt trực tiếp lên Windows, Mac, Android hoặc iOS để dùng offline mượt mà không cần mạng</span>
+                        </div>
+                        <button type="button" id="btn-install-pwa" class="btn btn-outline-action btn-settings-theme-toggle" style="display: none;">
+                            <i class="ri-download-cloud-line"></i>
+                            <span id="btn-install-pwa-text">Cài đặt App</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="btn-reset-settings" class="btn btn-secondary">
+                        <i class="ri-restart-line"></i>
+                        <span>Khôi phục mặc định</span>
+                    </button>
+                    <button type="submit" id="btn-save-settings" class="btn btn-primary btn-save-settings-prominent">
+                        <i class="ri-check-line"></i>
+                        <span>Lưu Cài Đặt</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL 3B: QUẢN LÝ DỮ LIỆU & SAO LƯU (DATA MODAL - ĐẨY LÊN GIỐNG MODAL CÀI ĐẶT)
+         ======================================================= -->
+    <div id="dataDropdownPanel" class="data-dropdown-panel modal-overlay" role="dialog" aria-modal="true" aria-labelledby="dataModalTitle" aria-hidden="true" aria-label="Menu quản lý dữ liệu">
+        <div class="modal-card data-modal-card">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <div class="modal-icon" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
+                        <i class="ri-database-2-fill"></i>
+                    </div>
+                    <div>
+                        <h2 id="dataModalTitle" class="modal-title">Quản lý Dữ liệu</h2>
+                        <p class="modal-subtitle">Sao lưu JSON &amp; Bảng tính Excel</p>
+                    </div>
+                </div>
+                <button type="button" id="btn-close-data-modal" class="btn-close-modal" title="Đóng cửa sổ" aria-label="Đóng">✕</button>
+            </div>
+
+            <div class="modal-body data-modal-body">
+                <!-- NHÓM 1: SAO LƯU HỆ THỐNG (JSON) -->
+                <div class="settings-group">
+                    <h3 class="settings-group-title">
+                        <i class="ri-code-s-slash-line"></i>
+                        <span>Sao lưu JSON</span>
+                    </h3>
+                    <div class="data-modal-actions-grid">
+                        <button type="button" id="btn-export-json" class="data-dropdown-item data-card-btn" title="Sao lưu toàn bộ dữ liệu ra file JSON">
+                            <div class="data-btn-icon json-export">
+                                <i class="ri-download-2-line"></i>
+                            </div>
+                            <div class="data-btn-info">
+                                <strong>Sao lưu toàn bộ</strong>
+                                <span>Tải file backup .json</span>
+                            </div>
+                        </button>
+                        <button type="button" id="btn-import-json" class="data-dropdown-item data-card-btn" title="Khôi phục dữ liệu từ file JSON">
+                            <div class="data-btn-icon json-import">
+                                <i class="ri-upload-2-line"></i>
+                            </div>
+                            <div class="data-btn-info">
+                                <strong>Khôi phục dữ liệu</strong>
+                                <span>Nạp lại từ bản sao lưu .json</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- NHÓM 2: BẢNG TÍNH EXCEL (.XLSX / .CSV) -->
+                <div class="settings-group">
+                    <h3 class="settings-group-title">
+                        <i class="ri-file-excel-2-line"></i>
+                        <span>Bảng tính Excel (.xlsx)</span>
+                    </h3>
+                    <div class="data-modal-actions-grid">
+                        <button type="button" id="exportExcelBtn" class="data-dropdown-item data-card-btn" title="Xuất toàn bộ công việc ra file Excel (.xlsx)">
+                            <div class="data-btn-icon excel-export">
+                                <i class="ri-file-excel-2-line"></i>
+                            </div>
+                            <div class="data-btn-info">
+                                <strong>Xuất danh sách Excel</strong>
+                                <span>Tải bảng tính việc làm .xlsx</span>
+                            </div>
+                        </button>
+                        <button type="button" id="importExcelBtn" class="data-dropdown-item data-card-btn" title="Nhập danh sách công việc từ file Excel (.xlsx / .csv)">
+                            <div class="data-btn-icon excel-import">
+                                <i class="ri-file-upload-line"></i>
+                            </div>
+                            <div class="data-btn-info">
+                                <strong>Nhập từ Excel</strong>
+                                <span>Tải danh sách từ file Excel/CSV</span>
+                            </div>
+                        </button>
+                        <button type="button" id="downloadExcelTemplateBtn" class="data-dropdown-item data-card-btn" title="Tải file mẫu Excel chuẩn để nhập dữ liệu">
+                            <div class="data-btn-icon excel-template">
+                                <i class="ri-file-download-line"></i>
+                            </div>
+                            <div class="data-btn-info">
+                                <strong>Tải mẫu Excel chuẩn</strong>
+                                <span>Template mẫu sẵn cấu trúc cột</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="padding: 8px 14px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end;">
+                <button type="button" id="btn-close-data-modal-footer" class="btn btn-secondary" style="padding: 4px 14px; font-size: 12px; height: 28px;">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL 4: THÊM & SỬA THÓI QUEN (HABIT MODAL)
+         ======================================================= -->
+    <div id="habit-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="habit-modal-title" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <div class="modal-icon" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
+                        <i class="ri-plant-line"></i>
+                    </div>
+                    <div>
+                        <h2 id="habit-modal-title" class="modal-title">Thêm Thói Quen Mới</h2>
+                        <p class="modal-subtitle">Xây dựng thói quen tốt mỗi ngày để tạo nên sự bứt phá</p>
+                    </div>
+                </div>
+                <button type="button" id="btn-close-habit-modal" class="btn-close-modal" title="Đóng cửa sổ" aria-label="Đóng">✕</button>
+            </div>
+
+            <form id="habit-form" class="modal-body">
+                <input type="hidden" id="habit-edit-id" value="">
+                
+                <div class="form-group">
+                    <label for="habit-title-input" class="modal-label">Tên thói quen <span class="required">*</span></label>
+                    <input type="text" id="habit-title-input" class="form-control" placeholder="Ví dụ: Đọc sách 20 trang, Chạy bộ, Uống 2L nước..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+                </div>
+
+                <div class="modal-form-grid">
+                    <div class="form-group">
+                        <label for="habit-category-input" class="modal-label">Danh mục / Phân loại</label>
+                        <select id="habit-category-input" class="form-control">
+                            <option value="Sức khỏe">💪 Sức khỏe & Thể lực</option>
+                            <option value="Học tập">📚 Học tập & Phát triển</option>
+                            <option value="Kỷ luật">⏳ Kỷ luật & Năng suất</option>
+                            <option value="Tâm trí">🧘 Thiền & Tâm trí</option>
+                            <option value="Tài chính">💰 Tài chính cá nhân</option>
+                            <option value="Khác">🌱 Khác</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="habit-frequency-input" class="modal-label">Tần suất thực hiện</label>
+                        <select id="habit-frequency-input" class="form-control">
+                            <option value="daily">Hằng ngày (7 ngày / tuần)</option>
+                            <option value="weekdays">Ngày trong tuần (Thứ 2 - Thứ 6)</option>
+                            <option value="3days">3 ngày / tuần</option>
+                            <option value="5days">5 ngày / tuần</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="modal-label">Chọn biểu tượng (Emoji)</label>
+                    <div class="habit-emoji-picker">
+                        <button type="button" class="habit-emoji-btn active" data-emoji="🌱">🌱</button>
+                        <button type="button" class="habit-emoji-btn" data-emoji="🏃">🏃</button>
+                        <button type="button" class="habit-emoji-btn" data-emoji="💧">💧</button>
+                        <button type="button" class="habit-emoji-btn" data-emoji="📚">📚</button>
+                        <button type="button" class="habit-emoji-btn" data-emoji="🧘">🧘</button>
+                        <button type="button" class="habit-emoji-btn" data-emoji="💻">💻</button>
+                        <button type="button" class="habit-emoji-btn" data-emoji="🥗">🥗</button>
+                        <button type="button" class="habit-emoji-btn" data-emoji="💤">💤</button>
+                        <button type="button" class="habit-emoji-btn" data-emoji="✍️">✍️</button>
+                        <button type="button" class="habit-emoji-btn" data-emoji="🎯">🎯</button>
+                        <button type="button" class="habit-emoji-btn" data-emoji="🚴">🚴</button>
+                        <button type="button" class="habit-emoji-btn" data-emoji="☀️">☀️</button>
+                    </div>
+                    <input type="hidden" id="habit-selected-emoji" value="🌱">
+                </div>
+
+                <div class="form-group">
+                    <label for="habit-target-note" class="modal-label">Ghi chú mục tiêu / Động lực</label>
+                    <input type="text" id="habit-target-note" class="form-control" placeholder="Mục tiêu nhỏ: 'Chỉ cần xỏ giày ra sân là thành công'" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="btn-cancel-habit-modal" class="btn btn-secondary">Hủy</button>
+                    <button type="submit" id="btn-save-habit-modal" class="btn btn-primary">
+                        <i class="ri-check-line"></i>
+                        <span>Lưu Thói Quen</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL 5: THÊM & SỬA GHI CHÚ (NOTE MODAL)
+         ======================================================= -->
+    <div id="note-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="note-modal-title" aria-hidden="true">
+        <div class="modal-card modal-card-lg">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <div class="modal-icon" style="background: rgba(79, 70, 229, 0.15); color: #4F46E5;">
+                        <i class="ri-file-text-line"></i>
+                    </div>
+                    <div>
+                        <h2 id="note-modal-title" class="modal-title">Ghi Chú Mới</h2>
+                        <p class="modal-subtitle">Soạn thảo ý tưởng nhanh với hỗ trợ định dạng Markdown</p>
+                    </div>
+                </div>
+                <button type="button" id="btn-close-note-modal" class="btn-close-modal" title="Đóng cửa sổ" aria-label="Đóng">✕</button>
+            </div>
+
+            <form id="note-form" class="modal-body">
+                <input type="hidden" id="note-edit-id" value="">
+
+                <div class="form-group">
+                    <label for="note-title-input" class="modal-label">Tiêu đề ghi chú <span class="required">*</span></label>
+                    <input type="text" id="note-title-input" class="form-control" placeholder="Tiêu đề gợi nhớ ngắn gọn..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+                </div>
+
+                <div class="modal-form-grid">
+                    <div class="form-group">
+                        <label for="note-tags-input" class="modal-label">Thẻ gắn nhãn (cách nhau bằng dấu phẩy)</label>
+                        <input type="text" id="note-tags-input" class="form-control" placeholder="Ý tưởng, Dự án, Đọc sách, Họp hành..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    </div>
+                    <div class="form-group">
+                        <label for="note-color-select" class="modal-label">Màu sắc phân biệt</label>
+                        <select id="note-color-select" class="form-control">
+                            <option value="#4F46E5">Tím Indigo</option>
+                            <option value="#3B82F6">Xanh Lam</option>
+                            <option value="#10B981">Xanh Lục Emerald</option>
+                            <option value="#F59E0B">Vàng Cam Amber</option>
+                            <option value="#EF4444">Đỏ Hồng Rose</option>
+                            <option value="#8B5CF6">Tím Violet</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="settings-toggle-switch-wrapper" for="note-pin-checkbox" style="padding: 0.5rem 0; margin-bottom: 0.5rem;">
+                        <div class="switch">
+                            <input type="checkbox" id="note-pin-checkbox" class="toggle-checkbox">
+                            <span class="toggle-slider"></span>
+                        </div>
+                        <div class="settings-toggle-content">
+                            <span class="settings-toggle-main-text">📌 Ghim ghi chú này lên đầu trang</span>
+                            <span class="settings-toggle-sub-text">Ghi chú quan trọng sẽ luôn xuất hiện trước nhất</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Markdown Editor / Preview Switcher -->
+                <div class="form-group">
+                    <div class="note-editor-header">
+                        <label for="note-content-input" class="modal-label">Nội dung ghi chú</label>
+                        <div class="note-tab-controls">
+                            <button type="button" id="note-tab-write" class="note-tab-btn active">✏️ Soạn thảo</button>
+                            <button type="button" id="note-tab-preview" class="note-tab-btn">👁️ Xem trước (Preview)</button>
+                        </div>
+                    </div>
+
+                    <div id="note-editor-wrapper">
+                        <!-- Toolbar định dạng nhanh Markdown -->
+                        <div class="note-md-toolbar" id="note-md-toolbar">
+                            <button type="button" class="note-md-btn" data-md-action="h1" title="Tiêu đề 1">H1</button>
+                            <button type="button" class="note-md-btn" data-md-action="h2" title="Tiêu đề 2">H2</button>
+                            <button type="button" class="note-md-btn" data-md-action="bold" title="In đậm"><b>B</b></button>
+                            <button type="button" class="note-md-btn" data-md-action="italic" title="In nghiêng"><i>I</i></button>
+                            <button type="button" class="note-md-btn" data-md-action="checklist" title="Mục việc cần làm">- [ ]</button>
+                            <button type="button" class="note-md-btn" data-md-action="code" title="Khối mã">&lt;/&gt;</button>
+                            <button type="button" class="note-md-btn note-extract-tasks-btn" id="btn-extract-tasks-from-note" title="Trích xuất các dòng - [ ] thành công việc">
+                                <i class="ri-flashlight-line"></i> <span>Trích xuất Task</span>
+                            </button>
+                        </div>
+                        <textarea id="note-content-input" class="form-control note-textarea" rows="9" placeholder="Viết nội dung ở đây... Hỗ trợ Markdown:
+# Tiêu đề lớn
+## Tiêu đề phụ
+- [x] Việc đã làm
+- [ ] Việc cần làm
+- Danh sách chấm tròn
+**In đậm** hoặc *In nghiêng*
+`Mã code`" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+                    </div>
+
+                    <div id="note-preview-wrapper" class="note-preview-pane" style="display: none;"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="btn-cancel-note-modal" class="btn btn-secondary">Hủy</button>
+                    <button type="submit" id="btn-save-note-modal" class="btn btn-primary">
+                        <i class="ri-check-line"></i>
+                        <span>Lưu Ghi Chú</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =======================================================
+         FLOATING MINI-POMODORO PILL (ĐỒNG HỒ NỔI GÓC MÀN HÌNH)
+         ======================================================= -->
+    <div id="floating-pomo-widget" class="floating-pomo-widget" style="display: none;" role="region" aria-label="Đồng hồ Pomodoro thu nhỏ">
+        <div class="floating-pomo-timer-ring" id="floating-pomo-ring">
+            <div class="floating-pomo-timer-inner">
+                <i class="ri-timer-flash-line"></i>
+            </div>
+        </div>
+        <div class="floating-pomo-info">
+            <span class="floating-pomo-time" id="floating-pomo-time-display">25:00</span>
+            <span class="floating-pomo-title" id="floating-pomo-task-name">Đang tập trung...</span>
+        </div>
+        <div class="floating-pomo-btns">
+            <button type="button" id="floating-pomo-toggle-btn" class="floating-pomo-btn" title="Tạm dừng / Tiếp tục">
+                <i class="ri-pause-line"></i>
+            </button>
+            <button type="button" id="floating-pomo-maximize-btn" class="floating-pomo-btn" title="Mở trang Pomodoro">
+                <i class="ri-fullscreen-line"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- =======================================================
+         COMMAND PALETTE TOÀN CỤC (CTRL + K / CMD + K)
+         ======================================================= -->
+    <div id="command-palette-modal" class="command-palette-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-label="Tìm kiếm và Lệnh hệ thống">
+        <div class="command-palette-card">
+            <div class="command-palette-search-row">
+                <i class="ri-search-2-line"></i>
+                <input type="text" id="command-palette-input" class="command-palette-input" placeholder="Gõ lệnh hoặc tìm công việc, thói quen, ghi chú... (Esc để đóng)" autocomplete="off" spellcheck="false">
+                <kbd>ESC</kbd>
+            </div>
+            <div class="command-palette-results" id="command-palette-results"></div>
+            <div class="command-palette-footer">
+                <span>Dùng phím <kbd>↑</kbd> <kbd>↓</kbd> để di chuyển, <kbd>Enter</kbd> để chọn</span>
+                <span>TreTH v4.0 Suite</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container cho Toast Notifications -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- Nạp các module dịch vụ CSDL cục bộ và Giao diện Kanban TreTH -->
+    <script src="./services/SyncQueue.js"></script>
+    <script src="./services/LocalRepository.js"></script>
+    <script src="./ui/KanbanView.js"></script>
+    <script src="./ui/CalendarView.js"></script>
+    <script src="./script.js"></script>
+
+    <!-- Script điều khiển App-Shell UI (Sidebar toggle, Mobile drawer, Smart Lists counts) -->
+    <script>
+        (function() {
+            // 1. Sidebar Toggle & Mobile Menu Drawer
+            const sidebar = document.getElementById('treth-sidebar');
+            const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+            const sidebarToggleIcon = document.getElementById('sidebar-toggle-icon');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
+            function toggleSidebar() {
+                if (window.innerWidth <= 900) {
+                    const isOpen = sidebar.classList.toggle('open');
+                    if (sidebarBackdrop) sidebarBackdrop.classList.toggle('active', isOpen);
+                } else {
+                    const isCollapsed = sidebar.classList.toggle('collapsed');
+                    if (sidebarToggleIcon) {
+                        sidebarToggleIcon.className = isCollapsed ? 'ri-menu-unfold-line' : 'ri-menu-fold-line';
+                    }
+                }
+            }
+
+            function closeMobileSidebar() {
+                if (sidebar) sidebar.classList.remove('open');
+                if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+            }
+
+            if (sidebarToggleBtn) sidebarToggleBtn.addEventListener('click', toggleSidebar);
+            if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleSidebar);
+            if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeMobileSidebar);
+
+            // 2. Tích hợp Smart Lists (TickTick Style) kết nối trực tiếp với Bộ Lọc
+            const smartListItems = document.querySelectorAll('.smart-list-item');
+            const filterDueDateSelect = document.getElementById('filterDueDateSelect');
+            const filterStatusSelect = document.getElementById('filterStatusSelect');
+            const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+            const btnApplyFilter = document.getElementById('btnApplyFilter');
+
+            smartListItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    smartListItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    closeMobileSidebar();
+
+                    // Chuyển sang module công việc nếu đang ở module khác
+                    const navBtnTasks = document.getElementById('nav-btn-tasks');
+                    if (navBtnTasks) navBtnTasks.click();
+
+                    const filterType = this.getAttribute('data-smart-filter');
+                    if (window.__setSmartFilter) {
+                        window.__setSmartFilter(filterType);
+                    }
+                    if (resetFiltersBtn) resetFiltersBtn.click();
+
+                    if (filterType === 'today' && filterDueDateSelect) {
+                        filterDueDateSelect.value = 'today';
+                        filterDueDateSelect.dispatchEvent(new Event('change'));
+                    } else if (filterType === 'this_week' && filterDueDateSelect) {
+                        filterDueDateSelect.value = 'this_week';
+                        filterDueDateSelect.dispatchEvent(new Event('change'));
+                    } else if (filterType === 'urgent' && filterDueDateSelect) {
+                        filterDueDateSelect.value = 'overdue';
+                        filterDueDateSelect.dispatchEvent(new Event('change'));
+                    } else if (filterType === 'completed' && filterStatusSelect) {
+                        filterStatusSelect.value = 'completed';
+                        filterStatusSelect.dispatchEvent(new Event('change'));
+                    }
+
+                    if (btnApplyFilter) btnApplyFilter.click();
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

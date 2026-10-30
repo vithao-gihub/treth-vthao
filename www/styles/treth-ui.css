@@ -1,0 +1,3973 @@
+/* ==========================================================================
+   TRETH UI STYLES - APP-SHELL ARCHITECTURE (TRELLO + TICKTICK HYBRID)
+   Thiết kế chuẩn Design System Slate 900 / Indigo #4F46E5 & Responsive
+   ========================================================================== */
+
+:root {
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 68px;
+  --topbar-height: 64px;
+  --keyboard-offset: 0px;
+}
+
+/* ==========================================================================
+   1. APP-SHELL LAYOUT (SIDEBAR + MAIN WORKSPACE)
+   ========================================================================== */
+.treth-app {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background: var(--bg-body, #F8FAFC);
+  color: var(--text-main, #0F172A);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ==========================================================================
+   2. SIDEBAR ĐIỀU HƯỚNG HIỆN ĐẠI (TICKTICK STYLE)
+   ========================================================================== */
+.treth-sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  background: var(--bg-surface, #FFFFFF);
+  border-right: 1px solid var(--border-color, #E2E8F0);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+/* Header thương hiệu Sidebar */
+.treth-sidebar-header {
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color, #E2E8F0);
+  background: var(--bg-surface, #FFFFFF);
+  flex-shrink: 0;
+}
+
+.treth-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.treth-brand-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+  flex-shrink: 0;
+}
+
+.treth-brand-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.treth-brand-title {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-main, #0F172A);
+  line-height: 1.2;
+}
+
+.treth-brand-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.treth-version-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--primary-light, #EEF2FF);
+  color: var(--primary, #4F46E5);
+  text-transform: uppercase;
+}
+
+.treth-offline-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  color: #10B981;
+  font-weight: 500;
+}
+
+.treth-sidebar-toggle {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary, #475569);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.treth-sidebar-toggle:hover {
+  background: var(--bg-subtle, #F1F5F9);
+  color: var(--text-main, #0F172A);
+}
+
+/* Thanh điều hướng Module trên Sidebar */
+.treth-sidebar .module-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px 8px;
+  border-bottom: 1px solid var(--border-color, #E2E8F0);
+  flex-shrink: 0;
+}
+
+.treth-sidebar .module-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius-md, 10px);
+  font-weight: 500;
+  font-size: 14px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary, #475569);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.treth-sidebar .module-nav-btn:hover {
+  background: var(--bg-subtle, #F1F5F9);
+  color: var(--text-main, #0F172A);
+}
+
+.treth-sidebar .module-nav-btn.active {
+  background: var(--primary-light, #EEF2FF);
+  color: var(--primary, #4F46E5);
+  font-weight: 600;
+  border-color: rgba(79, 70, 229, 0.2);
+}
+
+html[data-theme="dark"] .treth-sidebar .module-nav-btn.active {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818CF8;
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.treth-sidebar .module-nav-btn i {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* Cụm Smart Lists kiểu TickTick */
+.treth-sidebar-section {
+  padding: 12px 14px;
+  flex-shrink: 0;
+}
+
+.sidebar-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  padding: 0 4px;
+}
+
+.sidebar-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted, #94A3B8);
+}
+
+.treth-smart-list-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.smart-list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary, #475569);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.smart-list-item:hover {
+  background: var(--bg-subtle, #F1F5F9);
+  color: var(--text-main, #0F172A);
+}
+
+.smart-list-item.active {
+  background: var(--primary-light, #EEF2FF);
+  color: var(--primary, #4F46E5);
+  font-weight: 600;
+}
+
+html[data-theme="dark"] .smart-list-item.active {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818CF8;
+}
+
+.smart-list-item i {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.smart-list-item .smart-badge-count {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--bg-subtle, #F1F5F9);
+  color: var(--text-muted, #94A3B8);
+}
+
+html[data-theme="dark"] .smart-list-item .smart-badge-count {
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+}
+
+/* Danh sách loại việc nhanh trong Sidebar */
+.btn-sidebar-action {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.treth-category-quick-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.treth-cat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 13px;
+  color: var(--text-secondary, #475569);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.treth-cat-item:hover {
+  background: var(--bg-subtle, #F1F5F9);
+  color: var(--text-main, #0F172A);
+}
+
+.treth-cat-color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Đáy Sidebar (Footer) */
+.treth-sidebar-footer {
+  margin-top: auto;
+  padding: 12px 14px;
+  border-top: 1px solid var(--border-color, #E2E8F0);
+  background: var(--bg-surface, #FFFFFF);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.treth-footer-actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.treth-footer-actions > * {
+  flex: 1;
+}
+
+.treth-footer-actions .btn {
+  width: 100%;
+  justify-content: center;
+  font-size: 12px;
+  padding: 6px 10px;
+}
+
+.treth-footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.btn-theme-pill, .btn-pwa-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color, #E2E8F0);
+  background: var(--bg-subtle, #F1F5F9);
+  color: var(--text-secondary, #475569);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-theme-pill:hover, .btn-pwa-pill:hover {
+  background: var(--bg-body, #F8FAFC);
+  color: var(--text-main, #0F172A);
+  border-color: var(--primary, #4F46E5);
+}
+
+/* ==========================================================================
+   3. MAIN WORKSPACE & TOPBAR
+   ========================================================================== */
+.treth-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Topbar dính trên cùng */
+.treth-topbar {
+  height: var(--topbar-height);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--border-color, #E2E8F0);
+  background: var(--bg-surface, #FFFFFF);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+html[data-theme="dark"] .treth-topbar {
+  background: var(--bg-surface);
+  border-color: var(--border-color);
+}
+
+.treth-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mobile-menu-trigger {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #E2E8F0);
+  background: var(--bg-surface, #FFFFFF);
+  color: var(--text-main, #0F172A);
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.treth-topbar .header-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.treth-topbar .brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--primary-light, #EEF2FF);
+  color: var(--primary, #4F46E5);
+  flex-shrink: 0;
+}
+
+.treth-topbar .app-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main, #0F172A);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.treth-topbar .app-slogan {
+  display: none; /* Thu gọn cho thanh Topbar sạch sẽ */
+}
+
+/* Cụm điều khiển tìm kiếm, lọc & view switcher */
+.treth-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.treth-topbar .filter-search-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.treth-topbar .search-box-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.treth-topbar .search-box-input {
+  width: 200px;
+  padding: 7px 12px 7px 32px;
+  border-radius: var(--radius-md, 10px);
+  border: 1px solid var(--border-color, #E2E8F0);
+  background: var(--bg-body, #F8FAFC);
+  color: var(--text-main, #0F172A);
+  font-size: 13px;
+  transition: width 0.2s ease, border-color 0.2s ease;
+}
+
+.treth-topbar .search-box-input:focus {
+  width: 260px;
+  border-color: var(--primary, #4F46E5);
+  background: var(--bg-surface, #FFFFFF);
+  outline: none;
+}
+
+.treth-topbar .search-box-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--text-muted, #94A3B8);
+  font-size: 15px;
+  pointer-events: none;
+}
+
+/* View Switcher */
+.treth-topbar .view-switcher {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--bg-body, #F8FAFC);
+  border: 1px solid var(--border-color, #E2E8F0);
+  gap: 2px;
+}
+
+.treth-topbar .view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #475569);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.treth-topbar .view-btn:hover {
+  color: var(--text-main, #0F172A);
+}
+
+.treth-topbar .view-btn.active {
+  background: var(--bg-surface, #FFFFFF);
+  color: var(--primary, #4F46E5);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="dark"] .treth-topbar .view-btn.active {
+  background: var(--bg-subtle);
+  color: var(--primary);
+}
+
+/* ==========================================================================
+   4. DASHBOARD MINI CONTROLS BAR (THỐNG KÊ NHANH)
+   ========================================================================== */
+.treth-dashboard-bar {
+  padding: 16px 24px 0;
+  flex-shrink: 0;
+}
+
+.treth-dashboard-bar .stats-grid-4 {
+  margin-bottom: 8px;
+}
+
+/* ==========================================================================
+   5. THANH QUICK-ADD 1 DÒNG GỌN GÀNG (TICKTICK / TODOIST STYLE)
+   ========================================================================== */
+.treth-quick-add-section {
+  margin: 14px 24px 10px;
+  padding: 6px 10px;
+  border-radius: var(--radius-lg, 14px);
+  background: var(--bg-surface, #FFFFFF);
+  border: 1px solid var(--border-color, #E2E8F0);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.treth-quick-add-section:focus-within {
+  border-color: var(--primary, #4F46E5);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.treth-quick-add-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  flex-wrap: nowrap;
+}
+
+.quick-add-leading-icon {
+  font-size: 22px;
+  color: var(--primary, #4F46E5);
+  flex-shrink: 0;
+  padding-left: 4px;
+}
+
+.quick-add-input {
+  flex: 1;
+  min-width: 180px;
+  border: none;
+  background: transparent;
+  padding: 8px 6px;
+  font-size: 14px;
+  color: var(--text-main, #0F172A);
+  outline: none;
+}
+
+.quick-add-input::placeholder {
+  color: var(--text-muted, #94A3B8);
+}
+
+.quick-add-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.quick-pill-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: var(--bg-subtle, #F1F5F9);
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid var(--border-color, #E2E8F0);
+  font-size: 12px;
+  color: var(--text-secondary, #475569);
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+html[data-theme="dark"] .quick-pill-item {
+  background: var(--bg-subtle);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.quick-pill-item:hover, .quick-pill-item:focus-within {
+  border-color: var(--primary, #4F46E5);
+  color: var(--primary, #4F46E5);
+}
+
+.quick-pill-select, .quick-pill-date {
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+  max-width: 125px;
+}
+
+.quick-pill-date {
+  max-width: 130px;
+}
+
+.btn-quick-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   6. KHÔNG GIAN LÀM VIỆC RỘNG (WIDE WORKSPACE)
+   ========================================================================== */
+.treth-workspace-content {
+  padding: 6px 24px 32px;
+  flex: 1;
+}
+
+/* List View Container */
+#list-view-container {
+  width: 100%;
+  animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Matrix 4 Ô Grid Container */
+#matrix-view-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  width: 100%;
+  animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Calendar View Container */
+.calendar-view-container {
+  width: 100%;
+  animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--bg-surface, #FFFFFF);
+  border: 1px solid var(--border-color, #E2E8F0);
+  border-radius: var(--radius-lg, 14px);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ==========================================================================
+   7. KHÔNG GIAN BẢNG KANBAN (TRETH KANBAN VIEW)
+   ========================================================================== */
+.kanban-view-container {
+  width: 100%;
+  animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.kanban-board {
+  display: flex;
+  gap: 16px;
+  padding: 8px 4px 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.kanban-column {
+  flex: 1 1 310px;
+  min-width: 285px;
+  max-width: 360px;
+  scroll-snap-align: start;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg, 14px);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 210px - var(--keyboard-offset, 0px));
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition, 0.2s ease), box-shadow var(--transition, 0.2s ease);
+}
+
+.kanban-column:focus-within {
+  border-color: var(--primary);
+}
+
+/* Header cột */
+.kanban-column .column-header {
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+.kanban-column .column-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-main);
+}
+
+.kanban-column .column-title i {
+  font-size: 16px;
+  color: var(--primary);
+}
+
+.kanban-column .count-badge {
+  background: var(--bg-subtle, #F1F5F9);
+  color: var(--text-secondary, #475569);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+html[data-theme="dark"] .kanban-column .count-badge {
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+}
+
+/* Vùng danh sách thẻ */
+.card-list {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 120px;
+  transition: background-color 0.15s ease;
+}
+
+.card-list.drag-over {
+  background-color: var(--primary-light, rgba(79, 70, 229, 0.08));
+  border-radius: 8px;
+}
+
+.kanban-empty-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 12px;
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+  gap: 6px;
+  background: var(--bg-body);
+}
+
+.kanban-empty-zone i {
+  font-size: 20px;
+  opacity: 0.7;
+}
+
+/* Thẻ Kanban */
+.task-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md, 10px);
+  padding: 12px 14px;
+  box-shadow: var(--shadow-sm);
+  cursor: grab;
+  position: relative;
+  transition: transform var(--transition, 0.2s ease), box-shadow var(--transition, 0.2s ease), border-color var(--transition, 0.2s ease);
+}
+
+.task-card:active {
+  cursor: grabbing;
+}
+
+.task-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(79, 70, 229, 0.3);
+}
+
+.task-card.dragging {
+  opacity: 0.45;
+  transform: scale(0.98);
+}
+
+/* Header Thẻ */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 6px;
+}
+
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.card-badges {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sync-badge {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.sync-badge.synced {
+  color: #10B981;
+}
+
+.sync-badge.pending {
+  color: #F59E0B;
+}
+
+.sync-badge.conflict {
+  color: #EF4444;
+}
+
+.priority-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.priority-badge.high {
+  background: var(--high-bg);
+  color: var(--high-text);
+  border: 1px solid var(--high-border);
+}
+
+.priority-badge.medium {
+  background: var(--medium-bg);
+  color: var(--medium-text);
+  border: 1px solid var(--medium-border);
+}
+
+.priority-badge.low {
+  background: var(--low-bg);
+  color: var(--low-text);
+  border: 1px solid var(--low-border);
+}
+
+/* Tiêu đề thẻ Kanban (Inline Editing không nút sửa) */
+.task-card .card-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-main);
+  line-height: 1.4;
+  margin-bottom: 10px;
+  word-break: break-word;
+  padding: 3px 4px;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+.task-card .card-title:hover {
+  background: rgba(79, 70, 229, 0.06);
+}
+
+.task-card .card-title:focus {
+  outline: 2px solid var(--primary);
+  background: var(--bg-surface);
+  user-select: text;
+}
+
+/* Footer & Meta thẻ */
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  gap: 8px;
+}
+
+.card-meta .meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Nút chuyển trạng thái nhanh trên Mobile Touch */
+.card-touch-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border-color);
+  justify-content: flex-end;
+}
+
+.btn-card-move {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-card-move:hover {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-card-move.btn-move-success:hover {
+  background: rgba(5, 150, 105, 0.15);
+  border-color: #059669;
+  color: #059669;
+}
+
+/* Đáy cột: Thêm thẻ nhanh */
+.column-footer {
+  padding: 10px 12px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+}
+
+.column-quick-add {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.column-quick-input {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid var(--border-color);
+  background: var(--bg-body);
+  color: var(--text-main);
+  transition: border-color var(--transition, 0.2s ease);
+}
+
+.column-quick-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.column-quick-submit {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm, 6px);
+  background: var(--primary);
+  color: #FFFFFF;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color var(--transition, 0.2s ease);
+}
+
+.column-quick-submit:hover {
+  background: var(--primary-hover);
+}
+
+/* ==========================================================================
+   8. BACKDROP VÀ RESPONSIVE DESIGN (MOBILE & TABLET)
+   ========================================================================== */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  z-index: 90;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar-backdrop.active {
+  display: block;
+  opacity: 1;
+}
+
+@media (max-width: 1024px) {
+  .treth-quick-add-form {
+    flex-wrap: wrap;
+  }
+  
+  .quick-add-pills-row {
+    width: 100%;
+    overflow-x: auto;
+    padding-top: 4px;
+  }
+  
+  #matrix-view-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .treth-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .treth-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .mobile-menu-trigger {
+    display: flex;
+  }
+
+  .treth-topbar {
+    padding: 0 16px;
+  }
+
+  .treth-dashboard-bar,
+  .treth-quick-add-section,
+  .treth-workspace-content {
+    margin-left: 12px;
+    margin-right: 12px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .kanban-board {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .kanban-column {
+    flex: 0 0 85vw;
+    max-width: 85vw;
+    min-width: 85vw;
+  }
+
+  body {
+    padding-bottom: calc(4rem + var(--keyboard-offset, 0px));
+    transition: padding-bottom 0.15s ease-out;
+  }
+
+  .modal-card {
+    max-height: calc(100dvh - 2rem - var(--keyboard-offset, 0px));
+  }
+}
+
+/* ==========================================================================
+   MODAL QUẢN LÝ DỮ LIỆU ĐẨY LÊN (SLIDE-UP DATA MODAL - NHỎ GỌN & SIÊU MƯỢT)
+   ========================================================================== */
+.data-menu-popover-container {
+  position: relative;
+}
+
+#dataDropdownPanel.modal-overlay,
+.data-dropdown-panel.modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: rgba(15, 23, 42, 0.75) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem !important;
+  z-index: 10000 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  will-change: opacity !important;
+  transition: opacity 0.18s ease, visibility 0.18s ease !important;
+  border: none !important;
+  box-shadow: none !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+}
+
+#dataDropdownPanel.modal-overlay.active,
+.data-dropdown-panel.modal-overlay.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+#dataDropdownPanel .modal-card,
+.data-modal-card {
+  background-color: var(--bg-surface) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-lg, 14px) !important;
+  width: 100% !important;
+  max-width: min(360px, calc(100vw - 24px)) !important;
+  box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.35) !important;
+  transform: translate3d(0, 14px, 0) !important;
+  will-change: transform !important;
+  transition: transform 0.18s cubic-bezier(0, 0, 0.2, 1) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  max-height: calc(100dvh - 100px) !important;
+  overflow-y: auto !important;
+}
+
+#dataDropdownPanel.modal-overlay.active .modal-card,
+.data-dropdown-panel.modal-overlay.active .modal-card {
+  transform: translate3d(0, 0, 0) !important;
+}
+
+#dataDropdownPanel .modal-header {
+  padding: 10px 14px !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+#dataDropdownPanel .modal-title {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+
+#dataDropdownPanel .modal-subtitle {
+  font-size: 11px !important;
+  margin-top: 1px !important;
+}
+
+.data-modal-body {
+  padding: 8px 12px !important;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px !important;
+}
+
+.data-modal-body .settings-group-title {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  color: var(--text-muted) !important;
+  margin-bottom: 4px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.data-modal-actions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px !important;
+  margin-top: 2px !important;
+}
+
+.data-card-btn {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 6px 9px !important;
+  background: var(--bg-body) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-sm, 8px) !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease, border-color 0.15s ease !important;
+  text-align: left !important;
+  width: 100% !important;
+  color: var(--text-main) !important;
+  user-select: none;
+}
+
+.data-card-btn:hover {
+  background: var(--bg-subtle) !important;
+  border-color: var(--primary) !important;
+}
+
+.data-btn-icon {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  flex-shrink: 0 !important;
+}
+
+.data-btn-icon.json-export { background: rgba(79, 70, 229, 0.12); color: #6366F1; }
+.data-btn-icon.json-import { background: rgba(16, 185, 129, 0.12); color: #10B981; }
+.data-btn-icon.excel-export { background: rgba(5, 150, 105, 0.12); color: #059669; }
+.data-btn-icon.excel-import { background: rgba(6, 182, 212, 0.12); color: #06B6D4; }
+.data-btn-icon.excel-template { background: rgba(245, 158, 11, 0.12); color: #F59E0B; }
+
+.data-btn-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px !important;
+  flex: 1;
+  min-width: 0;
+}
+
+.data-btn-info strong {
+  font-size: 12px !important;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.data-btn-info span {
+  font-size: 10.5px !important;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Đẩy lên từ dưới trên thiết bị di động (Bottom Sheet Mobile) */
+@media (max-width: 640px) {
+  #dataDropdownPanel.modal-overlay {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
+  #dataDropdownPanel .modal-card {
+    border-radius: 16px 16px 0 0 !important;
+    max-width: 100% !important;
+    max-height: 80dvh !important;
+    transform: translate3d(0, 100%, 0) !important;
+    transition: transform 0.2s cubic-bezier(0, 0, 0.2, 1) !important;
+  }
+  #dataDropdownPanel.modal-overlay.active .modal-card {
+    transform: translate3d(0, 0, 0) !important;
+  }
+}
+
+/* ==========================================================================
+   TRETH CALENDAR VIEW (CHẾ ĐỘ XEM LỊCH CÔNG VIỆC THÔNG MINH)
+   ========================================================================== */
+.calendar-view-container {
+  border-radius: var(--radius-lg, 14px);
+  padding: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  margin-top: 12px;
+}
+
+.calendar-workspace-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.calendar-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.cal-nav-group,
+.cal-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cal-title-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cal-title-display i {
+  font-size: 20px;
+  color: var(--primary);
+}
+
+.cal-month-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.cal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-body);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  transition: var(--transition);
+  user-select: none;
+}
+
+.cal-btn:hover {
+  color: var(--text-main);
+  background: var(--bg-subtle);
+  border-color: var(--primary);
+}
+
+.cal-btn-today {
+  color: var(--primary);
+  background: var(--primary-light, #EEF2FF);
+  border-color: rgba(79, 70, 229, 0.3);
+  font-weight: 600;
+}
+
+.cal-btn-unscheduled.active {
+  color: #F59E0B;
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+/* Bố cục Lưới Tháng + Sidebar */
+.calendar-main-layout {
+  display: flex;
+  gap: 16px;
+  position: relative;
+}
+
+.calendar-month-grid {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-weekdays-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: var(--border-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md, 8px) var(--radius-md, 8px) 0 0;
+  overflow: hidden;
+}
+
+.cal-weekday {
+  background: var(--bg-subtle);
+  padding: 10px 4px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cal-weekday-sat,
+.cal-weekday-sun {
+  color: var(--primary);
+}
+
+.calendar-days-container {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: var(--border-color);
+  border: 1px solid var(--border-color);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md, 8px) var(--radius-md, 8px);
+  overflow: hidden;
+}
+
+.cal-day-cell {
+  background: var(--bg-surface);
+  min-height: 105px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: background 0.15s ease;
+  position: relative;
+}
+
+.cal-day-cell.other-month {
+  background: var(--bg-body);
+  opacity: 0.55;
+}
+
+.cal-day-cell.is-today {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(6, 182, 212, 0.05) 100%) !important;
+  border: 1.5px solid var(--bamboo-green, #10B981) !important;
+  box-shadow: inset 0 0 12px rgba(16, 185, 129, 0.12), 0 0 16px -3px rgba(16, 185, 129, 0.28) !important;
+  position: relative;
+  z-index: 2;
+}
+
+html[data-theme="dark"] .cal-day-cell.is-today {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(6, 182, 212, 0.08) 100%) !important;
+  border-color: #00FF87 !important;
+  box-shadow: inset 0 0 14px rgba(0, 255, 135, 0.18), 0 0 20px -2px rgba(0, 255, 135, 0.32) !important;
+}
+
+.cal-day-header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cal-today-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.2);
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  letter-spacing: 0.2px;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+html[data-theme="dark"] .cal-today-pill {
+  background: rgba(0, 255, 135, 0.2);
+  color: #00FF87;
+  border-color: rgba(0, 255, 135, 0.5);
+  box-shadow: 0 0 8px rgba(0, 255, 135, 0.3);
+}
+
+.cal-day-cell.cal-drag-over {
+  background: rgba(16, 185, 129, 0.12) !important;
+  outline: 2px dashed var(--bamboo-green, #10B981);
+  outline-offset: -2px;
+}
+
+.cal-day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.cal-day-number {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.cal-day-cell.is-today .cal-day-number {
+  background: #10B981 !important;
+  color: #FFFFFF !important;
+  font-weight: 700;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5) !important;
+}
+
+html[data-theme="dark"] .cal-day-cell.is-today .cal-day-number {
+  background: #00FF87 !important;
+  color: #0B0F19 !important;
+  box-shadow: 0 0 10px rgba(0, 255, 135, 0.7) !important;
+}
+
+/* Thêm việc nhanh tại chỗ (Inline Day Task Quick-Add) */
+.cal-inline-add-box {
+  background: var(--bg-surface);
+  border: 1.5px solid var(--primary, #10B981);
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  margin-bottom: 4px;
+  animation: calInlineFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10;
+}
+
+@keyframes calInlineFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.cal-inline-add-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--bg-body);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: var(--text-main);
+  outline: none;
+  font-family: inherit;
+}
+
+.cal-inline-add-input:focus {
+  border-color: var(--primary, #10B981);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+}
+
+.cal-inline-add-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.cal-inline-save-btn {
+  background: var(--primary, #10B981);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  transition: opacity 0.15s ease;
+}
+
+.cal-inline-save-btn:hover {
+  opacity: 0.9;
+}
+
+.cal-inline-cancel-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.cal-inline-cancel-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--text-main);
+}
+
+.cal-quick-add-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: var(--transition);
+  font-size: 13px;
+}
+
+.cal-day-cell:hover .cal-quick-add-btn {
+  opacity: 1;
+}
+
+.cal-quick-add-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--primary);
+}
+
+.cal-day-tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  overflow-y: auto;
+  max-height: 120px;
+}
+
+/* Thẻ công việc trên lịch (Task Chip) */
+.cal-task-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 6px;
+  background: var(--bg-body);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--chip-cat-color, var(--primary));
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.cal-task-chip:hover {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.cal-task-chip.priority-high {
+  border-left-color: #EF4444;
+}
+
+.cal-task-chip.priority-medium {
+  border-left-color: #F59E0B;
+}
+
+.cal-task-chip.priority-low {
+  border-left-color: #10B981;
+}
+
+.cal-task-chip.is-completed {
+  opacity: 0.55;
+}
+
+.cal-task-chip.is-completed .cal-task-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.cal-task-chip.cal-dragging {
+  opacity: 0.35;
+  transform: scale(0.96);
+}
+
+.cal-task-check {
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+  accent-color: var(--primary);
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.cal-task-title {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-main);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.cal-drag-handle {
+  font-size: 12px;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.cal-task-chip:hover .cal-drag-handle {
+  opacity: 0.8;
+}
+
+/* Panel Việc chưa đặt hạn (Sidebar) */
+.calendar-unscheduled-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--bg-body);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md, 8px);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 650px;
+}
+
+.calendar-unscheduled-sidebar.cal-drag-over {
+  background: rgba(245, 158, 11, 0.08) !important;
+  border-color: #F59E0B !important;
+  outline: 2px dashed #F59E0B;
+}
+
+.unscheduled-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.unscheduled-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.unscheduled-count {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 6px;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  border-radius: 999px;
+}
+
+.unscheduled-dropzone-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  border: 1px dashed var(--border-color);
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.unscheduled-tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.unscheduled-empty {
+  text-align: center;
+  padding: 24px 12px;
+  color: var(--text-muted);
+}
+
+.unscheduled-empty i {
+  font-size: 28px;
+  color: var(--bamboo-green, #10B981);
+  margin-bottom: 6px;
+}
+
+.unscheduled-empty p {
+  font-size: 12px;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .calendar-main-layout {
+    flex-direction: column;
+  }
+  .calendar-unscheduled-sidebar {
+    width: 100%;
+    max-height: 250px;
+  }
+  .cal-day-cell {
+    min-height: 80px;
+    padding: 4px;
+  }
+  .cal-btn-text {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   TRETH v4.0 — MASTER CALENDAR SUITE & CYBER-NATURAL DESIGN SYSTEM
+   ========================================================================== */
+
+/* 1. Main Calendar Shell & Layout */
+.cal-v4-shell {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg, 14px);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  height: calc(100dvh - 195px);
+  min-height: 600px;
+  position: relative;
+}
+
+.cal-v4-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  gap: 1rem;
+  flex-wrap: wrap;
+  z-index: 30;
+}
+
+.cal-toolbar-left,
+.cal-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.cal-toolbar-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-today-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 6px var(--primary);
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.cal-nav-arrows {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm, 6px);
+  padding: 2px;
+}
+
+.cal-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.cal-btn-icon:hover {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.cal-title-block {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-left: 0.25rem;
+}
+
+.cal-title-block .cal-month-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.cal-sub-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cal-badge-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.cal-lunar-badge {
+  color: #F59E0B;
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+/* 2. Segmented View Switcher (Day / Week / Month / Agenda) */
+.cal-view-segmented {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md, 8px);
+  padding: 3px;
+  gap: 2px;
+}
+
+.cal-seg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.cal-seg-btn kbd {
+  font-size: 9px;
+  font-weight: 700;
+  background: rgba(148, 163, 184, 0.18);
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: var(--text-muted);
+}
+
+.cal-seg-btn:hover {
+  color: var(--text-main);
+}
+
+.cal-seg-btn.active {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.cal-seg-btn.active kbd {
+  background: var(--primary);
+  color: #FFFFFF;
+}
+
+/* 3. Toolbar Right Buttons */
+.cal-btn-layer {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.cal-btn-layer:hover {
+  background: var(--bg-subtle);
+  color: var(--text-main);
+}
+
+.cal-btn-layer.active {
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--primary);
+  border-color: rgba(99, 102, 241, 0.35);
+  font-weight: 600;
+}
+
+.cal-btn-backlog {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.cal-btn-backlog.active {
+  background: rgba(245, 158, 11, 0.12);
+  color: #F59E0B;
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+.cal-backlog-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+}
+
+.cal-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: none;
+  background: var(--primary);
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.28);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.cal-btn-primary:hover {
+  transform: translateY(-1px);
+  opacity: 0.94;
+}
+
+/* 4. Body & Main Viewport */
+.cal-v4-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.cal-v4-main-viewport {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--bg-surface);
+}
+
+/* 5. Time-Grid View (Day & Week) */
+.cal-timegrid-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.cal-timegrid-header {
+  display: grid;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-subtle);
+  flex-shrink: 0;
+  z-index: 15;
+}
+
+.cal-time-corner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--border-color);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.cal-header-col {
+  padding: 6px 8px;
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cal-header-col.is-today {
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.cal-header-col-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cal-header-dayname {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cal-quick-add-col-btn {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.cal-header-col:hover .cal-quick-add-col-btn {
+  opacity: 1;
+}
+
+.cal-quick-add-col-btn:hover {
+  background: var(--bg-surface);
+  color: var(--primary);
+}
+
+.cal-header-col-main {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.cal-header-daynum {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.1;
+}
+
+.cal-header-daynum.is-today-circle {
+  background: var(--primary);
+  color: #FFFFFF;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}
+
+.cal-header-lunarnum {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.cal-header-lunarnum.is-special {
+  color: #F59E0B;
+  font-weight: 600;
+}
+
+.cal-header-progress {
+  height: 3px;
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 3px;
+}
+
+.cal-header-progress .cal-progress-bar {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 999px;
+}
+
+/* 6. All-Day & Habits Banner Row */
+.cal-allday-row {
+  display: grid;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  min-height: 40px;
+  max-height: 120px;
+  overflow-y: auto;
+  flex-shrink: 0;
+  z-index: 14;
+}
+
+.cal-allday-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--border-color);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.cal-allday-cell {
+  border-right: 1px solid var(--border-color);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.cal-habits-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 3px;
+}
+
+.cal-habit-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-subtle);
+  font-size: 10px;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  user-select: none;
+}
+
+.cal-habit-pill:hover {
+  border-color: var(--primary);
+}
+
+.cal-habit-pill.is-done {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: #10B981;
+  color: #10B981;
+}
+
+.cal-habit-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 4px;
+  text-align: left;
+}
+
+.cal-allday-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--bg-body);
+  border-left: 3px solid var(--chip-cat-color, var(--primary));
+  border: 1px solid var(--border-color);
+  border-left-width: 3px;
+  font-size: 11px;
+  cursor: grab;
+  user-select: none;
+}
+
+.cal-allday-chip-title {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 7. Scrollable 24-Hour Time Grid */
+.cal-timegrid-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  scroll-behavior: smooth;
+}
+
+.cal-timegrid-canvas {
+  display: grid;
+  position: relative;
+}
+
+.cal-time-axis {
+  border-right: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  position: relative;
+  user-select: none;
+}
+
+.cal-hour-label {
+  position: absolute;
+  left: 0;
+  right: 6px;
+  text-align: right;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  transform: translateY(-50%);
+}
+
+.cal-day-column {
+  position: relative;
+  border-right: 1px solid var(--border-color);
+  background-image: linear-gradient(
+    to bottom,
+    var(--border-color) 1px,
+    transparent 1px,
+    transparent 31px,
+    rgba(148, 163, 184, 0.12) 32px,
+    transparent 32px
+  );
+  background-size: 100% 64px;
+}
+
+.cal-day-column.is-today {
+  background-color: rgba(99, 102, 241, 0.02);
+}
+
+.cal-grid-hour-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  pointer-events: none;
+}
+
+/* 8. Live Current Time Indicator (Now Line) */
+.cal-now-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #EF4444;
+  z-index: 25;
+  pointer-events: none;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.7);
+}
+
+.cal-now-line::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #EF4444;
+  box-shadow: 0 0 6px #EF4444;
+}
+
+/* 9. Time Block Event Card */
+.cal-time-block {
+  position: absolute;
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 11px;
+  line-height: 1.3;
+  overflow: hidden;
+  cursor: grab;
+  z-index: 10;
+  border-left: 3.5px solid var(--block-color, var(--primary));
+  background: rgba(99, 102, 241, 0.2);
+  color: var(--text-main);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+  transition: box-shadow 0.15s ease, transform 0.1s ease;
+  user-select: none;
+}
+
+html[data-theme="dark"] .cal-time-block {
+  background: rgba(30, 41, 59, 0.75);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cal-time-block:hover {
+  z-index: 22;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+.cal-time-block.is-completed {
+  opacity: 0.5;
+}
+
+.cal-time-block.is-completed .cal-block-title {
+  text-decoration: line-through;
+}
+
+.cal-block-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.cal-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.cal-block-time {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.cal-block-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.cal-time-block:hover .cal-block-actions {
+  opacity: 1;
+}
+
+.cal-block-btn-pomo,
+.cal-block-btn-edit {
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  border: none;
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--text-main);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+html[data-theme="dark"] .cal-block-btn-pomo,
+html[data-theme="dark"] .cal-block-btn-edit {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.cal-block-btn-pomo:hover {
+  background: var(--primary);
+  color: #FFFFFF;
+}
+
+.cal-block-btn-edit:hover {
+  background: var(--bg-surface);
+}
+
+.cal-block-title-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cal-block-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.cal-block-location {
+  font-size: 10px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Bottom Resize Handle */
+.cal-resize-handle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 8px;
+  cursor: ns-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+}
+
+.cal-resize-handle::after {
+  content: '';
+  width: 20px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.5);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.cal-time-block:hover .cal-resize-handle::after {
+  opacity: 1;
+}
+
+/* Drag-Create Selection Box */
+.cal-drag-create-selection {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  background: rgba(99, 102, 241, 0.25);
+  border: 1.5px dashed var(--primary);
+  border-radius: 6px;
+  z-index: 18;
+  pointer-events: none;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary);
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+/* 10. Backlog Drawer (Unscheduled Sidebar) */
+.cal-backlog-drawer {
+  width: 290px;
+  border-left: 1px solid var(--border-color);
+  background: var(--bg-body);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  z-index: 20;
+}
+
+.cal-backlog-drawer.collapsed {
+  width: 0 !important;
+  border-left: none !important;
+  padding: 0 !important;
+}
+
+.cal-backlog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-surface);
+}
+
+.cal-backlog-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.cal-backlog-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-subtle);
+  padding: 3px;
+  gap: 2px;
+}
+
+.cal-backlog-tab {
+  flex: 1;
+  padding: 5px 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.cal-backlog-tab:hover {
+  color: var(--text-main);
+}
+
+.cal-backlog-tab.active {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.cal-backlog-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-surface);
+}
+
+.cal-backlog-search i {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.cal-backlog-search input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-main);
+  font-size: 12px;
+  outline: none;
+}
+
+.cal-backlog-tasks-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cal-backlog-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-left: 3.5px solid var(--chip-cat-color, var(--primary));
+  cursor: grab;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cal-backlog-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.cal-backlog-card-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cal-backlog-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cal-backlog-card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cal-backlog-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.cal-meta-prio {
+  text-transform: capitalize;
+}
+
+.cal-meta-prio.priority-high { color: #EF4444; font-weight: 600; }
+.cal-meta-prio.priority-medium { color: #F59E0B; }
+.cal-meta-prio.priority-low { color: #10B981; }
+
+/* 11. Month View v4.0 enhancements */
+.cal-v4-month-grid {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.cal-v4-month-cells {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: 1fr;
+  min-height: 0;
+}
+
+.cal-v4-month-cells .cal-day-cell {
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 4px 6px;
+}
+
+.cal-lunar-mini {
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+.cal-lunar-mini.is-special {
+  color: #F59E0B;
+  font-weight: 600;
+}
+
+.cal-extra-tasks-pill {
+  border: none;
+  background: var(--bg-subtle);
+  color: var(--primary);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.cal-extra-tasks-pill:hover {
+  background: rgba(99, 102, 241, 0.15);
+}
+
+/* 12. Agenda View */
+.cal-agenda-container {
+  padding: 1.25rem 1.5rem;
+  overflow-y: auto;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.cal-agenda-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.cal-agenda-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cal-agenda-stats-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+}
+
+.cal-agenda-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cal-agenda-day-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cal-agenda-day-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.cal-agenda-day-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+.cal-agenda-lunar-tag {
+  font-size: 11px;
+  color: #F59E0B;
+  margin-left: 6px;
+}
+
+.cal-agenda-summary {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.cal-agenda-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cal-agenda-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--bg-body);
+  border: 1px solid var(--border-color);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.cal-agenda-card:hover {
+  box-shadow: var(--shadow-sm);
+  border-color: var(--primary);
+}
+
+.cal-agenda-time-col {
+  width: 120px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cal-agenda-time-text {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.cal-agenda-cat-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.cal-agenda-main-col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.cal-agenda-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cal-agenda-card.is-completed .cal-agenda-title {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.cal-agenda-loc {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.cal-agenda-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 13. Event Dialog / Modal */
+.cal-event-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.15s ease;
+}
+
+.cal-event-modal-card {
+  width: 100%;
+  max-width: 520px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg, 14px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.cal-event-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.cal-event-modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cal-modal-close-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-modal-close-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--text-main);
+}
+
+.cal-event-form {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cal-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.cal-form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.cal-form-group label .req {
+  color: #EF4444;
+}
+
+.cal-form-input,
+.cal-form-select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-body);
+  color: var(--text-main);
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cal-form-input:focus,
+.cal-form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.cal-form-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cal-flex-1 {
+  flex: 1;
+  min-width: 0;
+}
+
+.cal-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.cal-event-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  gap: 0.5rem;
+}
+
+.cal-footer-right-btns {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cal-btn-secondary {
+  padding: 6px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-subtle);
+  color: var(--text-main);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cal-btn-danger {
+  padding: 6px 12px;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cal-btn-danger:hover {
+  background: #EF4444;
+  color: #FFFFFF;
+}
+
+.cal-btn-focus {
+  padding: 6px 12px;
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  border-radius: 6px;
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cal-btn-focus:hover {
+  background: var(--primary);
+  color: #FFFFFF;
+}
+
+/* 14. Floating Day Popover (Month View +N việc khác) */
+.cal-day-detail-popover {
+  position: fixed;
+  width: 280px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  z-index: 100;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: fadeIn 0.15s ease;
+}
+
+.cal-popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 6px;
+  font-size: 12px;
+}
+
+.cal-popover-lunar {
+  color: #F59E0B;
+  margin-left: 5px;
+  font-size: 10px;
+}
+
+.cal-popover-list {
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cal-popover-add {
+  margin-top: 4px;
+  width: 100%;
+  justify-content: center;
+}
+
+/* 15. Floating Mini-Pomodoro Widget */
+.floating-pomo-widget {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 950;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 6px 14px 6px 10px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideUpPomo 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpPomo {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.floating-pomo-timer-ring {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: conic-gradient(var(--primary) calc(var(--pomo-percent, 100) * 1%), rgba(148, 163, 184, 0.2) 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.floating-pomo-timer-inner {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--primary);
+}
+
+.floating-pomo-info {
+  display: flex;
+  flex-direction: column;
+  max-width: 150px;
+}
+
+.floating-pomo-time {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.floating-pomo-title {
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.floating-pomo-btns {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.floating-pomo-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: var(--bg-subtle);
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.floating-pomo-btn:hover {
+  background: var(--primary);
+  color: #FFFFFF;
+}
+
+/* 16. Command Palette (Ctrl + K) */
+.command-palette-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  animation: fadeIn 0.15s ease;
+}
+
+.command-palette-card {
+  width: 100%;
+  max-width: 600px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg, 14px);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.command-palette-search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.command-palette-search-row i {
+  font-size: 18px;
+  color: var(--primary);
+}
+
+.command-palette-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-main);
+  font-size: 15px;
+  outline: none;
+  font-family: inherit;
+}
+
+.command-palette-results {
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.command-palette-group-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  padding: 6px 10px 2px;
+}
+
+.command-palette-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-main);
+  font-size: 13px;
+  transition: background 0.12s ease;
+}
+
+.command-palette-item.active,
+.command-palette-item:hover {
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--primary);
+}
+
+.command-palette-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.command-palette-item-icon {
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.command-palette-item.active .command-palette-item-icon {
+  color: var(--primary);
+}
+
+.command-palette-item-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.command-palette-item-tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+}
+
+.command-palette-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-subtle);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.command-palette-footer kbd {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 10px;
+}
+
+/* 17. Interactive Bento Cards on Dashboard (.stats-grid-4) */
+.stats-grid-4 .stat-card {
+  cursor: pointer;
+  transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.18s ease, border-color 0.18s ease;
+  user-select: none;
+}
+
+.stats-grid-4 .stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary);
+}
+
+.stats-grid-4 .stat-card:active {
+  transform: translateY(0);
+}
+
+/* 18. Quick-Add NLP Hint Strip */
+.task-nlp-preview-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 4px 8px;
+  margin-top: 4px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--text-main);
+  animation: fadeIn 0.15s ease;
+}
+
+.task-nlp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  font-weight: 600;
+  font-size: 10px;
+  color: var(--primary);
+}
+
+/* 19. Habits Yearly Contribution Heatmap */
+.habit-heatmap-card {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg, 14px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.habit-heatmap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.habit-heatmap-header h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.habit-heatmap-scroll {
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.habit-heatmap-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 12px);
+  grid-auto-flow: column;
+  grid-auto-columns: 12px;
+  gap: 3px;
+  width: max-content;
+}
+
+.heatmap-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--bg-subtle);
+  transition: transform 0.1s ease;
+  cursor: pointer;
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.3);
+  z-index: 5;
+}
+
+.heatmap-cell.level-0 { background: rgba(148, 163, 184, 0.15); }
+.heatmap-cell.level-1 { background: rgba(16, 185, 129, 0.35); }
+.heatmap-cell.level-2 { background: rgba(16, 185, 129, 0.6); }
+.heatmap-cell.level-3 { background: rgba(16, 185, 129, 0.85); }
+.heatmap-cell.level-4 { background: #10B981; box-shadow: 0 0 4px rgba(16, 185, 129, 0.6); }
+
+/* 20. Notes Markdown Formatting Toolbar */
+.note-md-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  flex-wrap: wrap;
+}
+
+.note-md-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.note-md-btn:hover {
+  background: var(--bg-surface);
+  color: var(--text-main);
+}
+
+.note-extract-tasks-btn {
+  margin-left: auto;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.note-extract-tasks-btn:hover {
+  background: rgba(99, 102, 241, 0.15);
+}
+
+/* ==========================================================================
+   17. TỐI ƯU HÓA GIAO DIỆN & HIỆU NĂNG TRETH V4.0 (TASKS 1 -> 7)
+   ========================================================================== */
+
+/* --- Task 6: Tối ưu hóa & Chuẩn hóa Sidebar --- */
+.treth-sidebar {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.treth-sidebar .header-right-actions.treth-sidebar-nav-container {
+  display: contents !important;
+}
+
+.treth-sidebar .module-nav {
+  order: 1 !important;
+  padding: 10px 12px 6px !important;
+  gap: 3px !important;
+  border-bottom: 1px solid var(--border-color, #E2E8F0);
+}
+
+.treth-sidebar .module-nav-btn {
+  padding: 8px 12px !important;
+  font-size: 13.5px !important;
+  gap: 10px !important;
+  border-radius: 8px !important;
+}
+
+.treth-sidebar .module-nav-btn i {
+  font-size: 17px !important;
+  color: var(--text-secondary);
+}
+
+.treth-sidebar .module-nav-btn.active i {
+  color: inherit;
+}
+
+/* Nút Quản lý Loại việc - Tinh tế, đồng nhất */
+.treth-sidebar #btn-open-cat-manager {
+  order: 2 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: calc(100% - 24px) !important;
+  margin: 6px 12px !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: var(--text-secondary, #475569) !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  cursor: pointer !important;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease !important;
+}
+
+.treth-sidebar #btn-open-cat-manager:hover {
+  background: var(--bg-subtle, #F1F5F9) !important;
+  color: var(--primary, #4F46E5) !important;
+}
+
+html[data-theme="dark"] .treth-sidebar #btn-open-cat-manager:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: var(--neon-green, #00FF87) !important;
+}
+
+/* Nhóm Danh sách thông minh */
+#treth-smart-lists {
+  order: 3 !important;
+  padding: 8px 12px !important;
+}
+
+.treth-smart-list-items .smart-list-item i {
+  color: var(--text-secondary) !important;
+}
+
+.treth-smart-list-items .smart-list-item.active i {
+  color: inherit !important;
+}
+
+/* Đẩy cụm 2 nút hệ thống (Dữ liệu & Cài đặt) xuống cố định ở phần đáy Sidebar */
+.treth-sidebar .data-menu-popover-container {
+  order: 10 !important;
+  margin-top: auto !important;
+  padding: 0 12px !important;
+  margin-bottom: 2px !important;
+}
+
+.treth-sidebar #btnToggleDataMenu,
+.treth-sidebar #btn-open-settings {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: var(--text-secondary, #475569) !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  cursor: pointer !important;
+  transition: background-color 0.15s ease, color 0.15s ease !important;
+}
+
+.treth-sidebar #btn-open-settings {
+  order: 11 !important;
+  width: calc(100% - 24px) !important;
+  margin: 0 12px 6px 12px !important;
+}
+
+.treth-sidebar #btnToggleDataMenu:hover,
+.treth-sidebar #btn-open-settings:hover {
+  background: var(--bg-subtle, #F1F5F9) !important;
+  color: var(--text-main, #0F172A) !important;
+}
+
+html[data-theme="dark"] .treth-sidebar #btnToggleDataMenu:hover,
+html[data-theme="dark"] .treth-sidebar #btn-open-settings:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #F8FAFC !important;
+}
+
+.treth-sidebar-footer {
+  order: 20 !important;
+}
+
+/* --- Task 3: Progressive Disclosure Thanh thêm công việc trên 1 hàng --- */
+.treth-quick-add-form {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+.treth-quick-add-form .quick-add-input {
+  flex: 1 1 auto !important;
+  min-width: 180px !important;
+}
+
+.treth-quick-add-form .quick-add-pills-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Mặc định Collapsed: Ẩn 5 thuộc tính */
+.treth-quick-add-form.is-collapsed .quick-pill-item {
+  display: none !important;
+}
+
+/* Kích hoạt Expanded: Hiện 5 thuộc tính trên cùng 1 hàng */
+.treth-quick-add-form.is-expanded .quick-pill-item {
+  display: inline-flex !important;
+}
+
+/* --- Task 2 & 7: Tối ưu Render danh sách dài & Micro-UI --- */
+.task-item {
+  contain: content !important;
+  content-visibility: auto !important;
+  contain-intrinsic-size: 0 52px !important;
+  padding: 10px 14px !important;
+  gap: 8px !important;
+  border-radius: 10px !important;
+  margin-bottom: 8px !important;
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+html[data-theme="dark"] .task-item {
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  background: rgba(18, 26, 42, 0.96) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] .task-item:hover {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* --- Task 5: Ẩn/Hiện thông minh nút Xóa --- */
+.task-item .btn-delete,
+.task-item .delete-btn {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.15s ease !important;
+}
+
+.task-item:hover .btn-delete,
+.task-item:hover .delete-btn,
+.task-item:focus-within .btn-delete,
+.task-item:focus-within .delete-btn {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+@media (hover: none) {
+  .task-item .btn-delete,
+  .task-item .delete-btn {
+    opacity: 0.7 !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* --- Task 4 & 7: Phân cấp thị giác cho Thẻ trong Tab "Đã hoàn thành" --- */
+.task-item.is-completed {
+  opacity: 0.65 !important;
+  transition: opacity 0.15s ease, border-color 0.15s ease !important;
+}
+
+.task-item.is-completed:hover {
+  opacity: 1 !important;
+}
+
+.task-item.is-completed .task-name {
+  text-decoration: line-through !important;
+  text-decoration-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+html[data-theme="light"] .task-item.is-completed .task-name {
+  text-decoration-color: rgba(15, 23, 42, 0.35) !important;
+}
+
+/* --- Task 1: Module Thống kê (Analytics Dashboard) Styles --- */
+.analytics-module-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px 24px;
+}
+
+.analytics-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 20px;
+}
+
+.analytics-header-title {
+  font-size: 17px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 4px 0;
+  color: var(--text-main);
+}
+
+.analytics-header-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.analytics-time-filter {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-subtle, #F1F5F9);
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #E2E8F0);
+  gap: 2px;
+}
+
+.analytics-filter-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+  color: var(--text-secondary, #475569);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.analytics-filter-btn:hover {
+  color: var(--text-main, #0F172A);
+}
+
+.analytics-filter-btn.active {
+  background: var(--bg-surface, #FFFFFF);
+  color: var(--primary, #4F46E5);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="dark"] .analytics-time-filter {
+  background: rgba(11, 15, 25, 0.7);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"] .analytics-filter-btn.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--neon-green, #00FF87);
+  box-shadow: none;
+}
+
+/* Lưới thẻ tổng hợp */
+.analytics-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.analytics-summary-grid .stat-card {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 12px;
+}
+
+.analytics-summary-grid .stat-card-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+/* Lưới 3 biểu đồ */
+.analytics-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.analytics-chart-card {
+  padding: 16px 20px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chart-card-header .chart-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-main);
+}
+
+.chart-card-body {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 180px;
+}
+
+.chart-visual-wrapper {
+  flex-shrink: 0;
+  width: 170px;
+  height: 170px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.chart-visual-wrapper svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.chart-legend-list {
+  flex: 1 1 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12.5px;
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+
+.chart-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.chart-legend-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chart-legend-val {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+
+
+

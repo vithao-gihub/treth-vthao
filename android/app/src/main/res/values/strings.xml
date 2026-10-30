@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">TreTH</string>
+    <string name="title_activity_main">TreTH</string>
+    <string name="package_name">com.treth.app</string>
+    <string name="custom_url_scheme">com.treth.app</string>
+</resources>

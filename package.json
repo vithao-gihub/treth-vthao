@@ -1,0 +1,65 @@
+{
+  "name": "treth",
+  "version": "3.1.0",
+  "description": "TreTH - Quản lý công việc, Pomodoro, thói quen và ghi chú",
+  "main": "main.js",
+  "author": "TreTH Team",
+  "license": "MIT",
+  "scripts": {
+    "build:web": "node sync-assets.js",
+    "electron:dev": "node sync-assets.js && electron .",
+    "build:win": "node sync-assets.js && electron-builder --win --x64",
+    "build:win:portable": "node sync-assets.js && electron-builder --win portable --x64",
+    "cap:add": "npx cap add android",
+    "cap:sync": "node sync-assets.js && npx cap sync android",
+    "cap:open": "npx cap open android",
+    "build:apk": "node sync-assets.js && npx cap sync android && cd android && gradlew assembleDebug"
+  },
+  "build": {
+    "appId": "com.treth.app",
+    "productName": "TreTH",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "www/**/*",
+      "icon.ico",
+      "icon-512.png"
+    ],
+    "win": {
+      "icon": "icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "TreTH"
+    },
+    "portable": {
+      "artifactName": "TreTH-Portable.exe"
+    }
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/cli": "^6.2.0",
+    "@capacitor/core": "^6.2.0"
+  },
+  "devDependencies": {
+    "electron": "^31.0.2",
+    "electron-builder": "^24.13.3"
+  }
+}
+
