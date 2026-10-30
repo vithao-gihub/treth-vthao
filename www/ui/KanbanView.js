@@ -249,6 +249,10 @@
         });
 
         el.addEventListener('keydown', e => {
+          if (e.isComposing || (typeof window !== 'undefined' && window.__isInputComposing)) return;
+          if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+            if (e.key === 'Backspace' || e.key === 'Delete') return;
+          }
           if (e.key === 'Enter') {
             e.preventDefault();
             el.blur();
@@ -277,7 +281,21 @@
       // 3. Thêm việc nhanh ở đáy mỗi cột
       const addForms = this.container.querySelectorAll('.column-quick-add');
       addForms.forEach(form => {
+        const colInput = form.querySelector('.column-quick-input');
+        if (colInput) {
+          colInput.addEventListener('keydown', ev => {
+            if (ev.isComposing || (typeof window !== 'undefined' && window.__isInputComposing)) return;
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+              if (ev.key === 'Backspace' || ev.key === 'Delete') return;
+            }
+          });
+        }
+
         form.addEventListener('submit', e => {
+          if (typeof window !== 'undefined' && window.__isInputComposing) {
+            e.preventDefault();
+            return;
+          }
           e.preventDefault();
           const input = form.querySelector('.column-quick-input');
           const colId = form.dataset.column;

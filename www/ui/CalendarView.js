@@ -1906,6 +1906,9 @@
     _bindKeyboardShortcuts() {
       document.addEventListener('keydown', (e) => {
         // Bỏ qua nếu đang gõ văn bản
+        if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+          return; // Để bàn phím hoạt động tự nhiên
+        }
         const tag = (e.target.tagName || '').toLowerCase();
         if (tag === 'input' || tag === 'textarea' || tag === 'select' || e.target.isContentEditable) return;
         // Bỏ qua nếu Calendar view không hiển thị
@@ -2000,6 +2003,10 @@
       });
 
       input.addEventListener('keydown', (ev) => {
+        if (ev.isComposing || (typeof window !== 'undefined' && window.__isInputComposing)) return;
+        if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+          if (ev.key === 'Backspace' || ev.key === 'Delete') return;
+        }
         if (ev.key === 'Enter') {
           ev.preventDefault();
           doSave();

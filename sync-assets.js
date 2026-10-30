@@ -5,6 +5,11 @@ const targetDirs = [
     path.join(__dirname, 'www')
 ];
 
+const androidPublicDir = path.join(__dirname, 'android', 'app', 'src', 'main', 'assets', 'public');
+if (fs.existsSync(androidPublicDir)) {
+    targetDirs.push(androidPublicDir);
+}
+
 if (fs.existsSync(path.join(__dirname, 'Quanlicanhan2.0'))) {
     targetDirs.push(path.join(__dirname, 'Quanlicanhan2.0', 'www'));
 }

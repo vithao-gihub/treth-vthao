@@ -8,6 +8,10 @@ root_dir = os.path.dirname(os.path.abspath(__file__))
 target_dirs = [
     os.path.join(root_dir, 'www')
 ]
+android_public = os.path.join(root_dir, 'android', 'app', 'src', 'main', 'assets', 'public')
+if os.path.exists(android_public):
+    target_dirs.append(android_public)
+
 qlc_dir = os.path.join(root_dir, 'Quanlicanhan2.0')
 if os.path.exists(qlc_dir):
     target_dirs.append(qlc_dir)

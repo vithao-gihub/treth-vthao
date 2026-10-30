@@ -14,6 +14,39 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    let isInputComposing = false;
+    window.__isInputComposing = false;
+
+    document.addEventListener('compositionstart', () => {
+        isInputComposing = true;
+        window.__isInputComposing = true;
+    }, true);
+
+    document.addEventListener('compositionupdate', () => {
+        isInputComposing = true;
+        window.__isInputComposing = true;
+    }, true);
+
+    document.addEventListener('compositionend', (e) => {
+        isInputComposing = false;
+        window.__isInputComposing = false;
+        if (e.target && (['INPUT', 'TEXTAREA'].includes(e.target.tagName) || e.target.isContentEditable)) {
+            e.target.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }, true);
+
+    // =========================================================================
+    // GLOBAL BACKSPACE & KEYBOARD GUARD (BẢO VỆ PHÍM BACKSPACE / DELETE)
+    // =========================================================================
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' || e.key === 'Delete' || e.keyCode === 8 || e.keyCode === 46) {
+            const activeEl = document.activeElement;
+            if (activeEl && (['INPUT', 'TEXTAREA'].includes(activeEl.tagName) || activeEl.isContentEditable)) {
+                return;
+            }
+        }
+    }, true);
+
     // Gỡ bỏ các thuộc tính cản trở bộ đệm IME (Telex/VNI) và bàn phím ảo trên Mobile
     document.querySelectorAll('input, textarea').forEach(el => {
         el.removeAttribute('autocorrect');
@@ -107,7 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, true);
     })();
 
-    // Hàm xác nhận xóa an toàn (không dùng native confirm bị chặn trên Mobile WebView & Sandboxed iFrame)
     function safeConfirm(_message) {
         return true;
     }
@@ -1736,6 +1768,10 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         if (inputEl) inputEl.addEventListener('keydown', (e) => {
+            if (e.isComposing || isInputComposing) return;
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+                if (e.key === 'Backspace' || e.key === 'Delete') return;
+            }
             if (e.key === 'Enter') { e.preventDefault(); saveChanges(); }
             else if (e.key === 'Escape') { e.preventDefault(); cancelChanges(); }
         });
@@ -1795,6 +1831,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectEl) selectEl.addEventListener('change', saveCategory);
         if (selectEl) selectEl.addEventListener('blur', saveCategory);
         if (selectEl) selectEl.addEventListener('keydown', (e) => {
+            if (e.isComposing || isInputComposing) return;
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+                if (e.key === 'Backspace' || e.key === 'Delete') return;
+            }
             if (e.key === 'Escape') { e.preventDefault(); cancelCategory(); }
             else if (e.key === 'Enter') { e.preventDefault(); saveCategory(); }
         });
@@ -1848,6 +1888,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectEl) selectEl.addEventListener('change', saveQuadrant);
         if (selectEl) selectEl.addEventListener('blur', saveQuadrant);
         if (selectEl) selectEl.addEventListener('keydown', (e) => {
+            if (e.isComposing || isInputComposing) return;
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+                if (e.key === 'Backspace' || e.key === 'Delete') return;
+            }
             if (e.key === 'Escape') { e.preventDefault(); cancelQuadrant(); }
             else if (e.key === 'Enter') { e.preventDefault(); saveQuadrant(); }
         });
@@ -1900,6 +1944,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectEl) selectEl.addEventListener('change', savePriority);
         if (selectEl) selectEl.addEventListener('blur', savePriority);
         if (selectEl) selectEl.addEventListener('keydown', (e) => {
+            if (e.isComposing || isInputComposing) return;
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+                if (e.key === 'Backspace' || e.key === 'Delete') return;
+            }
             if (e.key === 'Escape') { e.preventDefault(); cancelPriority(); }
             else if (e.key === 'Enter') { e.preventDefault(); savePriority(); }
         });
@@ -1948,6 +1996,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dateInput) dateInput.addEventListener('change', saveDate);
         if (dateInput) dateInput.addEventListener('blur', saveDate);
         if (dateInput) dateInput.addEventListener('keydown', (e) => {
+            if (e.isComposing || isInputComposing) return;
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+                if (e.key === 'Backspace' || e.key === 'Delete') return;
+            }
             if (e.key === 'Escape') { e.preventDefault(); cancelDate(); }
             else if (e.key === 'Enter') { e.preventDefault(); saveDate(); }
         });
@@ -2239,6 +2291,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('keydown', (e) => {
+        if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+            if (e.key !== 'Escape') {
+                return; // Để bàn phím hoạt động tự nhiên
+            }
+        }
         if (e.key === 'Escape') {
             const uModal = document.getElementById('update-modal');
             if (uModal && uModal.classList.contains('active') && typeof closeUpdateModal === 'function') closeUpdateModal();
@@ -2385,47 +2442,69 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // Gợi ý hiển thị NLP thời gian thực khi người dùng nhập tiêu đề
+    // Gợi ý hiển thị NLP thời gian thực khi người dùng nhập tiêu đề (An toàn IME & Tuyệt đối không gán lại .value)
     const nlpPreviewEl = document.getElementById('task-nlp-preview');
     if (titleInput && nlpPreviewEl) {
-        const updateNlpPreview = debounce(() => {
-            const val = titleInput.value.trim();
-            if (!val || val.length < 3) {
-                nlpPreviewEl.style.display = 'none';
-                nlpPreviewEl.innerHTML = '';
-                return;
-            }
+        let nlpDebounceTimer = null;
 
-            const parsed = parseSmartTaskInput(val);
-            const chips = [];
-            if (parsed.dueDate) {
-                chips.push(`<span class="task-nlp-chip"><i class="ri-calendar-line"></i> ${parsed.dueDate}</span>`);
-            }
-            if (parsed.startTime) {
-                chips.push(`<span class="task-nlp-chip"><i class="ri-time-line"></i> ${parsed.startTime}${parsed.endTime ? ' - ' + parsed.endTime : ''}</span>`);
-            }
-            if (parsed.priority) {
-                const prioText = parsed.priority === 'high' ? 'Cao 🔥' : (parsed.priority === 'low' ? 'Thấp 🌱' : 'Vừa ⚡');
-                chips.push(`<span class="task-nlp-chip"><i class="ri-flag-line"></i> ${prioText}</span>`);
-            }
-            if (parsed.categoryId) {
-                const c = getCategoryById(parsed.categoryId);
-                chips.push(`<span class="task-nlp-chip"><i class="ri-price-tag-3-line"></i> #${c ? c.name : 'Loại việc'}</span>`);
-            }
+        titleInput.addEventListener('input', (e) => {
+            if (e && e.isComposing) return;
+            if (isInputComposing) return;
 
-            if (chips.length > 0) {
-                nlpPreviewEl.style.display = 'flex';
-                nlpPreviewEl.innerHTML = `<span style="color: var(--text-muted); font-size: 11px;">Nhận diện:</span> ${chips.join('')}`;
-            } else {
-                nlpPreviewEl.style.display = 'none';
-                nlpPreviewEl.innerHTML = '';
+            const rawVal = e && e.target ? e.target.value : titleInput.value;
+
+            if (nlpDebounceTimer) clearTimeout(nlpDebounceTimer);
+            nlpDebounceTimer = setTimeout(() => {
+                if (isInputComposing) return;
+                const val = (rawVal || '').trim();
+                if (!val || val.length < 3) {
+                    nlpPreviewEl.style.display = 'none';
+                    nlpPreviewEl.innerHTML = '';
+                    return;
+                }
+
+                const parsed = parseSmartTaskInput(val);
+                const chips = [];
+                if (parsed.dueDate) {
+                    chips.push(`<span class="task-nlp-chip"><i class="ri-calendar-line"></i> ${parsed.dueDate}</span>`);
+                }
+                if (parsed.startTime) {
+                    chips.push(`<span class="task-nlp-chip"><i class="ri-time-line"></i> ${parsed.startTime}${parsed.endTime ? ' - ' + parsed.endTime : ''}</span>`);
+                }
+                if (parsed.priority) {
+                    const prioText = parsed.priority === 'high' ? 'Cao 🔴' : (parsed.priority === 'low' ? 'Thấp 🟢' : 'Vừa 🟡');
+                    chips.push(`<span class="task-nlp-chip"><i class="ri-flag-line"></i> ${prioText}</span>`);
+                }
+                if (parsed.categoryId) {
+                    const c = getCategoryById(parsed.categoryId);
+                    chips.push(`<span class="task-nlp-chip"><i class="ri-price-tag-3-line"></i> #${c ? c.name : 'Loại việc'}</span>`);
+                }
+
+                if (chips.length > 0) {
+                    nlpPreviewEl.style.display = 'flex';
+                    nlpPreviewEl.innerHTML = `<span style="color: var(--text-muted); font-size: 11px;">Nhận diện:</span> ${chips.join('')}`;
+                } else {
+                    nlpPreviewEl.style.display = 'none';
+                    nlpPreviewEl.innerHTML = '';
+                }
+            }, 200);
+        });
+
+        titleInput.addEventListener('keydown', (e) => {
+            if (e.isComposing || isInputComposing) return;
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+                if (e.key === 'Backspace' || e.key === 'Delete') return;
             }
-        }, 150);
-        titleInput.addEventListener('input', updateNlpPreview);
+        });
     }
 
     // Bắt sự kiện submit duy nhất trên thẻ <form id="task-form">
     if (taskForm) taskForm.addEventListener('submit', (e) => {
+        // Nếu người dùng đang IME composition (ghép từ tiếng Việt), không submit form
+        if (isInputComposing) {
+            e.preventDefault();
+            return;
+        }
         e.preventDefault();
 
         // Lấy tên công việc NGAY ĐẦU HÀM trước khi reset form
@@ -2514,6 +2593,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         document.addEventListener('keydown', (e) => {
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+                if (e.key !== 'Escape') return; // Để bàn phím hoạt động tự nhiên
+            }
             if (e.key === 'Escape' && taskForm.classList.contains('is-expanded')) {
                 collapseQuickAdd();
             }
@@ -2523,8 +2605,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // Thêm nhanh công việc trực tiếp trong từng Ô Ma trận Eisenhower
     quickAddForms.forEach(qForm => {
         if (!qForm) return;
+const qInput = qForm.querySelector('.quadrant-input');
+        if (qInput) {
+            qInput.addEventListener('click', e => e.stopPropagation());
+            qInput.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+            qInput.addEventListener('keydown', (e) => {
+                if (e.isComposing || isInputComposing) return;
+                if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+                    if (e.key === 'Backspace' || e.key === 'Delete') return;
+                }
+            });
+        }
 
         qForm.addEventListener('submit', (e) => {
+            if (isInputComposing) {
+                e.preventDefault();
+                return;
+            }
             e.preventDefault();
             const inputEl = qForm.querySelector('.quadrant-input');
             const title = inputEl ? inputEl.value.trim() : '';
@@ -2832,16 +2929,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Tìm kiếm thời gian thực theo từ khóa (hỗ trợ đầy đủ bàn phím ảo di động & nút Xóa Backspace)
+    // Tìm kiếm thời gian thực theo từ khóa có Debounce (250ms) & An toàn IME tiếng Việt
     if (searchTaskInput) {
-        const handleSearch = () => {
-            currentSearchQuery = searchTaskInput.value || '';
+        let searchDebounceTimer = null;
+
+        const executeSearch = (queryVal) => {
+            if (isInputComposing) return;
+            currentSearchQuery = (queryVal !== undefined ? queryVal : (searchTaskInput.value || '')).trim();
             updateActiveFiltersBadge();
-            renderTasks(); 
+            renderTasks();
         };
-        const debouncedSearch = debounce(handleSearch, 150);
-        searchTaskInput.addEventListener('input', debouncedSearch);
-        searchTaskInput.addEventListener('search', handleSearch);
+
+        const handleSearch = (e) => {
+            if (e && e.isComposing) return;
+            if (isInputComposing) return;
+
+            const val = e && e.target ? e.target.value : searchTaskInput.value;
+
+            if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(() => {
+                executeSearch(val);
+            }, 250);
+        };
+
+        searchTaskInput.addEventListener('input', handleSearch);
+
+        searchTaskInput.addEventListener('search', () => {
+            if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+            executeSearch(searchTaskInput.value);
+        });
+
+        searchTaskInput.addEventListener('keydown', (e) => {
+            if (e.isComposing || isInputComposing) return;
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+                if (e.key === 'Backspace' || e.key === 'Delete') {
+                    return;
+                }
+            }
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+                executeSearch(searchTaskInput.value);
+            }
+        });
+    }
     }
 
     // Lọc theo Filter Pills (nếu có)
@@ -5407,10 +5538,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (habitSearchInput) {
-        habitSearchInput.addEventListener('input', debounce((e) => {
-            currentHabitSearch = e.target.value.trim();
+let habitSearchDebounce = null;
+        const execHabitSearch = (val) => {
+            if (isInputComposing) return;
+            currentHabitSearch = (val !== undefined ? val : (habitSearchInput.value || '')).trim();
             renderHabits();
-        }, 150));
+        };
+
+        habitSearchInput.addEventListener('input', (e) => {
+            if (e && e.isComposing) return;
+            if (isInputComposing) return;
+            const val = e && e.target ? e.target.value : habitSearchInput.value;
+            if (habitSearchDebounce) clearTimeout(habitSearchDebounce);
+            habitSearchDebounce = setTimeout(() => {
+                execHabitSearch(val);
+            }, 250);
+        });
+
+        habitSearchInput.addEventListener('search', () => {
+            if (habitSearchDebounce) clearTimeout(habitSearchDebounce);
+            execHabitSearch(habitSearchInput.value);
+        });
+
+        habitSearchInput.addEventListener('keydown', (e) => {
+            if (e.isComposing || isInputComposing) return;
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+                if (e.key === 'Backspace' || e.key === 'Delete') return;
+            }
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (habitSearchDebounce) clearTimeout(habitSearchDebounce);
+                execHabitSearch(habitSearchInput.value);
+            }
+        });
     }
 
     document.querySelectorAll('.habit-filter-pill').forEach(btn => {
@@ -5424,6 +5584,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (habitForm) {
         habitForm.addEventListener('submit', (e) => {
+            if (isInputComposing) {
+                e.preventDefault();
+                return;
+            }
             e.preventDefault();
             const title = habitTitleInput ? habitTitleInput.value.trim() : '';
             if (!title) return;
@@ -5816,14 +5980,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (notesSearchInput) {
-        notesSearchInput.addEventListener('input', debounce((e) => {
-            currentNoteSearch = e.target.value.trim();
+let noteSearchDebounce = null;
+        const execNoteSearch = (val) => {
+            if (isInputComposing) return;
+            currentNoteSearch = (val !== undefined ? val : (notesSearchInput.value || '')).trim();
             renderNotes();
-        }, 150));
+        };
+
+        notesSearchInput.addEventListener('input', (e) => {
+            if (e && e.isComposing) return;
+            if (isInputComposing) return;
+            const val = e && e.target ? e.target.value : notesSearchInput.value;
+            if (noteSearchDebounce) clearTimeout(noteSearchDebounce);
+            noteSearchDebounce = setTimeout(() => {
+                execNoteSearch(val);
+            }, 250);
+        });
+
+        notesSearchInput.addEventListener('search', () => {
+            if (noteSearchDebounce) clearTimeout(noteSearchDebounce);
+            execNoteSearch(notesSearchInput.value);
+        });
+
+        notesSearchInput.addEventListener('keydown', (e) => {
+            if (e.isComposing || isInputComposing) return;
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+                if (e.key === 'Backspace' || e.key === 'Delete') return;
+            }
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (noteSearchDebounce) clearTimeout(noteSearchDebounce);
+                execNoteSearch(notesSearchInput.value);
+            }
+        });
     }
 
     if (noteForm) {
         noteForm.addEventListener('submit', (e) => {
+            if (isInputComposing) {
+                e.preventDefault();
+                return;
+            }
             e.preventDefault();
             const title = noteTitleInput ? noteTitleInput.value.trim() : '';
             if (!title) return;
@@ -6574,8 +6771,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const results = document.getElementById('command-palette-results');
 
         document.addEventListener('keydown', (e) => {
-            const keyLower = (e.key || '').toLowerCase();
-            if ((e.ctrlKey || e.metaKey) && keyLower === 'k') {
+if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+                if (e.key !== 'Escape' && !((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k')) {
+                    return; // Để bàn phím hoạt động tự nhiên
+                }
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
                 e.preventDefault();
                 toggleCommandPalette();
             } else if (e.key === 'Escape' && modal && modal.style.display !== 'none') {
@@ -6590,11 +6791,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (input) {
-            input.addEventListener('input', debounce(() => {
-                renderCommandPaletteResults(input.value);
-            }, 120));
+let cpDebounceTimer = null;
+            input.addEventListener('input', (e) => {
+                if (e && e.isComposing) return;
+                if (isInputComposing) return;
+                const val = e && e.target ? e.target.value : input.value;
+                if (cpDebounceTimer) clearTimeout(cpDebounceTimer);
+                cpDebounceTimer = setTimeout(() => {
+                    renderCommandPaletteResults(val);
+                }, 150);
+            });
 
             input.addEventListener('keydown', (e) => {
+                if (e.isComposing || isInputComposing) return;
+                if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+                    if (e.key === 'Backspace' || e.key === 'Delete') return;
+                }
                 if (commandPaletteCurrentItems.length === 0) return;
 
                 if (e.key === 'ArrowDown') {
