@@ -63,11 +63,11 @@
       });
     }
 
-    enqueue(actionType, entityId, payload, baseVersion = 0) {
+    enqueue(actionType, entityId, payload, baseVersion = 0, entityType = 'TASK') {
       const queue = this.getQueue();
       const op = {
         opId: `op_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-        entity: 'TASK',
+        entity: String(entityType || 'TASK').toUpperCase(),
         entityId: String(entityId),
         action: actionType, // 'CREATE' | 'UPDATE' | 'DELETE'
         payload: payload || {},

@@ -6527,6 +6527,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const localRepo = new LocalRepository();
         window.__localRepo = localRepo;
 
+        // Khởi tạo CloudSyncService (Cloud Sync & Multi-device Abstraction)
+        if (typeof CloudSyncService === 'function') {
+            const cloudSync = new CloudSyncService({ repository: localRepo, syncQueue: localRepo.syncQueue });
+            window.__cloudSync = cloudSync;
+        }
+
+        // Khởi tạo các Module chức năng
+        if (typeof TasksModule === 'function') {
+            window.__tasksModule = new TasksModule(localRepo);
+        }
+        if (typeof PomodoroModule === 'function') {
+            window.__pomodoroModule = new PomodoroModule(localRepo);
+        }
+        if (typeof HabitsModule === 'function') {
+            window.__habitsModule = new HabitsModule(localRepo);
+        }
+        if (typeof NotesModule === 'function') {
+            window.__notesModule = new NotesModule(localRepo);
+        }
+        if (typeof StatsModule === 'function') {
+            window.__statsModule = new StatsModule(localRepo);
+        }
+        if (typeof SettingsModule === 'function') {
+            window.__settingsModule = new SettingsModule(localRepo);
+        }
+
         if (typeof KanbanView === 'function' && kanbanViewContainer) {
             const kanbanInstance = new KanbanView(kanbanViewContainer, localRepo);
             window.__kanbanInstance = kanbanInstance;
@@ -6556,6 +6582,21 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             openEditModal: (task) => openUpdateModal(task),
             showToast: (msg, type) => showToast(msg, type)
+        };
+
+        // Cầu nối TreTH Architecture hoàn chỉnh (Scalable & Testable API)
+        window.TreTH = {
+            version: '3.1.0',
+            repo: localRepo,
+            sync: window.__cloudSync,
+            tasks: window.__tasksModule,
+            pomodoro: window.__pomodoroModule,
+            habits: window.__habitsModule,
+            notes: window.__notesModule,
+            stats: window.__statsModule,
+            settings: window.__settingsModule,
+            kanban: window.__kanbanInstance,
+            calendar: window.__calendarInstance
         };
 
         // Đồng bộ 2 chiều thống nhất: Khi thao tác trên Kanban, Calendar hoặc Repository

@@ -32,7 +32,8 @@ folders_to_copy = [
     'services',
     'ui',
     'styles',
-    'assets'
+    'assets',
+    'modules'
 ]
 
 for target in target_dirs:

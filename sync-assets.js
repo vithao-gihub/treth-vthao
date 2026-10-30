@@ -28,7 +28,8 @@ const foldersToCopy = [
     'services',
     'ui',
     'styles',
-    'assets'
+    'assets',
+    'modules'
 ];
 
 function copyFolderSync(from, to) {

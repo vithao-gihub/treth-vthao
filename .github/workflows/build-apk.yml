@@ -54,7 +54,7 @@ jobs:
       - name: 📦 Chuẩn bị file APK cài đặt
         run: |
           mkdir -p dist-apk
-          cp android/app/build/outputs/apk/debug/app-debug.apk dist-apk/TreTH-v3.1.0.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist-apk/TreTH-v3.1.${{ github.run_number }}.apk
           cp android/app/build/outputs/apk/debug/app-debug.apk dist-apk/TreTH-latest.apk
           echo "Danh sách file APK đã tạo:"
           ls -lh dist-apk/
@@ -66,40 +66,39 @@ jobs:
           path: dist-apk/*.apk
           retention-days: 90
 
-      - name: 🚀 Tạo GitHub Release v3.1.0 & Đính kèm file APK
+      - name: 🚀 Tạo GitHub Release & Đính kèm file APK
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
-          tag_name: v3.1.0
-          name: "TreTH v3.1.0 - Bản cài đặt Android (APK)"
+          tag_name: v3.1.${{ github.run_number }}
+          name: "TreTH v3.1.${{ github.run_number }} - Bản cài đặt Android (APK)"
           body: |
             ## 📱 TreTH - Ứng dụng Quản lý công việc, Pomodoro, Thói quen & Ghi chú
 
-            Chào bạn! File cài đặt APK chính thức của **TreTH v3.1.0** đã được tự động đóng gói sẵn sàng để tải về và sử dụng lâu dài trên điện thoại Android.
+            Chào bạn! File cài đặt APK chính thức của **TreTH** đã được tự động đóng gói sẵn sàng để tải về và sử dụng lâu dài trên điện thoại Android.
 
             ### 📥 Tải về trực tiếp (Tải trong mục Assets bên dưới):
-            - 📲 **`TreTH-v3.1.0.apk`**: Bản cài đặt ổn định cho mọi thiết bị Android.
-            - 🚀 **`TreTH-latest.apk`**: Bản cài đặt mới nhất.
+            - 🚀 **`TreTH-latest.apk`**: Bản cài đặt mới nhất tự động cập nhật.
+            - 📲 **`TreTH-v3.1.${{ github.run_number }}.apk`**: Bản cài đặt ổn định của phiên bản này.
 
             ---
 
             ### 🛠️ Hướng dẫn cài đặt trên Android:
             1. Mở trang này trên trình duyệt điện thoại Android hoặc tải về máy tính rồi chép sang điện thoại.
-            2. Nhấp vào file **`TreTH-v3.1.0.apk`** ở mục **Assets** bên dưới để tải về máy.
+            2. Nhấp vào file **`TreTH-latest.apk`** ở mục **Assets** bên dưới để tải về máy.
             3. Nhấp mở file APK vừa tải -> Chọn **Cài đặt**.
                *(Nếu điện thoại hiển thị cảnh báo "Cho phép cài đặt từ nguồn này", bạn hãy bật công tắc Cho phép để tiếp tục)*.
             4. Khởi chạy ứng dụng **TreTH** từ màn hình chính và bắt đầu quản lý công việc!
 
             ---
 
-            ### ✨ Tính năng nổi bật:
-            - **100% Hoạt động Offline:** Toàn bộ dữ liệu công việc, thói quen, ghi chú được lưu an toàn trực tiếp trên điện thoại của bạn.
-            - **Giao diện hiện đại & Siêu mượt:** Tối ưu hóa rendering, cuộn trang 60fps không giật lag.
-            - **Đầy đủ 4 chế độ xem:** Danh sách, Ma trận Eisenhower, Kanban và Lịch (Calendar).
-            - **Đồng hồ Pomodoro & Bộ theo dõi thói quen (Habit Tracker).**
-            - **Module Thống kê chuyên sâu:** 3 biểu đồ trực quan kèm lọc theo thời gian.
-            - **Sao lưu & Phục hồi:** Xuất/nhập JSON và Excel tiện lợi.
+            ### ✨ Cải tiến kiến trúc Modular & Cloud Sync Abstraction:
+            - **Kiến trúc Modular hóa:** Tách bạch rõ ràng giữa Data Layer (`LocalRepository`, `SyncQueue`, `CloudSyncService`) và các Feature Modules (`tasks`, `habits`, `notes`, `pomodoro`, `calendar`, `stats`, `settings`).
+            - **Single Source of Truth:** `LocalRepository.js` quản lý thống nhất 100% CSDL.
+            - **Sẵn sàng cho Cloud Sync:** Tích hợp `CloudSyncService` trừu tượng hóa kết nối đồng bộ đám mây và giải quyết xung đột đa thiết bị.
+            - **100% Hoạt động Offline:** Dữ liệu luôn an toàn trên máy, không phụ thuộc kết nối mạng.
           files: dist-apk/*.apk
           make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
