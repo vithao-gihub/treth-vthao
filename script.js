@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.__PERSONAL_WORKSPACE_INITIALIZED__ = true;
 
     // =========================================================================
-    // MOBILE VIRTUAL KEYBOARD & DEBOUNCE UTILITIES
+    // MOBILE VIRTUAL KEYBOARD, VISUAL VIEWPORT & DEBOUNCE UTILITIES
     // =========================================================================
     function debounce(fn, delay = 150) {
         let timer = null;
@@ -20,6 +20,92 @@ document.addEventListener('DOMContentLoaded', () => {
         el.removeAttribute('autocapitalize');
         el.removeAttribute('spellcheck');
     });
+
+    // Bộ điều khiển Toàn cục Bàn phím ảo & Khung nhìn Di động (VisualViewport + Focus Auto-Scroll)
+    (function setupGlobalMobileKeyboardController() {
+        if (window.__trethMobileKeyboardSetup) return;
+        window.__trethMobileKeyboardSetup = true;
+
+        let scrollTimer = null;
+        let lastKeyboardOffset = 0;
+
+        function isEditableInput(el) {
+            if (!el || el === document.body || el === document.documentElement) return false;
+            if (el.isContentEditable || el.getAttribute?.('contenteditable') === 'true') return true;
+            const tag = (el.tagName || '').toUpperCase();
+            if (tag === 'TEXTAREA' || tag === 'SELECT') return true;
+            if (tag === 'INPUT') {
+                const type = (el.type || 'text').toLowerCase();
+                return !['checkbox', 'radio', 'range', 'color', 'file', 'button', 'submit', 'reset', 'hidden'].includes(type);
+            }
+            return false;
+        }
+
+        function ensureElementVisibleAboveKeyboard(el) {
+            if (!isEditableInput(el)) return;
+            if (window.innerWidth > 900) return;
+            try {
+                const vvHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+                const vvTop = window.visualViewport ? window.visualViewport.offsetTop : 0;
+                const rect = el.getBoundingClientRect();
+                const safeTop = vvTop + 20;
+                const safeBottom = vvTop + vvHeight - 64;
+
+                if (rect.bottom > safeBottom || rect.top < safeTop) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+                }
+            } catch (_) {}
+        }
+
+        function updateViewportKeyboardState() {
+            const vv = window.visualViewport;
+            const offset = vv
+                ? Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop))
+                : 0;
+
+            document.documentElement.style.setProperty('--keyboard-offset', `${offset}px`);
+            const isOpen = offset > 90 || (window.innerWidth <= 900 && isEditableInput(document.activeElement));
+            document.documentElement.classList.toggle('is-keyboard-open', isOpen);
+            if (document.body) {
+                document.body.classList.toggle('is-keyboard-open', isOpen);
+            }
+
+            if (offset > 90 && lastKeyboardOffset <= 60 && isEditableInput(document.activeElement)) {
+                const activeEl = document.activeElement;
+                if (scrollTimer) clearTimeout(scrollTimer);
+                scrollTimer = setTimeout(() => ensureElementVisibleAboveKeyboard(activeEl), 120);
+            }
+            lastKeyboardOffset = offset;
+        }
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', updateViewportKeyboardState);
+            window.visualViewport.addEventListener('scroll', updateViewportKeyboardState);
+        }
+
+        document.addEventListener('focusin', (e) => {
+            const target = e.target;
+            if (!isEditableInput(target)) return;
+            target.removeAttribute?.('autocorrect');
+            target.removeAttribute?.('autocapitalize');
+            target.removeAttribute?.('spellcheck');
+
+            if (window.innerWidth <= 900) {
+                document.documentElement.classList.add('is-keyboard-open');
+                if (document.body) document.body.classList.add('is-keyboard-open');
+                if (scrollTimer) clearTimeout(scrollTimer);
+                scrollTimer = setTimeout(() => ensureElementVisibleAboveKeyboard(target), 180);
+            }
+        }, true);
+
+        document.addEventListener('focusout', () => {
+            setTimeout(() => {
+                if (!isEditableInput(document.activeElement)) {
+                    updateViewportKeyboardState();
+                }
+            }, 120);
+        }, true);
+    })();
 
     // Hàm xác nhận xóa an toàn (không dùng native confirm bị chặn trên Mobile WebView & Sandboxed iFrame)
     function safeConfirm(_message) {

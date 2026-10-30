@@ -101,6 +101,8 @@ body, .card, .modal-card, .form-control, .btn, .module-nav-btn, .task-item, .qua
 html, body {
     overflow-x: hidden;
     max-width: 100%;
+    scroll-padding-top: 72px;
+    scroll-padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px) + var(--keyboard-offset, 0px));
 }
 
 body {
@@ -281,10 +283,11 @@ html[data-theme="dark"] body {
     transition: var(--transition);
 }
 
-/* Chuẩn hóa tương tác chạm và chọn văn bản chống kẹt thao tác trên thiết bị di động */
+/* Chuẩn hóa tương tác chạm, cuộn tránh bàn phím ảo và chọn văn bản chống kẹt thao tác trên thiết bị di động */
 input,
 textarea,
 select,
+[contenteditable="true"],
 .form-control,
 .search-box-input,
 .quadrant-input,
@@ -296,6 +299,8 @@ select,
     -webkit-user-select: text !important;
     user-select: text !important;
     touch-action: manipulation !important;
+    scroll-margin-top: 72px;
+    scroll-margin-bottom: calc(140px + env(safe-area-inset-bottom, 0px) + var(--keyboard-offset, 0px));
 }
 
 .form-control {
@@ -2073,30 +2078,50 @@ select,
     .inline-edit-select,
     .inline-edit-date,
     .note-textarea,
+    .column-quick-input,
+    .cal-inline-add-input,
+    .cal-form-input,
+    .cal-form-select,
+    .command-palette-input,
     select,
     input,
-    textarea {
+    textarea,
+    [contenteditable="true"] {
         font-size: 16px !important;
         -webkit-user-select: text !important;
         user-select: text !important;
         touch-action: manipulation !important;
+        scroll-margin-top: 72px !important;
+        scroll-margin-bottom: calc(150px + env(safe-area-inset-bottom, 0px) + var(--keyboard-offset, 0px)) !important;
     }
 
-    /* Modal tràn màn hình & hỗ trợ cuộn khi mở bàn phím ảo */
+    /* Modal tràn màn hình & hỗ trợ cuộn mượt khi mở bàn phím ảo */
     .modal-overlay {
         padding: 0.5rem;
+        padding-bottom: calc(0.5rem + var(--keyboard-offset, 0px));
         align-items: center;
         justify-content: center;
+        overflow-y: auto;
+    }
+    html.is-keyboard-open .modal-overlay,
+    body.is-keyboard-open .modal-overlay,
+    .modal-overlay:focus-within {
+        align-items: flex-start !important;
+        padding-top: max(0.5rem, env(safe-area-inset-top, 0.5rem)) !important;
     }
     .modal-card {
-        max-height: 90dvh;
+        max-height: calc(100dvh - 1rem - var(--keyboard-offset, 0px));
         display: flex;
         flex-direction: column;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
     .modal-body {
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
-        flex: 1;
+        flex: 1 1 auto;
+        min-height: 0;
+        scroll-padding-bottom: 96px;
     }
     .modal-header,
     .modal-footer {
@@ -4334,15 +4359,17 @@ html[data-theme="dark"] .btn-excel:hover {
    TỐI ƯU MODAL CÀI ĐẶT & CHUYỂN ĐỔI GIAO DIỆN SÁNG / TỐI
    ========================================================================== */
 #settingsModal .modal-card {
-    max-height: 88vh;
+    max-height: calc(100dvh - 24px - var(--keyboard-offset, 0px));
     display: flex;
     flex-direction: column;
 }
 
 #settingsModal .modal-body {
-    max-height: 80vh;
+    max-height: calc(100dvh - 110px - var(--keyboard-offset, 0px));
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     padding-right: 1.25rem;
+    scroll-padding-bottom: 96px;
 }
 
 /* Custom Scrollbar cho Modal Cài đặt */

@@ -16,6 +16,7 @@
 .treth-app {
   display: flex;
   min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
   background: var(--bg-body, #F8FAFC);
   color: var(--text-main, #0F172A);
@@ -374,7 +375,11 @@ html[data-theme="dark"] .smart-list-item .smart-badge-count {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: calc(100dvh - var(--keyboard-offset, 0px));
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding-top: 72px;
+  scroll-padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px) + var(--keyboard-offset, 0px));
   position: relative;
 }
 
@@ -3991,7 +3996,7 @@ body {
   box-sizing: border-box !important;
 }
 
-/* 18.2. Đảm bảo mọi ô nhập liệu và vùng soạn thảo chọn chữ, đặt con trỏ và bấm phím Xóa (Backspace) mượt mà */
+/* 18.2. Đảm bảo mọi ô nhập liệu và vùng soạn thảo chọn chữ, đặt con trỏ, tự cuộn tránh bàn phím ảo và bấm phím Xóa (Backspace) mượt mà */
 input,
 textarea,
 select,
@@ -4000,12 +4005,19 @@ select,
 .inline-edit-input,
 .subtask-input,
 .quadrant-input,
+.column-quick-input,
+.cal-inline-add-input,
+.cal-form-input,
+.cal-form-select,
+.command-palette-input,
 .search-box-input,
 .quick-add-input {
   -webkit-user-select: text !important;
   user-select: text !important;
   touch-action: manipulation !important;
   pointer-events: auto !important;
+  scroll-margin-top: 72px !important;
+  scroll-margin-bottom: calc(140px + env(safe-area-inset-bottom, 0px) + var(--keyboard-offset, 0px)) !important;
 }
 
 /* Nút Xóa trên thẻ Kanban */
@@ -4060,8 +4072,20 @@ select,
     z-index: 1150 !important;
   }
 
-  /* Thanh Topbar: Xếp dọc thông minh, không tràn ngang */
+  /* Khung cuộn chính trên di động: tự động co giãn theo chiều cao khả dụng khi bật bàn phím ảo */
+  .treth-main {
+    height: calc(100dvh - var(--keyboard-offset, 0px)) !important;
+    max-height: calc(100dvh - var(--keyboard-offset, 0px)) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-padding-top: 64px !important;
+    scroll-padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px) + var(--keyboard-offset, 0px)) !important;
+  }
+
+  /* Thanh Topbar: Xếp dọc thông minh, không tràn ngang, tự cuộn theo trang để không đè che ô nhập liệu khi bật bàn phím ảo */
   .treth-topbar {
+    position: relative !important;
+    top: auto !important;
     height: auto !important;
     min-height: 56px !important;
     padding: 10px 12px !important;
@@ -4122,7 +4146,7 @@ select,
   #filterKeywordInput {
     width: 100% !important;
     min-width: 0 !important;
-    font-size: 15px !important;
+    font-size: 16px !important;
     height: 38px !important;
     box-sizing: border-box !important;
   }
@@ -4294,10 +4318,10 @@ select,
     margin: 0 !important;
   }
 
-  /* Không gian danh sách công việc & Thẻ công việc (.task-item) */
+  /* Không gian danh sách công việc & Thẻ công việc (.task-item) - Bổ sung đệm đáy chống bàn phím ảo che khuất */
   .treth-workspace-content {
     margin: 10px 12px 24px !important;
-    padding: 0 !important;
+    padding: 0 0 calc(96px + env(safe-area-inset-bottom, 0px) + var(--keyboard-offset, 0px)) 0 !important;
     min-width: 0 !important;
   }
 
@@ -4391,7 +4415,7 @@ select,
   .subtask-input {
     flex: 1 1 0% !important;
     min-width: 0 !important;
-    font-size: 15px !important;
+    font-size: 16px !important;
   }
 
   /* Ma trận Eisenhower 4 Ô trên di động */
@@ -4415,10 +4439,15 @@ select,
     gap: 6px !important;
   }
 
-  .quadrant-input {
+  .quadrant-input,
+  .column-quick-input,
+  .cal-inline-add-input,
+  .cal-form-input,
+  .cal-form-select,
+  .command-palette-input {
     flex: 1 1 0% !important;
     min-width: 0 !important;
-    font-size: 15px !important;
+    font-size: 16px !important;
   }
 
   /* Bảng Kanban trên di động: Xếp cột dọc vừa khít 100% chiều ngang, không tràn mép */
@@ -4760,7 +4789,7 @@ select,
   #notes-search-input {
     width: 100% !important;
     min-width: 0 !important;
-    font-size: 15px !important;
+    font-size: 16px !important;
     box-sizing: border-box !important;
   }
 
@@ -4835,18 +4864,60 @@ select,
     min-width: 0 !important;
   }
 
-  /* Tất cả các Hộp thoại Modal (Quản lý loại việc, Cài đặt, Sửa việc, Thói quen, Ghi chú) */
-  .modal-overlay {
-    padding: 12px !important;
+  /* Tất cả các Hộp thoại Modal (Quản lý loại việc, Cài đặt, Sửa việc, Thói quen, Ghi chú, Sự kiện Lịch) */
+  .modal-overlay,
+  .cal-event-modal-backdrop,
+  .command-palette-backdrop {
+    padding: 10px !important;
+    padding-bottom: calc(10px + var(--keyboard-offset, 0px)) !important;
+    box-sizing: border-box !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  html.is-keyboard-open .modal-overlay,
+  body.is-keyboard-open .modal-overlay,
+  .modal-overlay:focus-within,
+  html.is-keyboard-open .cal-event-modal-backdrop,
+  body.is-keyboard-open .cal-event-modal-backdrop,
+  .cal-event-modal-backdrop:focus-within,
+  html.is-keyboard-open .command-palette-backdrop,
+  body.is-keyboard-open .command-palette-backdrop,
+  .command-palette-backdrop:focus-within {
+    align-items: flex-start !important;
+    padding-top: max(8px, env(safe-area-inset-top, 8px)) !important;
+  }
+
+  .modal-card,
+  #settingsModal .modal-card,
+  .cal-event-modal-card,
+  .command-palette-card {
+    width: 100% !important;
+    max-width: calc(100vw - 20px) !important;
+    max-height: calc(100dvh - 20px - var(--keyboard-offset, 0px)) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
     box-sizing: border-box !important;
   }
 
-  .modal-card {
-    width: 100% !important;
-    max-width: calc(100vw - 24px) !important;
-    max-height: calc(100dvh - 24px) !important;
+  .modal-body,
+  #settingsModal .modal-body,
+  .cal-event-form {
     overflow-y: auto !important;
-    box-sizing: border-box !important;
+    -webkit-overflow-scrolling: touch !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    scroll-padding-bottom: 96px !important;
+  }
+
+  /* Ẩn tiện ích nổi góc dưới khi bàn phím ảo đang bật để không che khuất vùng nhập liệu */
+  html.is-keyboard-open .floating-pomo-widget,
+  body.is-keyboard-open .floating-pomo-widget {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
   }
 
   .cat-form-grid,

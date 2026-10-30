@@ -32,21 +32,22 @@
      * Lắng nghe VisualViewport để không bị vỡ giao diện hoặc che mất input khi bật bàn phím ảo trên Mobile Android
      */
     _setupMobileKeyboardFix() {
+      if (typeof window !== 'undefined' && window.__trethMobileKeyboardSetup) return;
       if (typeof window !== 'undefined' && window.visualViewport) {
         let prevOffset = 0;
         const updateOffset = () => {
           const offset = Math.max(0, window.innerHeight - window.visualViewport.height);
           document.documentElement.style.setProperty('--keyboard-offset', `${offset}px`);
+          document.documentElement.classList.toggle('is-keyboard-open', offset > 90);
 
-          // Chỉ cuộn nhẹ khi bàn phím ảo vừa bật lên (tránh cuộn lặp khi đang gõ hoặc bấm phím xóa)
           if (offset > 80 && prevOffset <= 60 && document.activeElement) {
             const el = document.activeElement;
             if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable) {
               setTimeout(() => {
                 try {
-                  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                  el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
                 } catch (e) {}
-              }, 60);
+              }, 120);
             }
           }
           prevOffset = offset;
