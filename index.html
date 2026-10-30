@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>TreTH - Quản lý công việc & Hiệu suất</title>
     
     <!-- Google Fonts: Inter -->
@@ -36,9 +36,9 @@
     <meta name="apple-mobile-web-app-title" content="TreTH">
     
     <!-- Hệ thống Stylesheet: Base System + TreTH App-Shell + Cyber Natural v3.1 -->
-    <link rel="stylesheet" href="./style.css?v=4.2.0">
-    <link rel="stylesheet" href="./styles/treth-ui.css?v=4.2.0">
-    <link rel="stylesheet" href="./styles/theme-treth-v3.css?v=4.2.0">
+    <link rel="stylesheet" href="./style.css?v=4.3.0">
+    <link rel="stylesheet" href="./styles/treth-ui.css?v=4.3.0">
+    <link rel="stylesheet" href="./styles/theme-treth-v3.css?v=4.3.0">
     
     <!-- Script Chống Chớp Giao diện Sáng / Tối khi tải trang -->
     <script>
@@ -728,7 +728,7 @@
                     <div class="habit-toolbar-left">
                         <div class="input-with-icon habit-search-wrapper">
                             <i class="ri-search-line input-icon"></i>
-                            <input type="text" id="habit-search-input" class="form-control" placeholder="Tìm kiếm thói quen..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                            <input type="text" id="habit-search-input" class="form-control" placeholder="Tìm kiếm thói quen..." autocomplete="off">
                         </div>
                         <div class="habit-filter-pills" role="tablist">
                             <button type="button" class="habit-filter-pill active" data-filter="all">Tất cả</button>
@@ -757,7 +757,7 @@
                     <div class="notes-toolbar-left">
                         <div class="input-with-icon notes-search-wrapper">
                             <i class="ri-search-line input-icon"></i>
-                            <input type="text" id="notes-search-input" class="form-control" placeholder="Tìm kiếm ghi chú theo tiêu đề, nội dung hoặc thẻ tag..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                            <input type="text" id="notes-search-input" class="form-control" placeholder="Tìm kiếm ghi chú theo tiêu đề, nội dung hoặc thẻ tag..." autocomplete="off">
                         </div>
                         <div id="notes-tag-pills" class="notes-tag-pills">
                             <button type="button" class="note-tag-pill active" data-tag="all">Tất cả thẻ</button>
@@ -1251,11 +1251,11 @@
                     </p>
                     <div class="form-group" style="margin-bottom: 8px;">
                         <label for="github-repo-input" class="modal-label">Kho lưu trữ GitHub (Owner/Repo)</label>
-                        <input type="text" id="github-repo-input" class="form-control" value="vithao-gihub/treth-vthao" placeholder="vithao-gihub/treth-vthao" autocomplete="off" spellcheck="false">
+                        <input type="text" id="github-repo-input" class="form-control" value="vithao-gihub/treth-vthao" placeholder="vithao-gihub/treth-vthao" autocomplete="off">
                     </div>
                     <div class="form-group" style="margin-bottom: 10px;">
                         <label for="github-token-input" class="modal-label">GitHub Personal Access Token (quyền <code>repo</code> &amp; <code>workflow</code>)</label>
-                        <input type="password" id="github-token-input" class="form-control" placeholder="Dán mã ghp_... hoặc github_pat_... vào đây" autocomplete="off" spellcheck="false">
+                        <input type="password" id="github-token-input" class="form-control" placeholder="Dán mã ghp_... hoặc github_pat_... vào đây" autocomplete="off">
                     </div>
                     <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
                         <button type="button" id="btn-github-push" class="btn btn-primary btn-sm" style="flex: 1; min-width: 200px; justify-content: center;">
@@ -1398,7 +1398,7 @@
                 
                 <div class="form-group">
                     <label for="habit-title-input" class="modal-label">Tên thói quen <span class="required">*</span></label>
-                    <input type="text" id="habit-title-input" class="form-control" placeholder="Ví dụ: Đọc sách 20 trang, Chạy bộ, Uống 2L nước..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+                    <input type="text" id="habit-title-input" class="form-control" placeholder="Ví dụ: Đọc sách 20 trang, Chạy bộ, Uống 2L nước..." autocomplete="off" required>
                 </div>
 
                 <div class="modal-form-grid">
@@ -1446,7 +1446,7 @@
 
                 <div class="form-group">
                     <label for="habit-target-note" class="modal-label">Ghi chú mục tiêu / Động lực</label>
-                    <input type="text" id="habit-target-note" class="form-control" placeholder="Mục tiêu nhỏ: 'Chỉ cần xỏ giày ra sân là thành công'" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <input type="text" id="habit-target-note" class="form-control" placeholder="Mục tiêu nhỏ: 'Chỉ cần xỏ giày ra sân là thành công'" autocomplete="off">
                 </div>
 
                 <div class="modal-footer">
@@ -1483,13 +1483,13 @@
 
                 <div class="form-group">
                     <label for="note-title-input" class="modal-label">Tiêu đề ghi chú <span class="required">*</span></label>
-                    <input type="text" id="note-title-input" class="form-control" placeholder="Tiêu đề gợi nhớ ngắn gọn..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required>
+                    <input type="text" id="note-title-input" class="form-control" placeholder="Tiêu đề gợi nhớ ngắn gọn..." autocomplete="off" required>
                 </div>
 
                 <div class="modal-form-grid">
                     <div class="form-group">
                         <label for="note-tags-input" class="modal-label">Thẻ gắn nhãn (cách nhau bằng dấu phẩy)</label>
-                        <input type="text" id="note-tags-input" class="form-control" placeholder="Ý tưởng, Dự án, Đọc sách, Họp hành..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                        <input type="text" id="note-tags-input" class="form-control" placeholder="Ý tưởng, Dự án, Đọc sách, Họp hành..." autocomplete="off">
                     </div>
                     <div class="form-group">
                         <label for="note-color-select" class="modal-label">Màu sắc phân biệt</label>
@@ -1547,7 +1547,7 @@
 - [ ] Việc cần làm
 - Danh sách chấm tròn
 **In đậm** hoặc *In nghiêng*
-`Mã code`" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+`Mã code`"></textarea>
                     </div>
 
                     <div id="note-preview-wrapper" class="note-preview-pane" style="display: none;"></div>
@@ -1594,7 +1594,7 @@
         <div class="command-palette-card">
             <div class="command-palette-search-row">
                 <i class="ri-search-2-line"></i>
-                <input type="text" id="command-palette-input" class="command-palette-input" placeholder="Gõ lệnh hoặc tìm công việc, thói quen, ghi chú... (Esc để đóng)" autocomplete="off" spellcheck="false">
+                <input type="text" id="command-palette-input" class="command-palette-input" placeholder="Gõ lệnh hoặc tìm công việc, thói quen, ghi chú... (Esc để đóng)" autocomplete="off">
                 <kbd>ESC</kbd>
             </div>
             <div class="command-palette-results" id="command-palette-results"></div>
@@ -1609,11 +1609,11 @@
     <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
     <!-- Nạp các module dịch vụ CSDL cục bộ và Giao diện Kanban TreTH -->
-    <script src="./services/SyncQueue.js?v=4.2.0"></script>
-    <script src="./services/LocalRepository.js?v=4.2.0"></script>
-    <script src="./ui/KanbanView.js?v=4.2.0"></script>
-    <script src="./ui/CalendarView.js?v=4.2.0"></script>
-    <script src="./script.js?v=4.2.0"></script>
+    <script src="./services/SyncQueue.js?v=4.3.0"></script>
+    <script src="./services/LocalRepository.js?v=4.3.0"></script>
+    <script src="./ui/KanbanView.js?v=4.3.0"></script>
+    <script src="./ui/CalendarView.js?v=4.3.0"></script>
+    <script src="./script.js?v=4.3.0"></script>
 
     <!-- Script điều khiển App-Shell UI (Sidebar toggle, Mobile drawer, Smart Lists counts) -->
     <script>

@@ -247,10 +247,6 @@
           if (card) card.setAttribute('draggable', 'false');
         });
 
-        el.addEventListener('touchstart', e => {
-          e.stopPropagation();
-        }, { passive: true });
-
         el.addEventListener('keydown', e => {
           if (e.key === 'Enter') {
             e.preventDefault();

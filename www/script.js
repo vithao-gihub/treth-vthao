@@ -4,39 +4,21 @@ document.addEventListener('DOMContentLoaded', () => {
     window.__PERSONAL_WORKSPACE_INITIALIZED__ = true;
 
     // =========================================================================
-    // IME COMPOSITION GUARD & MOBILE VIRTUAL KEYBOARD ENHANCEMENTS
+    // MOBILE VIRTUAL KEYBOARD & DEBOUNCE UTILITIES
     // =========================================================================
-    let isInputComposing = false;
-    document.addEventListener('compositionstart', () => {
-        isInputComposing = true;
-    });
-    document.addEventListener('compositionend', (e) => {
-        isInputComposing = false;
-        if (e.target && e.target.matches && e.target.matches('#search-task-input, #filterKeywordInput, #notes-search-input, #habit-search-input, #task-title, #cat-name-input, #command-palette-input')) {
-            e.target.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-    });
-    // Đảm bảo trên bàn phím ảo di động (Android Gboard / Samsung / iOS Telex),
-    // nút Xóa (Backspace/Delete) và sự kiện blur không bao giờ bị kẹt bởi trạng thái composition
-    document.addEventListener('keydown', (e) => {
-        const k = e.key || '';
-        if (k === 'Backspace' || k === 'Delete' || k === 'Enter' || k === 'Escape' || e.keyCode === 8 || e.keyCode === 46) {
-            isInputComposing = false;
-        }
-    }, true);
-    document.addEventListener('input', (e) => {
-        if (!e.isComposing || (e.inputType && e.inputType.indexOf('delete') === 0)) {
-            isInputComposing = false;
-        }
-    }, true);
-    document.addEventListener('focusout', () => {
-        isInputComposing = false;
-    }, true);
+    function debounce(fn, delay = 150) {
+        let timer = null;
+        return function (...args) {
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(() => fn.apply(this, args), delay);
+        };
+    }
 
-    // Gỡ bỏ thuộc tính autocorrect/autocapitalize gây lỗi nuốt phím Xóa trên WebView/Chrome Android
+    // Gỡ bỏ các thuộc tính cản trở bộ đệm IME (Telex/VNI) và bàn phím ảo trên Mobile
     document.querySelectorAll('input, textarea').forEach(el => {
         el.removeAttribute('autocorrect');
         el.removeAttribute('autocapitalize');
+        el.removeAttribute('spellcheck');
     });
 
     // Hàm xác nhận xóa an toàn (không dùng native confirm bị chặn trên Mobile WebView & Sandboxed iFrame)
@@ -1416,8 +1398,8 @@ document.addEventListener('DOMContentLoaded', () => {
         li.dataset.quadrant = task.quadrant || 'q2';
 
         const isSubtaskExpanded = expandedSubtaskTaskIds.has(String(task.id));
-        const isMobileViewport = typeof window !== 'undefined' && window.innerWidth <= 900;
-        if (currentViewMode === 'matrix' && !isSubtaskExpanded && !isMobileViewport) {
+        const isTouchDevice = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window);
+        if (currentViewMode === 'matrix' && !isSubtaskExpanded && !isTouchDevice) {
             li.setAttribute('draggable', 'true');
         } else {
             li.setAttribute('draggable', 'false');
@@ -1648,14 +1630,10 @@ document.addEventListener('DOMContentLoaded', () => {
             inputEl.setSelectionRange(len, len);
         } catch (err) {}
 
-        inputEl.addEventListener('click', e => e.stopPropagation());
-        inputEl.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
-
         let isHandled = false;
         const saveChanges = () => {
             if (isHandled) return;
             isHandled = true;
-            isInputComposing = false;
             const newTitle = inputEl.value.trim();
             if (newTitle && newTitle !== taskObj.title) {
                 tasks = tasks.map(t => (String(t.id) === targetId ? { ...t, title: newTitle } : t));
@@ -2324,7 +2302,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Gợi ý hiển thị NLP thời gian thực khi người dùng nhập tiêu đề
     const nlpPreviewEl = document.getElementById('task-nlp-preview');
     if (titleInput && nlpPreviewEl) {
-        titleInput.addEventListener('input', () => {
+        const updateNlpPreview = debounce(() => {
             const val = titleInput.value.trim();
             if (!val || val.length < 3) {
                 nlpPreviewEl.style.display = 'none';
@@ -2356,7 +2334,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 nlpPreviewEl.style.display = 'none';
                 nlpPreviewEl.innerHTML = '';
             }
-        });
+        }, 150);
+        titleInput.addEventListener('input', updateNlpPreview);
     }
 
     // Bắt sự kiện submit duy nhất trên thẻ <form id="task-form">
@@ -2458,11 +2437,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Thêm nhanh công việc trực tiếp trong từng Ô Ma trận Eisenhower
     quickAddForms.forEach(qForm => {
         if (!qForm) return;
-        const qInput = qForm.querySelector('.quadrant-input');
-        if (qInput) {
-            qInput.addEventListener('click', e => e.stopPropagation());
-            qInput.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
-        }
 
         qForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -2529,7 +2503,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (tasksWorkspace) tasksWorkspace.addEventListener('click', (e) => {
         if (e.target && e.target.matches && e.target.matches('.subtask-input, .inline-edit-input, .quadrant-input')) {
-            e.stopPropagation();
+            return;
         }
 
         const taskItem = e.target.closest('.task-item');
@@ -2653,14 +2627,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Chặn sự kiện touchstart trên các ô input trong tasksWorkspace để không bị kéo thả nhầm
-    if (tasksWorkspace) {
-        tasksWorkspace.addEventListener('touchstart', (e) => {
-            if (e.target && e.target.matches && e.target.matches('.subtask-input, .inline-edit-input, .quadrant-input')) {
-                e.stopPropagation();
-            }
-        }, { passive: true });
-    }
 
     // Hủy bỏ draggable khi người dùng bấm/focus vào ô nhập liệu để bàn phím ảo không xung đột
     if (tasksWorkspace) {
@@ -2787,13 +2753,9 @@ document.addEventListener('DOMContentLoaded', () => {
             updateActiveFiltersBadge();
             renderTasks(); 
         };
-        searchTaskInput.addEventListener('input', handleSearch);
+        const debouncedSearch = debounce(handleSearch, 150);
+        searchTaskInput.addEventListener('input', debouncedSearch);
         searchTaskInput.addEventListener('search', handleSearch);
-        searchTaskInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Backspace' || e.key === 'Delete' || e.keyCode === 8 || e.keyCode === 46) {
-                handleSearch();
-            }
-        });
     }
 
     // Lọc theo Filter Pills (nếu có)
@@ -5359,10 +5321,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (habitSearchInput) {
-        habitSearchInput.addEventListener('input', (e) => {
+        habitSearchInput.addEventListener('input', debounce((e) => {
             currentHabitSearch = e.target.value.trim();
             renderHabits();
-        });
+        }, 150));
     }
 
     document.querySelectorAll('.habit-filter-pill').forEach(btn => {
@@ -5768,10 +5730,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (notesSearchInput) {
-        notesSearchInput.addEventListener('input', (e) => {
+        notesSearchInput.addEventListener('input', debounce((e) => {
             currentNoteSearch = e.target.value.trim();
             renderNotes();
-        });
+        }, 150));
     }
 
     if (noteForm) {
@@ -5882,8 +5844,8 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('Chúc mừng! TreTH đã được cài đặt thành app.', 'success');
     });
 
-    // 5. Đăng ký Service Worker an toàn & Tự động xóa cache phiên bản cũ (treth-v4.0.0)
-    const CURRENT_APP_CACHE = 'treth-v4.2.0';
+    // 5. Đăng ký Service Worker an toàn & Tự động xóa cache phiên bản cũ
+    const CURRENT_APP_CACHE = 'treth-v4.3.0';
     function registerServiceWorker() {
         // Tự động dọn dẹp cache phiên bản cũ ngay trên trình duyệt / PWA / WebView
         if ('caches' in window) {
@@ -5897,7 +5859,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-            navigator.serviceWorker.register('./sw.js?v=4.2.0', { updateViaCache: 'none' })
+            navigator.serviceWorker.register('./sw.js?v=4.3.0', { updateViaCache: 'none' })
                 .then(reg => {
                     console.log('[PWA] Service Worker đăng ký thành công:', reg.scope);
                     if (typeof reg.update === 'function') {
@@ -5933,7 +5895,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnForceUpdateApp) {
         btnForceUpdateApp.addEventListener('click', async () => {
             btnForceUpdateApp.disabled = true;
-            showToast('Đang xóa bộ nhớ đệm cũ và tải phiên bản v4.2.0 mới nhất...', 'info');
+            showToast('Đang xóa bộ nhớ đệm cũ và tải phiên bản v4.3.0 mới nhất...', 'info');
             try {
                 if ('serviceWorker' in navigator) {
                     const regs = await navigator.serviceWorker.getRegistrations();
@@ -5946,7 +5908,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (_) {}
             setTimeout(() => {
                 const url = new URL(window.location.href);
-                url.searchParams.set('v', '4.2.0');
+                url.searchParams.set('v', '4.3.0');
                 url.searchParams.set('_t', String(Date.now()));
                 window.location.replace(url.toString());
             }, 350);
@@ -5981,7 +5943,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (githubSyncStatus) {
                 githubSyncStatus.style.display = 'block';
                 githubSyncStatus.style.borderColor = 'var(--border-color)';
-                githubSyncStatus.innerHTML = '⏳ Đang đóng gói tài nguyên <code>www/</code> và đẩy mã nguồn v4.2.0 lên GitHub...';
+                githubSyncStatus.innerHTML = '⏳ Đang đóng gói tài nguyên <code>www/</code> và đẩy mã nguồn v4.3.0 lên GitHub...';
             }
 
             try {
@@ -6004,7 +5966,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             ✅ Đã đẩy thành công lên nhánh <code>${escapeHTML(data.branch)}</code> (Mã commit: <code>${escapeHTML(data.commitSha)}</code>)!
                         </div>
                         <div style="color: var(--text-secondary);">
-                            GitHub Actions đang tự động biên dịch file <strong>TreTH-v4.2.0.apk</strong> mới (mất khoảng 2–3 phút).
+                            GitHub Actions đang tự động biên dịch file <strong>TreTH-v4.3.0.apk</strong> mới (mất khoảng 2–3 phút).
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;">
                             <a href="${escapeHTML(data.actionsUrl)}" target="_blank" rel="noopener noreferrer" style="color: #2563EB; font-weight: 600; text-decoration: underline;">
@@ -6542,9 +6504,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (input) {
-            input.addEventListener('input', () => {
+            input.addEventListener('input', debounce(() => {
                 renderCommandPaletteResults(input.value);
-            });
+            }, 120));
 
             input.addEventListener('keydown', (e) => {
                 if (commandPaletteCurrentItems.length === 0) return;

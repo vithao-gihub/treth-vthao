@@ -54,6 +54,7 @@ jobs:
       - name: 📦 Chuẩn bị file APK cài đặt
         run: |
           mkdir -p dist-apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist-apk/TreTH-v4.3.0.apk
           cp android/app/build/outputs/apk/debug/app-debug.apk dist-apk/TreTH-v4.2.0.apk
           cp android/app/build/outputs/apk/debug/app-debug.apk dist-apk/TreTH-v3.1.0.apk
           cp android/app/build/outputs/apk/debug/app-debug.apk dist-apk/TreTH-latest.apk
@@ -67,26 +68,26 @@ jobs:
           path: dist-apk/*.apk
           retention-days: 90
 
-      - name: 🚀 Tạo GitHub Release v4.2.0 & Đính kèm file APK
+      - name: 🚀 Tạo GitHub Release v4.3.0 & Đính kèm file APK
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
-          tag_name: v4.2.0
-          name: "TreTH v4.2.0 - Bản cài đặt Android (APK) Tối ưu Di động & Bàn phím ảo"
+          tag_name: v4.3.0
+          name: "TreTH v4.3.0 - Bản cài đặt Android (APK) Fix Triệt Để Bàn Phím Ảo & Gõ Tiếng Việt"
           body: |
-            ## 📱 TreTH v4.2.0 - Ứng dụng Quản lý công việc, Pomodoro, Thói quen & Ghi chú
+            ## 📱 TreTH v4.3.0 - Ứng dụng Quản lý công việc, Pomodoro, Thói quen & Ghi chú
 
-            Chào bạn! File cài đặt APK chính thức của **TreTH v4.2.0** (đã tối ưu toàn diện hiển thị màn hình điện thoại và sửa lỗi nhập liệu bàn phím ảo / nút Xóa) đã được tự động đóng gói sẵn sàng để tải về.
+            Chào bạn! File cài đặt APK chính thức của **TreTH v4.3.0** (đã khắc phục triệt để lỗi bàn phím ảo giữ ký tự trong bộ đệm IME khi gõ Tiếng Việt Telex/VNI và lỗi chạm mở bàn phím trên các ô nhập liệu con) đã được tự động đóng gói sẵn sàng để tải về.
 
             ### 📥 Tải về trực tiếp (Tải trong mục Assets bên dưới):
-            - 📲 **`TreTH-v4.2.0.apk`**: Bản cài đặt mới nhất (v4.2.0) tối ưu cho mọi điện thoại Android.
+            - 📲 **`TreTH-v4.3.0.apk`**: Bản cài đặt mới nhất (v4.3.0) tối ưu cho mọi điện thoại Android.
             - 🚀 **`TreTH-latest.apk`**: Bản cài đặt mới nhất.
 
             ---
 
             ### 🛠️ Hướng dẫn cài đặt trên Android:
             1. Mở trang này trên trình duyệt điện thoại Android hoặc tải về máy tính rồi chép sang điện thoại.
-            2. Nhấp vào file **`TreTH-v4.2.0.apk`** ở mục **Assets** bên dưới để tải về máy.
+            2. Nhấp vào file **`TreTH-v4.3.0.apk`** ở mục **Assets** bên dưới để tải về máy.
             3. Nhấp mở file APK vừa tải -> Chọn **Cài đặt / Cập nhật**.
             4. Khởi chạy ứng dụng **TreTH** từ màn hình chính!
           files: dist-apk/*.apk

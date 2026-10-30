@@ -1136,8 +1136,7 @@
                    id="cal-backlog-search-input" 
                    placeholder="Tìm việc chưa xếp giờ..." 
                    value="${escapeHTML(this.backlogSearchQuery)}"
-                   autocomplete="off" 
-                   spellcheck="false">
+                   autocomplete="off">
           </div>
 
           <!-- Vùng gợi ý Kéo thả -->
@@ -1669,7 +1668,7 @@
             <!-- Tiêu đề -->
             <div class="cal-form-group">
               <label for="cal-form-title">Tên sự kiện / công việc <span class="req">*</span></label>
-              <input type="text" id="cal-form-title" class="cal-form-input" value="${escapeHTML(title)}" placeholder="VD: Họp chiến lược sản phẩm..." required autocomplete="off" spellcheck="false">
+              <input type="text" id="cal-form-title" class="cal-form-input" value="${escapeHTML(title)}" placeholder="VD: Họp chiến lược sản phẩm..." required autocomplete="off">
             </div>
 
             <!-- Công tắc Cả ngày & Khung giờ -->

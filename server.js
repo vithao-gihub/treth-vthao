@@ -35,7 +35,7 @@ app.post('/api/github-sync', async (req, res) => {
     .replace(/\/+$/, '');
   const commitMsg = String(
     (req.body && req.body.commitMessage) ||
-    'chore(release): cập nhật giao diện di động, bàn phím ảo & xóa cache TreTH v4.2.0'
+    'fix(mobile-keyboard): khắc phục triệt để bộ đệm IME gõ Tiếng Việt & chạm mở bàn phím TreTH v4.3.0'
   ).trim();
 
   if (!rawToken) {
