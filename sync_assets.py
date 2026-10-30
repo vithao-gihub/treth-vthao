@@ -8,7 +8,8 @@ root_dir = os.path.dirname(os.path.abspath(__file__))
 target_dirs = [
     os.path.join(root_dir, 'www')
 ]
-android_public = os.path.join(root_dir, 'android', 'app', 'src', 'main', 'assets', 'public')
+android_public = os.path.join(root_dir, 'android', 'app', 'src', 'main', 'assets',
+    'modules', 'public')
 if os.path.exists(android_public):
     target_dirs.append(android_public)
 
@@ -36,7 +37,8 @@ folders_to_copy = [
     'services',
     'ui',
     'styles',
-    'assets'
+    'assets',
+    'modules'
 ]
 
 for target in target_dirs:

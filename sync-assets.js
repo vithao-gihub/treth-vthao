@@ -5,7 +5,8 @@ const targetDirs = [
     path.join(__dirname, 'www')
 ];
 
-const androidPublicDir = path.join(__dirname, 'android', 'app', 'src', 'main', 'assets', 'public');
+const androidPublicDir = path.join(__dirname, 'android', 'app', 'src', 'main', 'assets',
+    'modules', 'public');
 if (fs.existsSync(androidPublicDir)) {
     targetDirs.push(androidPublicDir);
 }
@@ -33,7 +34,8 @@ const foldersToCopy = [
     'services',
     'ui',
     'styles',
-    'assets'
+    'assets',
+    'modules'
 ];
 
 function copyFolderSync(from, to) {

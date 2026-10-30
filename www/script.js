@@ -2973,7 +2973,6 @@ const qInput = qForm.querySelector('.quadrant-input');
             }
         });
     }
-    }
 
     // Lọc theo Filter Pills (nếu có)
     if (filterBtns && filterBtns.length > 0) {
@@ -6963,6 +6962,47 @@ let cpDebounceTimer = null;
             const calendarInstance = new CalendarView(calendarViewContainer, localRepo);
             window.__calendarInstance = calendarInstance;
         }
+
+        // Khởi tạo CloudSyncService (Cloud Sync & Multi-device Abstraction)
+        if (typeof CloudSyncService === 'function') {
+            const cloudSync = new CloudSyncService({ repository: localRepo, syncQueue: localRepo.syncQueue });
+            window.__cloudSync = cloudSync;
+        }
+
+        // Khởi tạo các Module chức năng
+        if (typeof TasksModule === 'function') {
+            window.__tasksModule = new TasksModule(localRepo);
+        }
+        if (typeof PomodoroModule === 'function') {
+            window.__pomodoroModule = new PomodoroModule(localRepo);
+        }
+        if (typeof HabitsModule === 'function') {
+            window.__habitsModule = new HabitsModule(localRepo);
+        }
+        if (typeof NotesModule === 'function') {
+            window.__notesModule = new NotesModule(localRepo);
+        }
+        if (typeof StatsModule === 'function') {
+            window.__statsModule = new StatsModule(localRepo);
+        }
+        if (typeof SettingsModule === 'function') {
+            window.__settingsModule = new SettingsModule(localRepo);
+        }
+
+        // Cầu nối TreTH Architecture hoàn chỉnh (Scalable & Testable API)
+        window.TreTH = {
+            version: '4.3.0',
+            repo: localRepo,
+            sync: window.__cloudSync,
+            tasks: window.__tasksModule,
+            pomodoro: window.__pomodoroModule,
+            habits: window.__habitsModule,
+            notes: window.__notesModule,
+            stats: window.__statsModule,
+            settings: window.__settingsModule,
+            kanban: window.__kanbanInstance,
+            calendar: window.__calendarInstance
+        };
 
         // Cầu nối toàn cục TreTHCore
         window.TreTHCore = {
