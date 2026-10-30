@@ -1625,24 +1625,64 @@
     <!-- Script điều khiển App-Shell UI (Sidebar toggle, Mobile drawer, Smart Lists counts) -->
     <script>
         (function() {
-            // 1. Sidebar Toggle & Mobile Menu Drawer
+            // 1. Sidebar Toggle & Mobile Menu Drawer (Desktop & Mobile)
             const sidebar = document.getElementById('treth-sidebar');
             const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
             const sidebarToggleIcon = document.getElementById('sidebar-toggle-icon');
             const mobileMenuBtn = document.getElementById('mobile-menu-btn');
             const sidebarBackdrop = document.getElementById('sidebar-backdrop');
 
+            function updateSidebarStateUI(isCollapsed) {
+                if (sidebarToggleIcon) {
+                    sidebarToggleIcon.className = isCollapsed ? 'ri-menu-unfold-line' : 'ri-menu-fold-line';
+                }
+                if (sidebarToggleBtn) {
+                    sidebarToggleBtn.title = isCollapsed ? 'Mở rộng thanh điều hướng (Ctrl+B)' : 'Thu gọn thanh điều hướng (Ctrl+B)';
+                }
+                if (mobileMenuBtn) {
+                    mobileMenuBtn.title = isCollapsed ? 'Mở rộng thanh điều hướng' : 'Thu gọn thanh điều hướng';
+                    const mobIcon = mobileMenuBtn.querySelector('i');
+                    if (mobIcon && window.innerWidth > 900) {
+                        mobIcon.className = isCollapsed ? 'ri-menu-unfold-line' : 'ri-menu-fold-line';
+                    }
+                }
+            }
+
             function toggleSidebar() {
+                if (!sidebar) return;
                 if (window.innerWidth <= 900) {
                     const isOpen = sidebar.classList.toggle('open');
                     if (sidebarBackdrop) sidebarBackdrop.classList.toggle('active', isOpen);
                 } else {
                     const isCollapsed = sidebar.classList.toggle('collapsed');
-                    if (sidebarToggleIcon) {
-                        sidebarToggleIcon.className = isCollapsed ? 'ri-menu-unfold-line' : 'ri-menu-fold-line';
-                    }
+                    updateSidebarStateUI(isCollapsed);
+                    try {
+                        localStorage.setItem('personal_workspace_sidebar_collapsed', isCollapsed ? 'true' : 'false');
+                    } catch (_) {}
                 }
             }
+
+            // Khôi phục trạng thái thu gọn sidebar từ localStorage (Desktop)
+            if (window.innerWidth > 900 && sidebar) {
+                try {
+                    const savedCollapsed = localStorage.getItem('personal_workspace_sidebar_collapsed');
+                    if (savedCollapsed === 'true') {
+                        sidebar.classList.add('collapsed');
+                        updateSidebarStateUI(true);
+                    }
+                } catch (_) {}
+            }
+
+            // Phím tắt Ctrl+B hoặc Cmd+B bật/tắt Sidebar
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && (e.key || '').toLowerCase() === 'b') {
+                    if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+                        return;
+                    }
+                    e.preventDefault();
+                    toggleSidebar();
+                }
+            });
 
             function closeMobileSidebar() {
                 if (sidebar) sidebar.classList.remove('open');
