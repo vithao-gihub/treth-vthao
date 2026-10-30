@@ -348,7 +348,7 @@
                                 <i class="ri-kanban-view"></i>
                                 <span>Kanban</span>
                             </button>
-                            <button type="button" id="btn-view-calendar" class="view-btn" data-view="calendar" title="Chế độ xem Lịch biểu (TreTH)">
+                            <button type="button" id="btn-view-calendar" class="view-btn" data-view="calendar" title="Chế độ xem Lịch biểu (TreTH)" style="display: none !important;">
                                 <i class="ri-calendar-todo-line"></i>
                                 <span>Lịch</span>
                             </button>
@@ -380,7 +380,7 @@
                 <!-- THANH QUICK-ADD 1 DÒNG GỌN GÀNG (TICKTICK / TODOIST STYLE) -->
                 <section class="card form-section treth-quick-add-section" aria-label="Thêm công việc nhanh">
                     <form id="task-form" class="task-form treth-quick-add-form is-collapsed" novalidate>
-                        <i class="ri-add-circle-fill quick-add-leading-icon" aria-hidden="true"></i>
+                        <!-- quick-add-leading-icon removed to avoid duplicate plus signs -->
 
                         <!-- Input Tiêu đề công việc chính -->
                         <input 
@@ -550,8 +550,6 @@
                     <!-- 3. CHẾ ĐỘ XEM BẢNG KANBAN (KANBAN VIEW - TRETH) -->
                     <div id="kanban-view-container" class="kanban-view-container" style="display: none;" role="region" aria-label="Bảng Kanban TreTH"></div>
 
-                    <!-- 4. CHẾ ĐỘ XEM LỊCH BIỂU (CALENDAR VIEW - TRETH) -->
-                    <div id="calendar-view-container" class="calendar-view-container" style="display: none;" role="region" aria-label="Lịch công việc TreTH"></div>
                 </section>
             </div>
 
@@ -797,6 +795,8 @@
                  MODULE 5: LỊCH CÔNG VIỆC (CALENDAR MODULE)
                  ======================================================= -->
             <section id="module-calendar-view" class="calendar-module-section treth-workspace-content" style="display: none;" aria-label="Lịch biểu công việc">
+                <!-- 4. CHẾ ĐỘ XEM LỊCH BIỂU (CALENDAR VIEW - TRETH) -->
+                <div id="calendar-view-container" class="calendar-view-container" role="region" aria-label="Lịch công việc TreTH"></div>
             </section>
 
             <!-- =======================================================
@@ -1714,8 +1714,12 @@
                     closeMobileSidebar();
 
                     // Chuyển sang module công việc nếu đang ở module khác
-                    const navBtnTasks = document.getElementById('nav-btn-tasks');
-                    if (navBtnTasks) navBtnTasks.click();
+                    if (typeof window.__trethSwitchModule === 'function') {
+                        window.__trethSwitchModule('tasks');
+                    } else {
+                        const navBtnTasks = document.getElementById('nav-btn-tasks');
+                        if (navBtnTasks) navBtnTasks.click();
+                    }
 
                     const filterType = this.getAttribute('data-smart-filter');
                     if (window.__setSmartFilter) {

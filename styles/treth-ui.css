@@ -13,15 +13,21 @@
 /* ==========================================================================
    1. APP-SHELL LAYOUT (SIDEBAR + MAIN WORKSPACE)
    ========================================================================== */
+html, body {
+  height: 100vh !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+}
+
 .treth-app {
   display: flex;
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100vh !important;
+  height: 100dvh !important;
   width: 100%;
   background: var(--bg-body, #F8FAFC);
   color: var(--text-main, #0F172A);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  overflow-x: hidden;
+  overflow: hidden !important;
   position: relative;
 }
 
@@ -37,7 +43,7 @@
   left: 0;
   z-index: 100;
   background: var(--bg-surface, #FFFFFF);
-  border-right: 1px solid var(--border-color, #E2E8F0);
+  border-right: 1px solid var(--border-subtle, rgba(148, 163, 184, 0.14)) !important;
   display: flex;
   flex-direction: column;
   transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2183,9 +2189,11 @@ html[data-theme="dark"] .cal-day-cell.is-today .cal-day-number {
 }
 
 .cal-header-col-main {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 6px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
 }
 
 .cal-header-daynum {
@@ -2209,8 +2217,9 @@ html[data-theme="dark"] .cal-day-cell.is-today .cal-day-number {
 }
 
 .cal-header-lunarnum {
-  font-size: 10px;
-  color: var(--text-muted);
+  font-size: 10px !important;
+  color: var(--text-muted) !important;
+  white-space: nowrap !important;
 }
 
 .cal-header-lunarnum.is-special {
@@ -2235,13 +2244,27 @@ html[data-theme="dark"] .cal-day-cell.is-today .cal-day-number {
 /* 6. All-Day & Habits Banner Row */
 .cal-allday-row {
   display: grid;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-subtle, var(--border-color));
   background: var(--bg-surface);
-  min-height: 40px;
-  max-height: 120px;
-  overflow-y: auto;
+  min-height: 38px;
+  max-height: 112px !important;
+  overflow-y: auto !important;
   flex-shrink: 0;
   z-index: 14;
+  scrollbar-width: thin;
+}
+
+.cal-allday-row::-webkit-scrollbar {
+  width: 4px !important;
+}
+
+.cal-allday-row::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.cal-allday-row::-webkit-scrollbar-thumb {
+  background: var(--border-subtle, rgba(148, 163, 184, 0.25)) !important;
+  border-radius: 4px !important;
 }
 
 .cal-allday-label {
@@ -2271,18 +2294,42 @@ html[data-theme="dark"] .cal-day-cell.is-today .cal-day-number {
 }
 
 .cal-habit-pill {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 2px 6px;
-  border-radius: 4px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-subtle);
-  font-size: 10px;
-  color: var(--text-main);
-  cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-  user-select: none;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 3px 6px !important;
+  gap: 4px !important;
+  min-height: 24px !important;
+  border-radius: 4px !important;
+  border: 1px solid var(--border-subtle, var(--border-color)) !important;
+  background: var(--bg-elevated, var(--bg-subtle)) !important;
+  font-size: 11.5px !important;
+  line-height: 1.2 !important;
+  color: var(--text-primary, var(--text-main)) !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  user-select: none !important;
+  box-sizing: border-box !important;
+}
+
+.cal-habit-pill .cal-habit-emoji {
+  width: 14px !important;
+  height: 14px !important;
+  font-size: 11px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+.cal-habit-pill i {
+  width: 14px !important;
+  height: 14px !important;
+  font-size: 13px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
 }
 
 .cal-habit-pill:hover {
@@ -2305,18 +2352,35 @@ html[data-theme="dark"] .cal-day-cell.is-today .cal-day-number {
 }
 
 .cal-allday-chip {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: var(--bg-body);
-  border-left: 3px solid var(--chip-cat-color, var(--primary));
-  border: 1px solid var(--border-color);
-  border-left-width: 3px;
-  font-size: 11px;
-  cursor: grab;
-  user-select: none;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 3px 6px !important;
+  min-height: 24px !important;
+  line-height: 1.2 !important;
+  margin-bottom: 4px !important;
+  border-radius: 4px !important;
+  background: var(--bg-elevated, var(--bg-body)) !important;
+  border: 1px solid var(--border-subtle, var(--border-color)) !important;
+  border-left: 3px solid var(--chip-cat-color, var(--primary)) !important;
+  font-size: 11.5px !important;
+  cursor: grab !important;
+  user-select: none !important;
+  box-sizing: border-box !important;
+}
+
+.cal-allday-chip .cal-task-check {
+  width: 14px !important;
+  height: 14px !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+}
+
+.cal-allday-chip .cal-drag-handle {
+  font-size: 12px !important;
+  flex-shrink: 0 !important;
+  opacity: 0.5 !important;
 }
 
 .cal-allday-chip-title {
@@ -5082,4 +5146,149 @@ html[data-theme="dark"] .mobile-menu-trigger {
   background: var(--bg-surface, #1E293B);
   border-color: var(--border-color, rgba(255, 255, 255, 0.12));
   color: var(--text-main, #F8FAFC);
+}
+
+/* ==========================================================================
+   TRETH v3.1 - ENHANCED CYBER BAMBOO CALENDAR & VIEWPORT STYLES
+   ========================================================================== */
+
+/* 1. Module Calendar Section Isolation & 100% Height Fill */
+.calendar-module-section {
+  display: flex !important;
+  flex-direction: column !important;
+  height: calc(100vh - var(--topbar-height, 64px)) !important;
+  height: calc(100dvh - var(--topbar-height, 64px)) !important;
+  padding: 12px 24px 16px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.calendar-module-section .calendar-view-container {
+  flex: 1 !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  margin-top: 0 !important;
+  overflow: hidden !important;
+}
+
+.calendar-module-section .cal-v4-shell {
+  height: 100% !important;
+  min-height: 0 !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  border: 1px solid var(--border-subtle, rgba(148, 163, 184, 0.14)) !important;
+  background: var(--bg-surface) !important;
+  overflow: hidden !important;
+}
+
+/* 2. Unified Single-Row Toolbar (Phương án A) */
+.cal-v4-toolbar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0.65rem 1rem !important;
+  border-bottom: 1px solid var(--border-subtle, var(--border-color)) !important;
+  background: var(--bg-surface) !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+  z-index: 30 !important;
+}
+
+.cal-toolbar-left,
+.cal-toolbar-center,
+.cal-toolbar-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.cal-lunar-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 4px 10px !important;
+  gap: 6px !important;
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: var(--accent-gold, #F59E0B) !important;
+  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+}
+
+.cal-btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary, #10B981), var(--accent-cyber, #06B6D4)) !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  box-shadow: 0 2px 8px var(--accent-glow, rgba(16, 185, 129, 0.3)) !important;
+  padding: 6px 14px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+}
+
+.cal-btn-primary:hover {
+  filter: brightness(1.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* 3. Vạch thời gian thực Live Now Badge */
+.cal-now-badge {
+  position: absolute !important;
+  left: 8px !important;
+  top: -9px !important;
+  background: #EF4444 !important;
+  color: #FFFFFF !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  padding: 2px 5px !important;
+  border-radius: 4px !important;
+  box-shadow: 0 1px 4px rgba(239, 68, 68, 0.4) !important;
+  letter-spacing: 0.02em !important;
+  pointer-events: none !important;
+}
+
+/* 4. Thanh cuộn mượt 6px cho lưới giờ */
+.cal-timegrid-scroll {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  position: relative !important;
+  scroll-behavior: smooth !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--border-subtle, rgba(148, 163, 184, 0.25)) transparent !important;
+}
+
+.cal-timegrid-scroll::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+.cal-timegrid-scroll::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.cal-timegrid-scroll::-webkit-scrollbar-thumb {
+  background: var(--border-subtle, rgba(148, 163, 184, 0.25)) !important;
+  border-radius: 999px !important;
+}
+
+.cal-timegrid-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary, #10B981) !important;
+}
+
+/* 5. Ẩn icon cộng thừa bên trái input thanh nhập nhanh */
+.quick-add-leading-icon {
+  display: none !important;
 }

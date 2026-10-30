@@ -1055,8 +1055,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isKanban && window.__kanbanInstance && typeof window.__kanbanInstance.render === 'function') {
             window.__kanbanInstance.render(tasks);
         }
-        if (isCalendar && window.__calendarInstance && typeof window.__calendarInstance.render === 'function') {
-            window.__calendarInstance.render(getFilteredTasks());
+        if (isCalendar) {
+            if (currentActiveModule !== 'calendar') {
+                switchModule('calendar');
+            } else if (window.__calendarInstance && typeof window.__calendarInstance.render === 'function') {
+                window.__calendarInstance.render(getFilteredTasks());
+            }
         }
         if (isList || isMatrix) {
             renderTasks();
@@ -1082,9 +1086,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (btnViewCalendar) btnViewCalendar.addEventListener('click', () => {
-        currentViewMode = 'calendar';
-        saveViewModeToStorage();
-        applyViewMode();
+        switchModule('calendar');
     });
 
     function populateCategoryDropdowns() {
@@ -3154,6 +3156,7 @@ const qInput = qForm.querySelector('.quadrant-input');
         const topbarRight = document.querySelector('.treth-topbar-right');
         const dashboardBar = document.querySelector('.treth-dashboard-bar');
         const viewSwitcher = document.querySelector('.view-switcher');
+        const trethMain = document.querySelector('.treth-main');
 
         // Ẩn tất cả các module view trước
         if (moduleTasksView) moduleTasksView.style.display = 'none';
@@ -3177,20 +3180,29 @@ const qInput = qForm.querySelector('.quadrant-input');
         }
 
         if (targetModule === 'calendar') {
-            if (moduleTasksView) moduleTasksView.style.display = 'block';
+            // MODULE LỊCH BIỂU: Phân tách module độc lập, ẩn toàn bộ Header & Quick-add của module Công việc
+            if (moduleTasksView) moduleTasksView.style.display = 'none';
+            if (moduleCalendarView) moduleCalendarView.style.display = 'block';
+            if (calendarViewContainer) calendarViewContainer.style.display = 'block';
             if (navBtnCalendar) navBtnCalendar.classList.add('active');
-            if (btnOpenCatManager) btnOpenCatManager.style.display = '';
+            if (btnOpenCatManager) btnOpenCatManager.style.display = 'none';
 
-            if (topbarRight) topbarRight.style.display = '';
-            if (dashboardBar) dashboardBar.style.display = '';
-            if (viewSwitcher) viewSwitcher.style.display = 'flex';
+            // Ẩn triệt để Hàng 1 (Task Toolbar) và Hàng 2 (Filter Chips)
+            if (topbarRight) topbarRight.style.display = 'none';
+            if (dashboardBar) dashboardBar.style.display = 'none';
+            if (viewSwitcher) viewSwitcher.style.display = 'none';
+            if (trethMain) trethMain.style.overflowY = 'hidden';
+
+            // Bỏ trạng thái tô sáng active của DANH SÁCH THÔNG MINH khi đang ở Lịch biểu
+            document.querySelectorAll('.smart-list-item').forEach(item => item.classList.remove('active'));
 
             if (headerModuleTitle) headerModuleTitle.textContent = 'Lịch biểu';
             if (headerModuleSlogan) headerModuleSlogan.textContent = 'Theo dõi tiến độ và phân bổ kế hoạch trực quan theo dòng thời gian.';
 
             currentViewMode = 'calendar';
-            saveViewModeToStorage();
-            applyViewMode();
+            if (window.__calendarInstance && typeof window.__calendarInstance.render === 'function') {
+                window.__calendarInstance.render(getFilteredTasks());
+            }
         } else if (targetModule === 'time') {
             if (moduleTimeView) moduleTimeView.style.display = 'block';
             if (navBtnTime) navBtnTime.classList.add('active');
@@ -3199,6 +3211,9 @@ const qInput = qForm.querySelector('.quadrant-input');
             if (topbarRight) topbarRight.style.display = 'none';
             if (dashboardBar) dashboardBar.style.display = 'none';
             if (viewSwitcher) viewSwitcher.style.display = 'none';
+            if (trethMain) trethMain.style.overflowY = 'auto';
+
+            document.querySelectorAll('.smart-list-item').forEach(item => item.classList.remove('active'));
 
             if (headerModuleTitle) headerModuleTitle.textContent = 'Thời gian';
             if (headerModuleSlogan) headerModuleSlogan.textContent = 'Làm việc sâu với phương pháp Pomodoro, đo lường chính xác thời gian thực tế.';
@@ -3212,6 +3227,9 @@ const qInput = qForm.querySelector('.quadrant-input');
             if (topbarRight) topbarRight.style.display = 'none';
             if (dashboardBar) dashboardBar.style.display = 'none';
             if (viewSwitcher) viewSwitcher.style.display = 'none';
+            if (trethMain) trethMain.style.overflowY = 'auto';
+
+            document.querySelectorAll('.smart-list-item').forEach(item => item.classList.remove('active'));
 
             if (headerModuleTitle) headerModuleTitle.textContent = 'Thói quen';
             if (headerModuleSlogan) headerModuleSlogan.textContent = 'Duy trì kỷ luật mỗi ngày để tạo nên sự thay đổi vượt bậc.';
@@ -3226,6 +3244,9 @@ const qInput = qForm.querySelector('.quadrant-input');
             if (topbarRight) topbarRight.style.display = 'none';
             if (dashboardBar) dashboardBar.style.display = 'none';
             if (viewSwitcher) viewSwitcher.style.display = 'none';
+            if (trethMain) trethMain.style.overflowY = 'auto';
+
+            document.querySelectorAll('.smart-list-item').forEach(item => item.classList.remove('active'));
 
             if (headerModuleTitle) headerModuleTitle.textContent = 'Ghi chú';
             if (headerModuleSlogan) headerModuleSlogan.textContent = 'Ghi lại ý tưởng tức thì, lưu trữ kiến thức và suy nghĩ sáng tạo.';
@@ -3240,6 +3261,9 @@ const qInput = qForm.querySelector('.quadrant-input');
             if (topbarRight) topbarRight.style.display = 'none';
             if (dashboardBar) dashboardBar.style.display = 'none';
             if (viewSwitcher) viewSwitcher.style.display = 'none';
+            if (trethMain) trethMain.style.overflowY = 'auto';
+
+            document.querySelectorAll('.smart-list-item').forEach(item => item.classList.remove('active'));
 
             if (headerModuleTitle) headerModuleTitle.textContent = 'Thống kê';
             if (headerModuleSlogan) headerModuleSlogan.textContent = 'Phân tích hiệu suất làm việc, tiến độ hoàn thành và phân bổ thời gian.';
@@ -3253,15 +3277,28 @@ const qInput = qForm.querySelector('.quadrant-input');
 
             if (topbarRight) topbarRight.style.display = '';
             if (dashboardBar) dashboardBar.style.display = '';
-            if (viewSwitcher) viewSwitcher.style.display = '';
+            if (viewSwitcher) viewSwitcher.style.display = 'flex';
+            if (trethMain) trethMain.style.overflowY = 'auto';
 
             if (headerModuleTitle) headerModuleTitle.textContent = 'Công việc';
             if (headerModuleSlogan) headerModuleSlogan.textContent = 'Tập trung vào điều quan trọng, hoàn thành từng mục tiêu nhỏ mỗi ngày.';
 
-            renderTasks();
+            if (currentViewMode === 'calendar') {
+                currentViewMode = 'list';
+                saveViewModeToStorage();
+            }
+
+            const activeSmart = document.querySelector('.smart-list-item.active');
+            if (!activeSmart) {
+                const targetSmart = document.querySelector(`.smart-list-item[data-smart-filter="${currentSmartFilter || 'all'}"]`);
+                if (targetSmart) targetSmart.classList.add('active');
+            }
+
+            applyViewMode();
         }
         updateTimerDisplay();
     }
+    window.__trethSwitchModule = switchModule;
 
     if (navBtnTasks) navBtnTasks.addEventListener('click', () => switchModule('tasks'));
     if (navBtnCalendar) navBtnCalendar.addEventListener('click', () => switchModule('calendar'));

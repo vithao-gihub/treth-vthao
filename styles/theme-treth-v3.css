@@ -803,3 +803,218 @@ html[data-theme="light"] .task-name {
 
 
 
+
+/* ==========================================================================
+   5. HỆ THỐNG MÀU SẮC "CYBER BAMBOO" (TRE VIỆT NAM THỜI KỲ PHÁT TRIỂN MỚI)
+   Dark & Light Mode Specification - WCAG AA Contrast Compliant
+   ========================================================================== */
+
+/* --- A. CHẾ ĐỘ TỐI (Dark Mode - "Rừng Tre Đêm Công Nghệ / Cyber Bamboo Night") --- */
+html[data-theme="dark"],
+[data-theme="dark"] {
+  /* Màu nền (Backgrounds) */
+  --bg-app: #091013;
+  --bg-sidebar: #0D161A;
+  --bg-surface: #121E24;
+  --bg-card: #121E24;
+  --bg-elevated: #1A2B33;
+  --bg-hover: #1A2B33;
+  --bg-body: #091013;
+
+  /* Màu nhấn chủ đạo (Primary Cyber Bamboo Accent) */
+  --accent-primary: #10B981;
+  --accent-cyber: #06B6D4;
+  --accent-glow: rgba(16, 185, 129, 0.22);
+  --primary: #10B981;
+  --primary-hover: #059669;
+
+  /* Màu nhấn phụ (Secondary Traditional Accent) */
+  --accent-gold: #F59E0B;
+
+  /* Màu chữ & Độ tương phản (Typography & Contrast - Chuẩn WCAG AA) */
+  --text-primary: #F1F5F9;
+  --text-main: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #94A3B8;
+  --text-placeholder: #64748B;
+
+  /* Đường viền (Borders) */
+  --border-subtle: rgba(148, 163, 184, 0.14);
+  --border-color: rgba(148, 163, 184, 0.14);
+}
+
+html[data-theme="dark"] body {
+  background-color: var(--bg-app, #091013) !important;
+  color: var(--text-primary, #F1F5F9) !important;
+}
+
+html[data-theme="dark"] .treth-sidebar {
+  background: var(--bg-sidebar, #0D161A) !important;
+  border-right: 1px solid var(--border-subtle, rgba(148, 163, 184, 0.14)) !important;
+}
+
+html[data-theme="dark"] .treth-sidebar-header {
+  background: var(--bg-sidebar, #0D161A) !important;
+  border-bottom: 1px solid var(--border-subtle, rgba(148, 163, 184, 0.14)) !important;
+}
+
+html[data-theme="dark"] .treth-sidebar .module-nav-btn.active,
+html[data-theme="dark"] .smart-list-item.active {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: var(--accent-primary, #10B981) !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+html[data-theme="dark"] .treth-sidebar .module-nav-btn:hover:not(.active),
+html[data-theme="dark"] .smart-list-item:hover:not(.active) {
+  background: var(--bg-elevated, #1A2B33) !important;
+  color: var(--text-primary, #F1F5F9) !important;
+}
+
+html[data-theme="dark"] .sidebar-group-title,
+html[data-theme="dark"] .treth-sidebar-section .sidebar-group-title {
+  color: var(--text-secondary, #94A3B8) !important;
+}
+
+html[data-theme="dark"] .treth-topbar {
+  background: var(--bg-surface, #121E24) !important;
+  border-color: var(--border-subtle, rgba(148, 163, 184, 0.14)) !important;
+}
+
+html[data-theme="dark"] .cal-v4-shell,
+html[data-theme="dark"] .calendar-view-container {
+  background: var(--bg-surface, #121E24) !important;
+  border-color: var(--border-subtle, rgba(148, 163, 184, 0.14)) !important;
+}
+
+html[data-theme="dark"] .cal-v4-toolbar,
+html[data-theme="dark"] .cal-timegrid-header,
+html[data-theme="dark"] .cal-allday-row {
+  background: var(--bg-surface, #121E24) !important;
+  border-color: var(--border-subtle, rgba(148, 163, 184, 0.14)) !important;
+}
+
+html[data-theme="dark"] .cal-allday-chip {
+  background: var(--bg-elevated, #1A2B33) !important;
+  border-color: var(--border-subtle, rgba(148, 163, 184, 0.14)) !important;
+  color: var(--text-primary, #F1F5F9) !important;
+}
+
+html[data-theme="dark"] .cal-habit-pill {
+  background: var(--bg-elevated, #1A2B33) !important;
+  border-color: var(--border-subtle, rgba(148, 163, 184, 0.14)) !important;
+  color: var(--text-primary, #F1F5F9) !important;
+}
+
+html[data-theme="dark"] .cal-gmt-hint {
+  color: var(--text-secondary, #94A3B8) !important;
+}
+
+
+/* --- B. CHẾ ĐỘ SÁNG (Light Mode - "Tre Mai Tinh Khiết / Daylight Bamboo") --- */
+html[data-theme="light"],
+[data-theme="light"] {
+  /* Màu nền (Backgrounds) */
+  --bg-app: #F3F7F5;
+  --bg-sidebar: #EBF2EE;
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #E2ECE7;
+  --bg-hover: #E2ECE7;
+  --bg-body: #F3F7F5;
+
+  /* Màu nhấn chủ đạo (Primary Bamboo Accent) */
+  --accent-primary: #059669;
+  --accent-cyber: #0D9488;
+  --accent-glow: rgba(5, 150, 105, 0.15);
+  --primary: #059669;
+  --primary-hover: #047857;
+
+  /* Màu nhấn phụ */
+  --accent-gold: #D97706;
+
+  /* Màu chữ & Đường viền */
+  --text-primary: #0F172A;
+  --text-main: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #475569;
+  --text-placeholder: #64748B;
+
+  --border-subtle: #D5E2DC;
+  --border-color: #D5E2DC;
+}
+
+html[data-theme="light"] body {
+  background-color: var(--bg-app, #F3F7F5) !important;
+  color: var(--text-primary, #0F172A) !important;
+}
+
+html[data-theme="light"] .treth-sidebar {
+  background: var(--bg-sidebar, #EBF2EE) !important;
+  border-right: 1px solid var(--border-subtle, #D5E2DC) !important;
+}
+
+html[data-theme="light"] .treth-sidebar-header {
+  background: var(--bg-sidebar, #EBF2EE) !important;
+  border-bottom: 1px solid var(--border-subtle, #D5E2DC) !important;
+}
+
+html[data-theme="light"] .treth-sidebar .module-nav-btn.active,
+html[data-theme="light"] .smart-list-item.active {
+  background: rgba(5, 150, 105, 0.12) !important;
+  color: var(--accent-primary, #059669) !important;
+  border-color: rgba(5, 150, 105, 0.3) !important;
+}
+
+html[data-theme="light"] .treth-sidebar .module-nav-btn:hover:not(.active),
+html[data-theme="light"] .smart-list-item:hover:not(.active) {
+  background: var(--bg-elevated, #E2ECE7) !important;
+  color: var(--text-primary, #0F172A) !important;
+}
+
+html[data-theme="light"] .sidebar-group-title,
+html[data-theme="light"] .treth-sidebar-section .sidebar-group-title {
+  color: var(--text-secondary, #475569) !important;
+}
+
+html[data-theme="light"] .treth-topbar {
+  background: var(--bg-surface, #FFFFFF) !important;
+  border-color: var(--border-subtle, #D5E2DC) !important;
+}
+
+html[data-theme="light"] .cal-v4-shell,
+html[data-theme="light"] .calendar-view-container {
+  background: var(--bg-surface, #FFFFFF) !important;
+  border-color: var(--border-subtle, #D5E2DC) !important;
+}
+
+html[data-theme="light"] .cal-v4-toolbar,
+html[data-theme="light"] .cal-timegrid-header,
+html[data-theme="light"] .cal-allday-row {
+  background: var(--bg-surface, #FFFFFF) !important;
+  border-color: var(--border-subtle, #D5E2DC) !important;
+}
+
+html[data-theme="light"] .cal-allday-chip {
+  background: var(--bg-elevated, #E2ECE7) !important;
+  border-color: var(--border-subtle, #D5E2DC) !important;
+  color: var(--text-primary, #0F172A) !important;
+}
+
+html[data-theme="light"] .cal-habit-pill {
+  background: var(--bg-elevated, #E2ECE7) !important;
+  border-color: var(--border-subtle, #D5E2DC) !important;
+  color: var(--text-primary, #0F172A) !important;
+}
+
+html[data-theme="light"] .cal-gmt-hint {
+  color: var(--text-secondary, #475569) !important;
+}
+
+
+/* --- C. CTA GRADIENTS (CYBER BAMBOO ACTION BUTTONS) --- */
+.btn-quick-submit,
+.cal-btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyber)) !important;
+  color: #FFFFFF !important;
+}

@@ -71,7 +71,7 @@
       const monthNum = parseInt(lunarMonth, 10) || 1;
       const isSpecial = (dayNum === 1 || dayNum === 15);
       const isFirstDaySolar = (d.getDate() === 1);
-      const label = (dayNum === 1 || isFirstDaySolar) ? `${dayNum}/${monthNum} ÂL` : `${dayNum}`;
+      const label = (dayNum === 1 || isFirstDaySolar) ? `${dayNum}/${monthNum}` : `${dayNum}`;
       return { day: dayNum, month: monthNum, isSpecial, label };
     } catch (e) {
       return { day: '', month: '', isSpecial: false, label: '' };
@@ -498,14 +498,33 @@
               <div class="cal-sub-badges">
                 <span class="cal-badge-pill cal-week-badge" title="Tuần thứ trong năm">Tuần ${weekNum}</span>
                 <span class="cal-badge-pill cal-lunar-badge" title="Âm lịch hôm nay">
-                  <i class="ri-moon-line"></i> ${todayLunar.label}
+                  <i class="ri-moon-line"></i> <span>${todayLunar.label}</span>
                 </span>
               </div>
             </div>
           </div>
 
-          <!-- Cụm 2: Chuyển đổi 4 Chế độ xem (Giữa - Segmented Control) -->
+          <!-- Cụm 2: Bộ lọc hiển thị nhanh trên Lịch (Giữa - Phương án A) -->
           <div class="cal-toolbar-center">
+            <button type="button" id="cal-toggle-habits" class="cal-btn cal-btn-layer ${this.showHabitsLayer ? 'active' : ''}" title="Bật/Tắt lớp phủ Thói quen">
+              <i class="ri-plant-line"></i>
+              <span>Thói quen</span>
+            </button>
+
+            <button type="button" id="cal-toggle-pomo" class="cal-btn cal-btn-layer ${this.showPomoLayer ? 'active' : ''}" title="Bật/Tắt hiển thị phiên Pomodoro">
+              <i class="ri-timer-line"></i>
+              <span>Tập trung</span>
+            </button>
+
+            <button type="button" id="cal-toggle-unscheduled" class="cal-btn cal-btn-backlog ${this.showBacklog ? 'active' : ''}" title="Bật/Tắt Ngăn kéo Việc chưa xếp giờ">
+              <i class="ri-inbox-archive-line"></i>
+              <span>Backlog</span>
+              <span class="cal-backlog-badge">${unscheduledCount}</span>
+            </button>
+          </div>
+
+          <!-- Cụm 3: Chế độ xem Lịch & Hành động chính (Phải - Phương án A) -->
+          <div class="cal-toolbar-right">
             <div class="cal-view-segmented" role="tablist" aria-label="Chế độ xem lịch">
               <button type="button" class="cal-seg-btn ${this.viewMode === 'day' ? 'active' : ''}" data-cal-view="day" title="Xem theo Ngày (D)">
                 <span>Ngày</span>
@@ -524,29 +543,10 @@
                 <kbd>A</kbd>
               </button>
             </div>
-          </div>
-
-          <!-- Cụm 3: Tác vụ & Lớp phủ & Ngăn kéo (Phải) -->
-          <div class="cal-toolbar-right">
-            <button type="button" id="cal-toggle-habits" class="cal-btn cal-btn-layer ${this.showHabitsLayer ? 'active' : ''}" title="Bật/Tắt lớp phủ Thói quen">
-              <i class="ri-plant-line"></i>
-              <span>Thói quen</span>
-            </button>
-
-            <button type="button" id="cal-toggle-pomo" class="cal-btn cal-btn-layer ${this.showPomoLayer ? 'active' : ''}" title="Bật/Tắt hiển thị phiên Pomodoro">
-              <i class="ri-timer-line"></i>
-              <span>Tập trung</span>
-            </button>
-
-            <button type="button" id="cal-toggle-unscheduled" class="cal-btn cal-btn-backlog ${this.showBacklog ? 'active' : ''}" title="Bật/Tắt Ngăn kéo Việc chưa xếp giờ">
-              <i class="ri-inbox-archive-line"></i>
-              <span>Backlog</span>
-              <span class="cal-backlog-badge">${unscheduledCount}</span>
-            </button>
 
             <button type="button" id="cal-btn-create-event" class="cal-btn cal-btn-primary" title="Tạo công việc / sự kiện mới trên Lịch">
               <i class="ri-add-line"></i>
-              <span>+ Sự kiện</span>
+              <span>Sự kiện</span>
             </button>
           </div>
         </header>
@@ -1203,13 +1203,17 @@
         const lineEl = this.container.querySelector('#cal-live-now-line');
         if (!lineEl) return;
         const now = new Date();
-        const minutes = now.getHours() * 60 + now.getMinutes();
-        const topPx = (minutes / 60) * this.hourHeight;
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const timeStr = `${hours}:${minutes}`;
+        const totalMinutes = now.getHours() * 60 + now.getMinutes();
+        const topPx = (totalMinutes / 60) * this.hourHeight;
         lineEl.style.top = `${topPx}px`;
+        lineEl.innerHTML = `<span class="cal-now-badge">${timeStr}</span>`;
       };
 
       updateNowLine();
-      this.nowLineInterval = setInterval(updateNowLine, 60000); // 1 phút
+      this.nowLineInterval = setInterval(updateNowLine, 30000); // cập nhật mỗi 30s
     }
 
     _autoScrollTimeGrid() {
