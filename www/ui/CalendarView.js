@@ -220,6 +220,7 @@
     setViewMode(mode) {
       if (!['week', 'day', 'month', 'agenda'].includes(mode)) return;
       this.viewMode = mode;
+      this._hasInitialScrolled = false;
       localStorage.setItem('treth_calendar_subview_v4', mode);
       this.render();
     }
@@ -428,6 +429,10 @@
       const allTasks = this._getAllTasks().map(t => this._normalizeTaskDates(t));
       const todayISO = formatDateISO(new Date());
 
+      // Lưu lại vị trí cuộn hiện tại của lưới giờ trước khi cập nhật DOM
+      const scrollViewport = this.container.querySelector('#cal-timegrid-scroll-viewport');
+      const prevScrollTop = scrollViewport ? scrollViewport.scrollTop : null;
+
       // HTML Khung Vỏ v4.0
       this.container.innerHTML = `
         <div class="cal-v4-shell ${this.showBacklog ? 'has-backlog' : ''}">
@@ -449,7 +454,17 @@
       // Kích hoạt sự kiện và vạch thời gian thực
       this._bindEvents();
       this._initNowLine(todayISO);
-      this._autoScrollTimeGrid();
+
+      // Khôi phục vị trí cuộn ngay lập tức (không delay, không giật về đầu)
+      const newScrollViewport = this.container.querySelector('#cal-timegrid-scroll-viewport');
+      if (newScrollViewport) {
+        if (prevScrollTop !== null && prevScrollTop > 0) {
+          newScrollViewport.scrollTop = prevScrollTop;
+        } else if (!this._hasInitialScrolled) {
+          this._hasInitialScrolled = true;
+          this._autoScrollTimeGrid();
+        }
+      }
     }
 
     // =======================================================================
@@ -1217,16 +1232,14 @@
     }
 
     _autoScrollTimeGrid() {
-      setTimeout(() => {
-        const scrollEl = this.container.querySelector('#cal-timegrid-scroll-viewport');
-        if (!scrollEl) return;
-        const now = new Date();
-        const curHour = now.getHours();
-        // Cuộn đến trước giờ hiện tại 1.5 tiếng hoặc mặc định 07:30
-        const targetHour = Math.max(0, curHour - 1.5);
-        const targetScrollTop = targetHour * this.hourHeight;
-        scrollEl.scrollTop = targetScrollTop;
-      }, 50);
+      const scrollEl = this.container.querySelector('#cal-timegrid-scroll-viewport');
+      if (!scrollEl) return;
+      const now = new Date();
+      const curHour = now.getHours();
+      // Cuộn đến trước giờ hiện tại 1.5 tiếng hoặc mặc định 07:30
+      const targetHour = Math.max(0, curHour - 1.5);
+      const targetScrollTop = targetHour * this.hourHeight;
+      scrollEl.scrollTop = targetScrollTop;
     }
 
     // =======================================================================

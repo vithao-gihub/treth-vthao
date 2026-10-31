@@ -1,4 +1,4 @@
-const CACHE_NAME = 'treth-v4.3.0';
+const CACHE_NAME = 'treth-v4.0.0';
 const STATIC_ASSETS = [
     './',
     './index.html',

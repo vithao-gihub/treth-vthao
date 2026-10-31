@@ -54,7 +54,7 @@
         })();
     </script>
 </head>
-<body>
+<body class="module-active-tasks">
 
     <!-- =========================================================================
          TRETH MODERN APP-SHELL (SIDEBAR ĐIỀU HƯỚNG + MAIN WORKSPACE RỘNG RÃI)
@@ -72,7 +72,7 @@
                     <div class="treth-brand-info">
                         <span class="treth-brand-title">TreTH</span>
                         <div class="treth-brand-meta">
-                            <span class="treth-version-badge">v3.1</span>
+                            <span class="treth-version-badge">v4.0</span>
                             <span class="treth-offline-indicator" title="Sẵn sàng hoạt động ngoại tuyến (Offline-First)">
                                 <i class="ri-wifi-line"></i> Offline
                             </span>
@@ -140,41 +140,8 @@
                 </button>
             </div>
 
-            <!-- Cụm Smart Lists kiểu TickTick (Danh sách thông minh) -->
-            <div class="treth-sidebar-section treth-smart-lists-section" id="treth-smart-lists">
-                <div class="sidebar-section-header">
-                    <span class="sidebar-section-title">DANH SÁCH THÔNG MINH</span>
-                </div>
-                <ul class="treth-smart-list-items" role="tablist">
-                    <li class="smart-list-item active" data-smart-filter="all" role="tab" tabindex="0">
-                        <i class="ri-inbox-archive-line"></i>
-                        <span>Tất cả công việc</span>
-                        <span class="smart-badge-count" id="smart-count-all">0</span>
-                    </li>
-                    <li class="smart-list-item" data-smart-filter="today" role="tab" tabindex="0">
-                        <i class="ri-calendar-check-line"></i>
-                        <span>Hôm nay</span>
-                        <span class="smart-badge-count" id="smart-count-today">0</span>
-                    </li>
-                    <li class="smart-list-item" data-smart-filter="this_week" role="tab" tabindex="0">
-                        <i class="ri-calendar-2-line"></i>
-                        <span>7 ngày tới</span>
-                        <span class="smart-badge-count" id="smart-count-week">0</span>
-                    </li>
-                    <li class="smart-list-item" data-smart-filter="urgent" role="tab" tabindex="0">
-                        <i class="ri-alarm-warning-line"></i>
-                        <span>Gấp &amp; Quá hạn</span>
-                        <span class="smart-badge-count" id="smart-count-urgent">0</span>
-                    </li>
-                    <li class="smart-list-item" data-smart-filter="completed" role="tab" tabindex="0">
-                        <i class="ri-checkbox-circle-line"></i>
-                        <span>Đã hoàn thành</span>
-                        <span class="smart-badge-count" id="smart-count-completed">0</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Đáy Sidebar: Theme Switcher -->
+            
+                    <!-- Đáy Sidebar: Theme Switcher -->
             <div class="treth-sidebar-footer">
                 <div class="treth-footer-bottom">
                     <button type="button" id="btn-toggle-theme" class="btn btn-theme-pill" title="Chuyển đổi giao diện Sáng / Tối">
@@ -265,10 +232,10 @@
                                         </label>
                                         <div class="filter-select-wrapper">
                                             <select id="filterPrioritySelect" class="filter-select-control">
-                                                <option value="all">🚩 Tất cả mức ưu tiên</option>
-                                                <option value="high">🔥 Ưu tiên cao</option>
-                                                <option value="medium">🟡 Trung bình</option>
-                                                <option value="low">🟢 Ưu tiên thấp</option>
+                                                <option value="all">Tất cả mức ưu tiên</option>
+                                                <option value="high">Ưu tiên cao</option>
+                                                <option value="medium">Trung bình</option>
+                                                <option value="low">Ưu tiên thấp</option>
                                             </select>
                                         </div>
                                     </div>
@@ -281,12 +248,12 @@
                                         </label>
                                         <div class="filter-select-wrapper">
                                             <select id="filterDueDateSelect" class="filter-select-control">
-                                                <option value="all">📅 Tất cả thời hạn</option>
-                                                <option value="overdue">🔴 Quá hạn</option>
-                                                <option value="today">⏰ Đến hạn hôm nay</option>
-                                                <option value="this_week">📅 Trong tuần này</option>
-                                                <option value="future">🟢 Còn nhiều thời gian</option>
-                                                <option value="no_date">⚪ Chưa đặt hạn</option>
+                                                <option value="all">Tất cả thời hạn</option>
+                                                <option value="overdue">Quá hạn</option>
+                                                <option value="today">Đến hạn hôm nay</option>
+                                                <option value="this_week">Trong tuần này</option>
+                                                <option value="future">Còn nhiều thời gian</option>
+                                                <option value="no_date">Chưa đặt hạn</option>
                                             </select>
                                         </div>
                                     </div>
@@ -299,10 +266,10 @@
                                         </label>
                                         <div class="filter-select-wrapper">
                                             <select id="filterStatusSelect" class="filter-select-control">
-                                                <option value="all">📋 Tất cả trạng thái</option>
-                                                <option value="pending">⌛ Cần làm</option>
-                                                <option value="in-progress">🔄 Đang làm</option>
-                                                <option value="completed">✅ Đã xong</option>
+                                                <option value="all">Tất cả trạng thái</option>
+                                                <option value="pending">Cần làm</option>
+                                                <option value="in-progress">Đang làm</option>
+                                                <option value="completed">Đã xong</option>
                                             </select>
                                         </div>
                                     </div>
@@ -328,7 +295,7 @@
                             <i class="ri-sort-desc sort-inside-icon"></i>
                             <select id="taskSortSelect" class="filter-select-control sort-select-control" aria-label="Tiêu chí sắp xếp">
                                 <option value="smart" selected>Sắp xếp thông minh</option>
-                                <option value="dueDate">📅 Hạn gần nhất</option>
+                                <option value="dueDate">Hạn gần nhất</option>
                                 <option value="priority">🔥 Ưu tiên cao ➔ thấp</option>
                                 <option value="created">🕒 Mới tạo gần đây</option>
                             </select>
@@ -340,7 +307,7 @@
                                 <i class="ri-list-check-2"></i>
                                 <span>Danh sách</span>
                             </button>
-                            <button type="button" id="btn-view-matrix" class="view-btn" data-view="matrix" title="Chế độ xem Ma trận Eisenhower 4 ô">
+                            <button type="button" id="btn-view-matrix" class="view-btn" data-view="matrix" title="Chế độ xem Ma trận Eisenhower">
                                 <i class="ri-layout-grid-fill"></i>
                                 <span>Ma trận</span>
                             </button>
@@ -358,7 +325,7 @@
             </header>
 
             <!-- DẢI FILTER CHIPS KHI TÌM KIẾM / LỌC -->
-            <div class="dashboard-controls treth-dashboard-bar" aria-label="Bộ lọc đang áp dụng">
+            <div class="dashboard-controls treth-dashboard-bar" id="activeFiltersDashboardBar" aria-label="Bộ lọc đang áp dụng" style="display: none;">
                 <!-- Dải thẻ bộ lọc đang kích hoạt (Active Filter Chips) -->
                 <div id="activeFilterChipsContainer" class="active-filter-chips-container" style="display: none;" role="region" aria-label="Bộ lọc đang áp dụng">
                     <div class="active-chips-label">
@@ -380,14 +347,14 @@
                 <!-- THANH QUICK-ADD 1 DÒNG GỌN GÀNG (TICKTICK / TODOIST STYLE) -->
                 <section class="card form-section treth-quick-add-section" aria-label="Thêm công việc nhanh">
                     <form id="task-form" class="task-form treth-quick-add-form is-collapsed" novalidate>
-                        <span class="quick-add-leading-icon" aria-hidden="true" title="Thêm việc nhanh"><i class="ri-sparkling-2-fill"></i></span>
+                        <span class="quick-add-leading-icon" aria-hidden="true" title="Thêm việc nhanh"><i class="ri-add-line"></i></span>
 
                         <!-- Input Tiêu đề công việc chính -->
                         <input 
                             type="text" 
                             id="task-title" 
                             class="form-control quick-add-input" 
-                            placeholder="Hôm nay bạn cần làm gì? (VD: Họp 9h-10h30 mai !cao #Họp...)" 
+                            placeholder="Thêm công việc mới... (gõ ! ưu tiên, # nhãn)" 
                             autocomplete="off"
                             required
                         >
@@ -433,9 +400,9 @@
                                 <i class="ri-repeat-line"></i>
                                 <label for="taskRecurringInput" class="sr-only">Chu kỳ lặp lại</label>
                                 <select id="taskRecurringInput" class="quick-pill-select">
-                                    <option value="none" selected>📌 1 lần</option>
-                                    <option value="daily">🔁 Hằng ngày</option>
-                                    <option value="weekly">📅 Hằng tuần</option>
+                                    <option value="none" selected>1 lần</option>
+                                    <option value="daily">Hằng ngày</option>
+                                    <option value="weekly">Hằng tuần</option>
                                 </select>
                             </div>
 
@@ -445,10 +412,10 @@
                                 <label for="task-quadrant" class="sr-only">Góc ma trận</label>
                                 <select id="task-quadrant" class="quick-pill-select">
                                     <option value="" selected>⚡ Góc ma trận</option>
-                                    <option value="q1">🔴 Ô 1: Làm ngay</option>
-                                    <option value="q2">🔵 Ô 2: Lên lịch</option>
-                                    <option value="q3">🟡 Ô 3: Ủy quyền</option>
-                                    <option value="q4">⚪ Ô 4: Xóa</option>
+                                    <option value="q1">🔴 Làm ngay</option>
+                                    <option value="q2">🔵 Lên kế hoạch</option>
+                                    <option value="q3">🟡 Ủy thác</option>
+                                    <option value="q4">⚪ Loại bỏ</option>
                                 </select>
                             </div>
 
@@ -470,13 +437,13 @@
 
                     <!-- 2. CHẾ ĐỘ XEM MA TRẬN EISENHOWER 4 Ô (MATRIX VIEW - HỖ TRỢ DRAG & DROP) -->
                     <div id="matrix-view-container" class="eisenhower-grid" style="display: none;">
-                        <!-- Ô 1: Khẩn cấp & Quan trọng (Làm ngay) -->
+                        <!-- Khẩn cấp & Quan trọng (Làm ngay) -->
                         <div class="quadrant-card quadrant-q1" data-quadrant="q1">
                             <div class="quadrant-header">
                                 <div class="quadrant-title-group">
                                     <span class="quadrant-dot"></span>
                                     <div>
-                                        <h3 class="quadrant-title">Ô 1: Khẩn cấp &amp; Quan trọng</h3>
+                                        <h3 class="quadrant-title">Khẩn cấp &amp; Quan trọng</h3>
                                         <p class="quadrant-subtitle">Làm ngay lập tức (Do First)</p>
                                     </div>
                                 </div>
@@ -484,18 +451,18 @@
                             </div>
                             <form class="quadrant-quick-add" data-quadrant="q1" novalidate>
                                 <input type="text" class="quadrant-input" placeholder="+ Thêm việc cần làm ngay..." autocomplete="off" required>
-                                <button type="submit" class="quadrant-add-btn" title="Thêm vào Ô 1"><i class="ri-add-line"></i></button>
+                                <button type="submit" class="quadrant-add-btn" title="Thêm việc"><i class="ri-add-line"></i></button>
                             </form>
                             <ul id="matrix-list-q1" class="quadrant-task-list" data-quadrant="q1"></ul>
                         </div>
 
-                        <!-- Ô 2: Không khẩn cấp & Quan trọng (Lên kế hoạch) -->
+                        <!-- Không khẩn cấp & Quan trọng (Lên kế hoạch) -->
                         <div class="quadrant-card quadrant-q2" data-quadrant="q2">
                             <div class="quadrant-header">
                                 <div class="quadrant-title-group">
                                     <span class="quadrant-dot"></span>
                                     <div>
-                                        <h3 class="quadrant-title">Ô 2: Không khẩn cấp &amp; Quan trọng</h3>
+                                        <h3 class="quadrant-title">Không khẩn cấp &amp; Quan trọng</h3>
                                         <p class="quadrant-subtitle">Lên kế hoạch thực hiện (Schedule)</p>
                                     </div>
                                 </div>
@@ -503,45 +470,45 @@
                             </div>
                             <form class="quadrant-quick-add" data-quadrant="q2" novalidate>
                                 <input type="text" class="quadrant-input" placeholder="+ Thêm việc cần lên kế hoạch..." autocomplete="off" required>
-                                <button type="submit" class="quadrant-add-btn" title="Thêm vào Ô 2"><i class="ri-add-line"></i></button>
+                                <button type="submit" class="quadrant-add-btn" title="Thêm việc"><i class="ri-add-line"></i></button>
                             </form>
                             <ul id="matrix-list-q2" class="quadrant-task-list" data-quadrant="q2"></ul>
                         </div>
 
-                        <!-- Ô 3: Khẩn cấp & Không quan trọng (Ủy quyền/Làm nhanh) -->
+                        <!-- Khẩn cấp & Không quan trọng (Ủy thác) -->
                         <div class="quadrant-card quadrant-q3" data-quadrant="q3">
                             <div class="quadrant-header">
                                 <div class="quadrant-title-group">
                                     <span class="quadrant-dot"></span>
                                     <div>
-                                        <h3 class="quadrant-title">Ô 3: Khẩn cấp &amp; Ít quan trọng</h3>
-                                        <p class="quadrant-subtitle">Ủy quyền hoặc Làm nhanh (Delegate)</p>
+                                        <h3 class="quadrant-title">Khẩn cấp &amp; Không quan trọng</h3>
+                                        <p class="quadrant-subtitle">Ủy thác / Giao việc (Delegate)</p>
                                     </div>
                                 </div>
                                 <span class="quadrant-count" id="count-q3">0</span>
                             </div>
                             <form class="quadrant-quick-add" data-quadrant="q3" novalidate>
-                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc ủy quyền / xử lý nhanh..." autocomplete="off" required>
-                                <button type="submit" class="quadrant-add-btn" title="Thêm vào Ô 3"><i class="ri-add-line"></i></button>
+                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc ủy quyền / giao việc..." autocomplete="off" required>
+                                <button type="submit" class="quadrant-add-btn" title="Thêm việc"><i class="ri-add-line"></i></button>
                             </form>
                             <ul id="matrix-list-q3" class="quadrant-task-list" data-quadrant="q3"></ul>
                         </div>
 
-                        <!-- Ô 4: Không khẩn cấp & Không quan trọng (Xóa/Tối thiểu) -->
+                        <!-- Không khẩn cấp & Không quan trọng (Loại bỏ) -->
                         <div class="quadrant-card quadrant-q4" data-quadrant="q4">
                             <div class="quadrant-header">
                                 <div class="quadrant-title-group">
                                     <span class="quadrant-dot"></span>
                                     <div>
-                                        <h3 class="quadrant-title">Ô 4: Không khẩn cấp &amp; Ít quan trọng</h3>
-                                        <p class="quadrant-subtitle">Tối thiểu hóa hoặc Loại bỏ (Eliminate)</p>
+                                        <h3 class="quadrant-title">Không khẩn cấp &amp; Không quan trọng</h3>
+                                        <p class="quadrant-subtitle">Loại bỏ / Làm sau (Eliminate)</p>
                                     </div>
                                 </div>
                                 <span class="quadrant-count" id="count-q4">0</span>
                             </div>
                             <form class="quadrant-quick-add" data-quadrant="q4" novalidate>
-                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc vặt / giải trí..." autocomplete="off" required>
-                                <button type="submit" class="quadrant-add-btn" title="Thêm vào Ô 4"><i class="ri-add-line"></i></button>
+                                <input type="text" class="quadrant-input" placeholder="+ Thêm việc loại bỏ / làm sau..." autocomplete="off" required>
+                                <button type="submit" class="quadrant-add-btn" title="Thêm việc"><i class="ri-add-line"></i></button>
                             </form>
                             <ul id="matrix-list-q4" class="quadrant-task-list" data-quadrant="q4"></ul>
                         </div>
@@ -994,8 +961,8 @@
                             <i class="ri-repeat-line input-icon"></i>
                             <select id="modalRecurringInput" class="form-control">
                                 <option value="none" selected>📌 Làm một lần</option>
-                                <option value="daily">🔁 Hằng ngày</option>
-                                <option value="weekly">📅 Hằng tuần</option>
+                                <option value="daily">Hằng ngày</option>
+                                <option value="weekly">Hằng tuần</option>
                             </select>
                         </div>
                     </div>
@@ -1005,10 +972,10 @@
                         <div class="input-with-icon">
                             <i class="ri-layout-grid-line input-icon"></i>
                             <select id="modal-quadrant" class="form-control">
-                                <option value="q1">🔴 Ô 1: Làm ngay (Khẩn cấp & Quan trọng)</option>
-                                <option value="q2">🔵 Ô 2: Lên lịch (Không khẩn cấp & Quan trọng)</option>
-                                <option value="q3">🟡 Ô 3: Ủy quyền (Khẩn cấp & Ít quan trọng)</option>
-                                <option value="q4">⚪ Ô 4: Xóa (Không khẩn cấp & Ít quan trọng)</option>
+                                <option value="q1">🔴 Làm ngay (Khẩn cấp &amp; Quan trọng)</option>
+                                <option value="q2">🔵 Lên kế hoạch (Không khẩn cấp &amp; Quan trọng)</option>
+                                <option value="q3">🟡 Ủy thác (Khẩn cấp &amp; Không quan trọng)</option>
+                                <option value="q4">⚪ Loại bỏ (Không khẩn cấp &amp; Không quan trọng)</option>
                             </select>
                         </div>
                     </div>
@@ -1700,50 +1667,7 @@
                 });
             });
 
-            // 2. Tích hợp Smart Lists (TickTick Style) kết nối trực tiếp với Bộ Lọc
-            const smartListItems = document.querySelectorAll('.smart-list-item');
-            const filterDueDateSelect = document.getElementById('filterDueDateSelect');
-            const filterStatusSelect = document.getElementById('filterStatusSelect');
-            const resetFiltersBtn = document.getElementById('resetFiltersBtn');
-            const btnApplyFilter = document.getElementById('btnApplyFilter');
-
-            smartListItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    smartListItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                    closeMobileSidebar();
-
-                    // Chuyển sang module công việc nếu đang ở module khác
-                    if (typeof window.__trethSwitchModule === 'function') {
-                        window.__trethSwitchModule('tasks');
-                    } else {
-                        const navBtnTasks = document.getElementById('nav-btn-tasks');
-                        if (navBtnTasks) navBtnTasks.click();
-                    }
-
-                    const filterType = this.getAttribute('data-smart-filter');
-                    if (window.__setSmartFilter) {
-                        window.__setSmartFilter(filterType);
-                    }
-                    if (resetFiltersBtn) resetFiltersBtn.click();
-
-                    if (filterType === 'today' && filterDueDateSelect) {
-                        filterDueDateSelect.value = 'today';
-                        filterDueDateSelect.dispatchEvent(new Event('change'));
-                    } else if (filterType === 'this_week' && filterDueDateSelect) {
-                        filterDueDateSelect.value = 'this_week';
-                        filterDueDateSelect.dispatchEvent(new Event('change'));
-                    } else if (filterType === 'urgent' && filterDueDateSelect) {
-                        filterDueDateSelect.value = 'overdue';
-                        filterDueDateSelect.dispatchEvent(new Event('change'));
-                    } else if (filterType === 'completed' && filterStatusSelect) {
-                        filterStatusSelect.value = 'completed';
-                        filterStatusSelect.dispatchEvent(new Event('change'));
-                    }
-
-                    if (btnApplyFilter) btnApplyFilter.click();
-                });
-            });
+            // 2. Smart Lists đã được loại bỏ theo yêu cầu
         })();
     </script>
 </body>

@@ -186,7 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const navBtnNotes = document.getElementById('nav-btn-notes');
     const navBtnAnalytics = document.getElementById('nav-btn-analytics');
     let currentActiveModule = 'tasks';
-    let currentSmartFilter = 'all';
+    document.body.classList.add('module-active-tasks');
+    // currentSmartFilter removed
     let analyticsTimeRange = 'all';
     const headerModuleBadge = document.getElementById('header-module-badge');
     const headerModuleTitle = document.getElementById('header-module-title');
@@ -1055,10 +1056,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getPriorityConfig(priority) {
         const configs = {
-            high: { class: 'badge-high', icon: 'ri-fire-fill', label: 'Ưu tiên cao' },
-            medium: { class: 'badge-medium', icon: 'ri-flag-2-fill', label: 'Trung bình' },
-            low: { class: 'badge-low', icon: 'ri-leaf-fill', label: 'Ưu tiên thấp' },
-            none: { class: 'badge-none', icon: 'ri-question-line', label: 'Chưa chọn ưu tiên' }
+            high: { class: 'badge-high', icon: 'priority-dot high', label: 'Ưu tiên cao' },
+            medium: { class: 'badge-medium', icon: 'priority-dot medium', label: 'Trung bình' },
+            low: { class: 'badge-low', icon: 'priority-dot low', label: 'Ưu tiên thấp' },
+            none: { class: 'badge-none', icon: 'priority-dot none', label: 'Chưa chọn ưu tiên' }
         };
         return configs[priority] || configs.none;
     }
@@ -1133,16 +1134,36 @@ document.addEventListener('DOMContentLoaded', () => {
         const isCalendar = currentViewMode === 'calendar';
         const isList = !isMatrix && !isKanban && !isCalendar;
 
+        // Đồng bộ class trên body
+        document.body.classList.toggle('view-mode-matrix', isMatrix);
+        document.body.classList.toggle('view-mode-kanban', isKanban);
+        document.body.classList.toggle('view-mode-list', isList);
+        document.body.classList.toggle('view-mode-calendar', isCalendar);
+
+        const trethMainEl = document.querySelector('.treth-main');
+        if (trethMainEl && currentActiveModule === 'tasks') {
+            trethMainEl.style.overflowY = isMatrix ? 'hidden' : 'auto';
+        }
+
+        // Quy tắc 1 & 2 & 3: Thanh nhập việc nhanh CHỈ hiện ở chế độ Danh sách
+        const quickAddSection = document.querySelector('.treth-quick-add-section');
+        if (quickAddSection) {
+            quickAddSection.style.display = isList ? 'block' : 'none';
+        }
+
+        // Ẩn/Hiện triệt để từng container chế độ xem
         if (listViewContainer) listViewContainer.style.display = isList ? 'block' : 'none';
         if (matrixViewContainer) matrixViewContainer.style.display = isMatrix ? 'grid' : 'none';
         if (kanbanViewContainer) kanbanViewContainer.style.display = isKanban ? 'block' : 'none';
         if (calendarViewContainer) calendarViewContainer.style.display = isCalendar ? 'block' : 'none';
 
+        // Đồng bộ trạng thái active trên các nút View Switcher
         if (btnViewList) btnViewList.classList.toggle('active', isList);
         if (btnViewMatrix) btnViewMatrix.classList.toggle('active', isMatrix);
         if (btnViewKanban) btnViewKanban.classList.toggle('active', isKanban);
         if (btnViewCalendar) btnViewCalendar.classList.toggle('active', isCalendar);
 
+        // Kích hoạt render tương ứng
         if (isKanban && window.__kanbanInstance && typeof window.__kanbanInstance.render === 'function') {
             window.__kanbanInstance.render(tasks);
         }
@@ -1306,42 +1327,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (statProgressTextEl) statProgressTextEl.textContent = `${percent}%`;
         if (statProgressBarEl) statProgressBarEl.style.width = `${percent}%`;
 
-        updateSmartListCounts();
+        // // // updateSmartListCounts();
     }
 
-    function updateSmartListCounts() {
-        const todayStr = getTodayISO();
-        const next7DaysStr = getOffsetDateISO(7);
-        const activeTasks = tasks.filter(t => !t.isDeleted);
-
-        const allCount = activeTasks.filter(t => t.status !== 'completed').length;
-        const completedCount = activeTasks.filter(t => t.status === 'completed').length;
-        const todayCount = activeTasks.filter(t => t.dueDate === todayStr && t.status !== 'completed').length;
-        const weekCount = activeTasks.filter(t => t.dueDate && t.dueDate >= todayStr && t.dueDate <= next7DaysStr && t.status !== 'completed').length;
-        const urgentCount = activeTasks.filter(t => t.dueDate && t.dueDate < todayStr && t.status !== 'completed').length;
-
-        const elAll = document.getElementById('smart-count-all');
-        const elToday = document.getElementById('smart-count-today');
-        const elWeek = document.getElementById('smart-count-week');
-        const elUrgent = document.getElementById('smart-count-urgent');
-        const elDone = document.getElementById('smart-count-completed');
-
-        if (elAll) elAll.textContent = allCount;
-        if (elToday) elToday.textContent = todayCount;
-        if (elWeek) elWeek.textContent = weekCount;
-        if (elUrgent) elUrgent.textContent = urgentCount;
-        if (elDone) elDone.textContent = completedCount;
-    }
-
-    window.__setSmartFilter = function(filterType) {
-        currentSmartFilter = filterType || 'all';
-        renderTasks();
-    };
+    function updateSmartListCounts() { /* Smart list removed */ }
+    window.__setSmartFilter = function() {};
 
     function getFilteredTasks() {
         const keyword = (currentSearchQuery || '').trim();
         const normalizedKeyword = removeVietnameseTones(keyword);
-        const isCompletedFilter = currentSmartFilter === 'completed' || currentStatusFilter === 'completed';
+        const isCompletedFilter = currentStatusFilter === 'completed';
 
         return tasks.filter(task => {
             if (task.isDeleted) return false;
@@ -1539,13 +1534,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        const activeFiltersDashboardBar = document.getElementById('activeFiltersDashboardBar');
         if (chips.length === 0) {
             activeFilterChipsContainer.style.display = 'none';
+            if (activeFiltersDashboardBar) activeFiltersDashboardBar.style.display = 'none';
             activeFilterChipsList.innerHTML = '';
             return;
         }
 
         activeFilterChipsContainer.style.display = 'flex';
+        if (activeFiltersDashboardBar) activeFiltersDashboardBar.style.display = 'block';
         activeFilterChipsList.innerHTML = '';
 
         chips.forEach(chip => {
@@ -1575,12 +1573,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPriorityFilter = 'all';
         currentDueDateFilter = 'all';
 
-        if (resetSmart) {
-            currentSmartFilter = 'all';
-            document.querySelectorAll('.smart-list-item').forEach(item => {
-                item.classList.toggle('active', item.dataset.smartFilter === 'all');
-            });
-        }
+// Smart filter reset removed
 
         if (searchTaskInput) searchTaskInput.value = '';
         if (filterCategorySelect) filterCategorySelect.value = 'all';
@@ -1605,14 +1598,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         updateActiveFiltersBadge();
-        updateSmartListBadges();
+        // updateSmartListBadges removed
         renderTasks();
     }
 
     // Expose resetAllFilters to window so empty state button can call it
     window.__resetAllAppFilters = () => resetAllFilters(true);
+    window.__filterByStatus = function(status) {
+        if (filterStatusSelect) {
+            filterStatusSelect.value = status;
+            filterStatusSelect.dispatchEvent(new Event('change'));
+            if (btnApplyFilter) btnApplyFilter.click();
+        }
+    };
+    window.__setTasks = function(newTasks) {
+        tasks = Array.isArray(newTasks) ? newTasks : [];
+        renderTasks();
+    };
+    window.__getTasks = function() {
+        return tasks;
+    };
+    
 
-    function createTaskElement(task) {
+    window.__createTaskElement = createTaskElement;
+
+    function createTaskElement(task, isMatrix = false) {
         const isCompleted = task.status === 'completed';
         const priorityInfo = getPriorityConfig(task.priority);
         const categoryInfo = getCategoryById(task.categoryId);
@@ -1621,18 +1631,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const deadlineInfo = getDeadlineAndTermInfo(task.dueDate, task.status);
 
         const li = document.createElement('li');
-        li.className = `task-item ${isCompleted ? 'is-completed' : ''}`;
+        li.className = `task-item ${isCompleted ? 'is-completed' : ''} ${isMatrix ? 'is-matrix-task' : ''}`;
         li.dataset.id = String(task.id);
         li.dataset.priority = task.priority;
         li.dataset.quadrant = task.quadrant || 'q2';
 
         const isSubtaskExpanded = expandedSubtaskTaskIds.has(String(task.id));
         const isTouchDevice = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window);
-        if (currentViewMode === 'matrix' && !isSubtaskExpanded && !isTouchDevice) {
+        if (isMatrix && !isSubtaskExpanded && !isTouchDevice) {
             li.setAttribute('draggable', 'true');
         } else {
             li.setAttribute('draggable', 'false');
         }
+
+        const subtasks = Array.isArray(task.subtasks) ? task.subtasks : [];
+        const totalSub = subtasks.length;
+        const doneSub = subtasks.filter(s => s.completed).length;
 
         li.innerHTML = `
             <div class="task-left">
@@ -1661,10 +1675,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="badge badge-recurring" title="Công việc lặp lại hằng tuần">📅 Hằng tuần</span>
                         ` : ''}
 
-                        <span class="badge-quadrant ${quadrantInfo.class} quadrant-editable" title="Nhấp để chuyển sang góc ma trận khác">
-                            <span>${quadrantInfo.dot}</span>
-                            <span>${quadrantInfo.shortLabel}</span>
-                        </span>
+                        ${!isMatrix ? `
+                            <span class="badge-quadrant ${quadrantInfo.class} quadrant-editable" title="Nhấp để chuyển sang góc ma trận khác">
+                                <span>${quadrantInfo.dot}</span>
+                                <span>${quadrantInfo.shortLabel}</span>
+                            </span>
+                        ` : ''}
 
                         <span class="badge ${priorityInfo.class} badge-editable" title="Nhấp để đổi mức độ ưu tiên">
                             <i class="${priorityInfo.icon}"></i> ${priorityInfo.label}
@@ -1674,24 +1690,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${deadlineInfo ? deadlineInfo.displayText : '<i class="ri-calendar-line"></i> Chưa đặt hạn'}
                         </span>
 
-                        ${(() => {
-                            const subtasks = Array.isArray(task.subtasks) ? task.subtasks : [];
-                            const totalSub = subtasks.length;
-                            const doneSub = subtasks.filter(s => s.completed).length;
-                            if (totalSub > 0) {
-                                return `
-                                    <button type="button" class="badge-subtasks-toggle ${doneSub === totalSub ? 'has-completed' : ''}" title="Bấm để xem/quản lý việc con">
-                                        <i class="ri-checkbox-multiple-line"></i> ☑️ ${doneSub}/${totalSub}
-                                    </button>
-                                `;
-                            } else {
-                                return `
-                                    <button type="button" class="btn-subtask-add-quick" title="Thêm việc con cho công việc này">
-                                        <i class="ri-node-tree"></i> + Việc con
-                                    </button>
-                                `;
-                            }
-                        })()}
+                        ${totalSub > 0 ? `
+                            <button type="button" class="badge-subtasks-toggle ${doneSub === totalSub ? 'has-completed' : ''}" title="Bấm để xem/quản lý việc con">
+                                <i class="ri-checkbox-multiple-line"></i> ☑️ ${doneSub}/${totalSub}
+                            </button>
+                        ` : `
+                            <button type="button" class="btn-subtask-add-quick" title="Thêm việc con cho công việc này">
+                                <i class="ri-node-tree"></i> + Việc con
+                            </button>
+                        `}
 
                         ${!isCompleted && task.status === 'in-progress' ? `
                             <span class="task-date" style="font-weight: 500;">
@@ -1700,13 +1707,23 @@ document.addEventListener('DOMContentLoaded', () => {
                         ` : ''}
                     </div>
 
+                    ${isMatrix && totalSub > 0 ? `
+                        <div class="matrix-subtasks-quick-list" aria-label="Danh sách việc con">
+                            ${subtasks.map(s => `
+                                <div class="matrix-subtask-row ${s.completed ? 'is-completed' : ''}" data-subtask-id="${escapeHTML(s.id)}">
+                                    <label class="matrix-subtask-label">
+                                        <input type="checkbox" class="subtask-item-checkbox matrix-subtask-check" ${s.completed ? 'checked' : ''}>
+                                        <span class="matrix-subtask-title">${escapeHTML(s.title)}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+
                     ${(() => {
                         const isExpanded = expandedSubtaskTaskIds.has(String(task.id));
                         if (!isExpanded) return '';
 
-                        const subtasks = Array.isArray(task.subtasks) ? task.subtasks : [];
-                        const totalSub = subtasks.length;
-                        const doneSub = subtasks.filter(s => s.completed).length;
                         const percent = totalSub > 0 ? Math.round((doneSub / totalSub) * 100) : 0;
 
                         return `
@@ -1741,10 +1758,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="task-actions">
                 ${!isCompleted ? `
-                    <button type="button" class="btn-icon btn-edit-title" title="Sửa tên công việc">
-                        <i class="ri-edit-line"></i>
-                        <span class="action-text">Sửa</span>
-                    </button>
                     <button type="button" class="btn-icon btn-progress" title="Chuyển trạng thái: Cần làm / Đang thực hiện">
                         <i class="${task.status === 'in-progress' ? 'ri-pause-circle-line' : 'ri-play-circle-line'}"></i>
                         <span class="action-text">${task.status === 'in-progress' ? 'Đang làm' : 'Bắt đầu'}</span>
@@ -1767,25 +1780,76 @@ document.addEventListener('DOMContentLoaded', () => {
         // 1. Render List View
         taskListEl.innerHTML = '';
         if (sortedTasks.length === 0) {
-            taskListEl.innerHTML = `
-                <li class="task-empty-state" role="status">
-                    <div class="empty-state-card">
-                        <div class="empty-icon-wrapper">
-                            <i class="ri-search-eye-line"></i>
+            const hasActiveFilter = Boolean(
+                (currentSearchQuery && currentSearchQuery.trim()) ||
+                (currentCategoryFilter && currentCategoryFilter !== 'all') ||
+                (currentPriorityFilter && currentPriorityFilter !== 'all') ||
+                (currentDueDateFilter && currentDueDateFilter !== 'all') ||
+                (currentStatusFilter && currentStatusFilter !== 'all')
+            );
+
+            const activeTasks = tasks.filter(t => !t.isDeleted);
+            const pendingTasks = activeTasks.filter(t => t.status !== 'completed');
+            const completedTasks = activeTasks.filter(t => t.status === 'completed');
+
+            let emptyHtml = '';
+
+            if (hasActiveFilter) {
+                // Trường hợp 1: Có bộ lọc/tìm kiếm nhưng không khớp kết quả nào
+                emptyHtml = `
+                    <li class="task-empty-state" role="status">
+                        <div class="empty-state-card">
+                            <div class="empty-icon-wrapper is-filter">
+                                <i class="ri-search-eye-line"></i>
+                            </div>
+                            <h3 class="empty-title">Không tìm thấy công việc phù hợp</h3>
+                            <p class="empty-desc">Không có công việc nào khớp với các tiêu chí bộ lọc hoặc từ khóa tìm kiếm hiện tại.</p>
+                            <button type="button" class="btn btn-primary btn-sm btn-empty-reset" onclick="window.__resetAllAppFilters && window.__resetAllAppFilters()">
+                                <i class="ri-refresh-line" style="margin-right: 6px;"></i>
+                                <span>Xóa bộ lọc để xem tất cả</span>
+                            </button>
                         </div>
-                        <h3 class="empty-title">Không tìm thấy công việc phù hợp</h3>
-                        <p class="empty-desc">Không có công việc nào khớp với các tiêu chí bộ lọc hoặc từ khóa tìm kiếm hiện tại.</p>
-                        <button type="button" class="btn btn-primary btn-sm btn-empty-reset" onclick="window.__resetAllAppFilters && window.__resetAllAppFilters()">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-right: 6px;"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>
-                            <span>Xóa bộ lọc để xem tất cả</span>
-                        </button>
-                    </div>
-                </li>
-            `;
+                    </li>
+                `;
+            } else if (activeTasks.length > 0 && pendingTasks.length === 0) {
+                // Trường hợp 2: Đã hoàn thành toàn bộ công việc! (All tasks completed)
+                emptyHtml = `
+                    <li class="task-empty-state is-all-completed" role="status">
+                        <div class="empty-state-card empty-card-completed">
+                            <div class="empty-icon-wrapper is-success">
+                                <i class="ri-checkbox-circle-fill"></i>
+                            </div>
+                            <h3 class="empty-title">Tuyệt vời! Bạn đã hoàn thành tất cả công việc 🎉</h3>
+                            <p class="empty-desc">Không còn công việc nào đang chờ xử lý. Hãy thư giãn, tái tạo năng lượng hoặc thêm mục tiêu mới!</p>
+                            <div class="empty-actions-row">
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="window.__filterByStatus && window.__filterByStatus('completed')">
+                                    <i class="ri-history-line" style="margin-right: 6px;"></i>
+                                    <span>Xem lại việc đã hoàn thành (${completedTasks.length})</span>
+                                </button>
+                            </div>
+                        </div>
+                    </li>
+                `;
+            } else {
+                // Trường hợp 3: Chưa có công việc nào trong danh sách
+                emptyHtml = `
+                    <li class="task-empty-state is-no-tasks" role="status">
+                        <div class="empty-state-card">
+                            <div class="empty-icon-wrapper is-welcome">
+                                <i class="ri-sparkling-fill"></i>
+                            </div>
+                            <h3 class="empty-title">Không gian làm việc đang trống</h3>
+                            <p class="empty-desc">Hôm nay bạn cần làm gì? Hãy nhập vào thanh "Thêm việc nhanh" ở phía trên để bắt đầu!</p>
+                        </div>
+                    </li>
+                `;
+            }
+
+            taskListEl.innerHTML = emptyHtml;
         } else {
             const listFragment = document.createDocumentFragment();
             sortedTasks.forEach(task => {
-                listFragment.appendChild(createTaskElement(task));
+                listFragment.appendChild(createTaskElement(task, false));
             });
             taskListEl.appendChild(listFragment);
         }
@@ -1804,13 +1868,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 listContainer.innerHTML = `
                     <li class="quadrant-empty">
                         <i class="ri-drag-drop-line"></i>
-                        <span>Trống — Kéo thả công việc vào đây hoặc nhập ở ô phía trên</span>
+                        <span>Chưa có công việc</span>
                     </li>
                 `;
             } else {
                 const quadFragment = document.createDocumentFragment();
                 quadrantTasks.forEach(task => {
-                    quadFragment.appendChild(createTaskElement(task));
+                    quadFragment.appendChild(createTaskElement(task, true));
                 });
                 listContainer.appendChild(quadFragment);
             }
@@ -1852,6 +1916,8 @@ document.addEventListener('DOMContentLoaded', () => {
         inputEl.setAttribute('autocomplete', 'off');
         inputEl.setAttribute('aria-label', 'Sửa tên công việc');
 
+        inputEl.addEventListener('click', (e) => e.stopPropagation());
+        inputEl.addEventListener('mousedown', (e) => e.stopPropagation());
         taskNameEl.replaceWith(inputEl);
         inputEl.focus();
         try {
@@ -1894,60 +1960,121 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    let activeBadgePopover = null;
+
+    function closeActiveBadgePopover() {
+        if (activeBadgePopover && activeBadgePopover.parentNode) {
+            activeBadgePopover.parentNode.removeChild(activeBadgePopover);
+            activeBadgePopover = null;
+        }
+    }
+
+    function showInlineBadgePopover({ targetEl, items, currentVal, onSelect, minWidth = 160 }) {
+        closeActiveBadgePopover();
+
+        const rect = targetEl.getBoundingClientRect();
+        const popover = document.createElement('div');
+        popover.className = 'treth-inline-badge-popover';
+
+        let popoverTop = rect.bottom + 4;
+        let popoverLeft = rect.left;
+        if (popoverLeft + minWidth > window.innerWidth - 12) {
+            popoverLeft = Math.max(12, window.innerWidth - minWidth - 12);
+        }
+        if (popoverTop + 240 > window.innerHeight - 12) {
+            popoverTop = Math.max(12, rect.top - 240);
+        }
+
+        popover.style.cssText = `
+            position: fixed;
+            top: ${popoverTop}px;
+            left: ${popoverLeft}px;
+            min-width: ${minWidth}px;
+            max-height: 280px;
+            overflow-y: auto;
+            z-index: 99999;
+        `;
+
+        const list = document.createElement('div');
+        list.className = 'inline-badge-popover-list';
+
+        items.forEach(item => {
+            const row = document.createElement('div');
+            const isSelected = String(item.value) === String(currentVal);
+            row.className = `inline-badge-popover-item ${isSelected ? 'is-selected' : ''}`;
+            row.innerHTML = `
+                <div class="popover-item-left">
+                    ${item.iconHtml ? item.iconHtml : ''}
+                    <span class="popover-item-label">${escapeHTML(item.label)}</span>
+                </div>
+                ${isSelected ? '<i class="ri-check-line popover-item-check"></i>' : ''}
+            `;
+
+            row.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeActiveBadgePopover();
+                onSelect(item.value);
+            });
+
+            list.appendChild(row);
+        });
+
+        popover.appendChild(list);
+        document.body.appendChild(popover);
+        activeBadgePopover = popover;
+
+        setTimeout(() => {
+            const handleOutsideClick = (e) => {
+                if (popover && !popover.contains(e.target) && !targetEl.contains(e.target)) {
+                    closeActiveBadgePopover();
+                    document.removeEventListener('click', handleOutsideClick, true);
+                    document.removeEventListener('keydown', handleEscape, true);
+                }
+            };
+            const handleEscape = (e) => {
+                if (e.key === 'Escape') {
+                    closeActiveBadgePopover();
+                    document.removeEventListener('click', handleOutsideClick, true);
+                    document.removeEventListener('keydown', handleEscape, true);
+                }
+            };
+            document.addEventListener('click', handleOutsideClick, true);
+            document.addEventListener('keydown', handleEscape, true);
+        }, 10);
+    }
+
     function enableInlineCategoryEdit(taskItem, catBadgeEl) {
         const targetId = String(taskItem.dataset.id);
         const taskObj = tasks.find(t => String(t.id) === targetId);
         if (!taskObj) return;
 
-        const selectEl = document.createElement('select');
-        selectEl.className = 'inline-edit-select';
+        const items = categories.map(cat => ({
+            value: cat.id,
+            label: cat.name,
+            iconHtml: cat.iconUrl
+                ? `<img src="${escapeHTML(cat.iconUrl)}" class="cat-img-icon" alt="" style="width:16px;height:16px;object-fit:contain;border-radius:3px;margin-right:6px;" />`
+                : `<span style="margin-right:6px;">${escapeHTML(cat.icon)}</span>`
+        }));
 
-        categories.forEach(cat => {
-            const optionEl = document.createElement('option');
-            optionEl.value = cat.id;
-            optionEl.textContent = `${cat.icon} ${cat.name}`;
-            if (String(cat.id) === String(taskObj.categoryId)) optionEl.selected = true;
-            selectEl.appendChild(optionEl);
+        items.unshift({
+            value: 'none',
+            label: 'Chưa phân loại',
+            iconHtml: '<span style="margin-right:6px;">📁</span>'
         });
 
-        if (taskObj.categoryId === 'none' || !categories.some(c => String(c.id) === String(taskObj.categoryId))) {
-            const noneOpt = document.createElement('option');
-            noneOpt.value = 'none';
-            noneOpt.textContent = '📁 Chưa phân loại';
-            noneOpt.selected = true;
-            selectEl.prepend(noneOpt);
-        }
-
-        catBadgeEl.replaceWith(selectEl);
-        selectEl.focus();
-
-        let isHandled = false;
-        const saveCategory = () => {
-            if (isHandled) return;
-            isHandled = true;
-            const newCatId = selectEl.value;
-            if (newCatId && String(newCatId) !== String(taskObj.categoryId)) {
-                tasks = tasks.map(t => (String(t.id) === targetId ? { ...t, categoryId: newCatId } : t));
-                saveTasksToStorage('UPDATE', targetId, { categoryId: newCatId });
+        showInlineBadgePopover({
+            targetEl: catBadgeEl,
+            items,
+            currentVal: taskObj.categoryId || 'none',
+            minWidth: 180,
+            onSelect: (newCatId) => {
+                if (String(newCatId) !== String(taskObj.categoryId)) {
+                    tasks = tasks.map(t => (String(t.id) === targetId ? { ...t, categoryId: newCatId } : t));
+                    saveTasksToStorage('UPDATE', targetId, { categoryId: newCatId });
+                    renderTasks();
+                    syncTimeModuleUI();
+                }
             }
-            renderTasks();
-            syncTimeModuleUI();
-        };
-        const cancelCategory = () => {
-            if (isHandled) return;
-            isHandled = true;
-            renderTasks();
-        };
-
-        if (selectEl) selectEl.addEventListener('change', saveCategory);
-        if (selectEl) selectEl.addEventListener('blur', saveCategory);
-        if (selectEl) selectEl.addEventListener('keydown', (e) => {
-            if (e.isComposing || isInputComposing) return;
-            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
-                if (e.key === 'Backspace' || e.key === 'Delete') return;
-            }
-            if (e.key === 'Escape') { e.preventDefault(); cancelCategory(); }
-            else if (e.key === 'Enter') { e.preventDefault(); saveCategory(); }
         });
     }
 
@@ -1956,55 +2083,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const taskObj = tasks.find(t => String(t.id) === targetId);
         if (!taskObj) return;
 
-        const selectEl = document.createElement('select');
-        selectEl.className = 'inline-edit-select';
-        selectEl.setAttribute('aria-label', 'Chọn góc ma trận Eisenhower');
-
-        const options = [
-            { value: 'q1', text: '🔴 Ô 1: Làm ngay' },
-            { value: 'q2', text: '🔵 Ô 2: Lên kế hoạch' },
-            { value: 'q3', text: '🟡 Ô 3: Ủy quyền' },
-            { value: 'q4', text: '⚪ Ô 4: Tối thiểu' }
+        const items = [
+            { value: 'q1', label: 'Khẩn cấp & Quan trọng (Làm ngay)', iconHtml: '<span style="color:#EF4444;margin-right:6px;">🔴</span>' },
+            { value: 'q2', label: 'Không khẩn cấp & Quan trọng (Lên kế hoạch)', iconHtml: '<span style="color:#3B82F6;margin-right:6px;">🔵</span>' },
+            { value: 'q3', label: 'Khẩn cấp & Không quan trọng (Ủy thác)', iconHtml: '<span style="color:#F59E0B;margin-right:6px;">🟡</span>' },
+            { value: 'q4', label: 'Không khẩn cấp & Không quan trọng (Loại bỏ)', iconHtml: '<span style="color:#94A3B8;margin-right:6px;">⚪</span>' }
         ];
 
-        options.forEach(opt => {
-            const optionEl = document.createElement('option');
-            optionEl.value = opt.value;
-            optionEl.textContent = opt.text;
-            if (opt.value === (taskObj.quadrant || 'q2')) optionEl.selected = true;
-            selectEl.appendChild(optionEl);
-        });
-
-        quadBadgeEl.replaceWith(selectEl);
-        selectEl.focus();
-
-        let isHandled = false;
-        const saveQuadrant = () => {
-            if (isHandled) return;
-            isHandled = true;
-            const newQuad = selectEl.value;
-            if (newQuad && newQuad !== taskObj.quadrant) {
-                tasks = tasks.map(t => (String(t.id) === targetId ? { ...t, quadrant: newQuad } : t));
-                saveTasksToStorage('UPDATE', targetId, { quadrant: newQuad });
+        showInlineBadgePopover({
+            targetEl: quadBadgeEl,
+            items,
+            currentVal: taskObj.quadrant || 'q2',
+            minWidth: 260,
+            onSelect: (newQuad) => {
+                if (newQuad !== taskObj.quadrant) {
+                    tasks = tasks.map(t => (String(t.id) === targetId ? { ...t, quadrant: newQuad } : t));
+                    saveTasksToStorage('UPDATE', targetId, { quadrant: newQuad });
+                    renderTasks();
+                    syncTimeModuleUI();
+                }
             }
-            renderTasks();
-            syncTimeModuleUI();
-        };
-        const cancelQuadrant = () => {
-            if (isHandled) return;
-            isHandled = true;
-            renderTasks();
-        };
-
-        if (selectEl) selectEl.addEventListener('change', saveQuadrant);
-        if (selectEl) selectEl.addEventListener('blur', saveQuadrant);
-        if (selectEl) selectEl.addEventListener('keydown', (e) => {
-            if (e.isComposing || isInputComposing) return;
-            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
-                if (e.key === 'Backspace' || e.key === 'Delete') return;
-            }
-            if (e.key === 'Escape') { e.preventDefault(); cancelQuadrant(); }
-            else if (e.key === 'Enter') { e.preventDefault(); saveQuadrant(); }
         });
     }
 
@@ -2013,54 +2111,42 @@ document.addEventListener('DOMContentLoaded', () => {
         const taskObj = tasks.find(t => String(t.id) === targetId);
         if (!taskObj) return;
 
-        const selectEl = document.createElement('select');
-        selectEl.className = 'inline-edit-select';
-
-        const options = [
-            { value: 'high', text: '🔥 Cao' },
-            { value: 'medium', text: '🚩 Trung bình' },
-            { value: 'low', text: '🌿 Thấp' }
+        const items = [
+            {
+                value: 'high',
+                label: 'Ưu tiên cao',
+                iconHtml: '<span class="priority-dot high"></span>'
+            },
+            {
+                value: 'medium',
+                label: 'Trung bình',
+                iconHtml: '<span class="priority-dot medium"></span>'
+            },
+            {
+                value: 'low',
+                label: 'Ưu tiên thấp',
+                iconHtml: '<span class="priority-dot low"></span>'
+            },
+            {
+                value: 'none',
+                label: 'Chưa chọn ưu tiên',
+                iconHtml: '<span class="priority-dot none"></span>'
+            }
         ];
 
-        const currentPriority = taskObj.priority !== 'none' ? taskObj.priority : 'medium';
-        options.forEach(opt => {
-            const optionEl = document.createElement('option');
-            optionEl.value = opt.value;
-            optionEl.textContent = opt.text;
-            if (opt.value === currentPriority) optionEl.selected = true;
-            selectEl.appendChild(optionEl);
-        });
-
-        badgeEl.replaceWith(selectEl);
-        selectEl.focus();
-
-        let isHandled = false;
-        const savePriority = () => {
-            if (isHandled) return;
-            isHandled = true;
-            const newPriority = selectEl.value;
-            if (newPriority && newPriority !== taskObj.priority) {
-                tasks = tasks.map(t => (String(t.id) === targetId ? { ...t, priority: newPriority } : t));
-                saveTasksToStorage('UPDATE', targetId, { priority: newPriority });
+        showInlineBadgePopover({
+            targetEl: badgeEl,
+            items,
+            currentVal: taskObj.priority || 'medium',
+            minWidth: 160,
+            onSelect: (newPriority) => {
+                if (newPriority !== taskObj.priority) {
+                    tasks = tasks.map(t => (String(t.id) === targetId ? { ...t, priority: newPriority } : t));
+                    saveTasksToStorage('UPDATE', targetId, { priority: newPriority });
+                    renderTasks();
+                    syncTimeModuleUI();
+                }
             }
-            renderTasks();
-            syncTimeModuleUI();
-        };
-        const cancelPriority = () => {
-            if (isHandled) return;
-            isHandled = true;
-            renderTasks();
-        };
-
-        if (selectEl) selectEl.addEventListener('change', savePriority);
-        if (selectEl) selectEl.addEventListener('blur', savePriority);
-        if (selectEl) selectEl.addEventListener('keydown', (e) => {
-            if (e.isComposing || isInputComposing) return;
-            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
-                if (e.key === 'Backspace' || e.key === 'Delete') return;
-            }
-            if (e.key === 'Escape') { e.preventDefault(); cancelPriority(); }
-            else if (e.key === 'Enter') { e.preventDefault(); savePriority(); }
         });
     }
 
@@ -2130,7 +2216,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         const taskItem = e.target.closest('.task-item');
-        if (!taskItem || !taskItem.dataset.id || taskItem.classList.contains('is-editing')) {
+        if (!taskItem || !taskItem.dataset.id || taskItem.classList.contains('is-editing') || e.target.closest('.task-name, .task-meta, .badge, input, select, button, .subtask-item')) {
             e.preventDefault();
             return;
         }
@@ -2854,7 +2940,7 @@ const qInput = qForm.querySelector('.quadrant-input');
 
         // Toggle hoàn thành subtask
         if (e.target.classList.contains('subtask-item-checkbox')) {
-            const subItem = e.target.closest('.subtask-item');
+            const subItem = e.target.closest('[data-subtask-id]');
             if (subItem && subItem.dataset.subtaskId) {
                 const subId = String(subItem.dataset.subtaskId);
                 tasks = tasks.map(t => {
@@ -2903,7 +2989,7 @@ const qInput = qForm.querySelector('.quadrant-input');
             return;
         }
 
-        if (e.target.closest('.btn-edit-title') || (e.target.closest('.task-name') && window.innerWidth <= 900)) {
+        if (e.target.closest('.task-name') || e.target.closest('.btn-edit-title')) {
             enableInlineTitleEdit(taskItem);
             return;
         }
@@ -3017,10 +3103,12 @@ const qInput = qForm.querySelector('.quadrant-input');
             filterDropdownPanel.style.display = 'block';
             btnToggleFilterDropdown.classList.add('active');
             btnToggleFilterDropdown.setAttribute('aria-expanded', 'true');
+            if (filterPopoverContainer) filterPopoverContainer.classList.add('is-open');
         } else {
             filterDropdownPanel.style.display = 'none';
             btnToggleFilterDropdown.classList.remove('active');
             btnToggleFilterDropdown.setAttribute('aria-expanded', 'false');
+            if (filterPopoverContainer) filterPopoverContainer.classList.remove('is-open');
         }
     }
 
@@ -3230,7 +3318,7 @@ const qInput = qForm.querySelector('.quadrant-input');
         
         tasks = tasks.map(t => (String(t.id) === safeTargetId ? { ...t, status: newStatus } : t));
         saveTasksToStorage('UPDATE', safeTargetId, { status: newStatus });
-        updateSmartListCounts();
+        // // // updateSmartListCounts();
 
         if (taskItem) {
             taskItem.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
@@ -3272,6 +3360,36 @@ const qInput = qForm.querySelector('.quadrant-input');
         currentActiveModule = targetModule;
         if (typeof window.__closeMobileSidebar === 'function' && window.innerWidth <= 900) {
             window.__closeMobileSidebar();
+        }
+
+        // Quản lý triệt để class module trên body để cô lập hoàn toàn các module
+        document.body.classList.remove(
+            'module-active-tasks',
+            'module-active-calendar',
+            'module-active-time',
+            'module-active-habits',
+            'module-active-notes',
+            'module-active-analytics'
+        );
+        document.body.classList.add(`module-active-${targetModule}`);
+
+        if (targetModule !== 'tasks') {
+            document.body.classList.remove('view-mode-matrix', 'view-mode-kanban', 'view-mode-list', 'view-mode-calendar');
+        }
+
+        // Quản lý triệt để class module trên body để cô lập hoàn toàn các module
+        document.body.classList.remove(
+            'module-active-tasks',
+            'module-active-calendar',
+            'module-active-time',
+            'module-active-habits',
+            'module-active-notes',
+            'module-active-analytics'
+        );
+        document.body.classList.add(`module-active-${targetModule}`);
+
+        if (targetModule !== 'tasks') {
+            document.body.classList.remove('view-mode-matrix', 'view-mode-kanban', 'view-mode-list', 'view-mode-calendar');
         }
 
         const topbarRight = document.querySelector('.treth-topbar-right');
@@ -3321,7 +3439,7 @@ const qInput = qForm.querySelector('.quadrant-input');
             if (trethMain) trethMain.style.overflowY = 'hidden';
 
             // Bỏ trạng thái tô sáng active của DANH SÁCH THÔNG MINH khi đang ở Lịch biểu
-            document.querySelectorAll('.smart-list-item').forEach(item => item.classList.remove('active'));
+            // smart list clean
 
             if (headerModuleTitle) headerModuleTitle.textContent = 'Lịch biểu';
             if (headerModuleSlogan) headerModuleSlogan.textContent = 'Theo dõi tiến độ và phân bổ kế hoạch trực quan theo dòng thời gian.';
@@ -3340,7 +3458,7 @@ const qInput = qForm.querySelector('.quadrant-input');
             if (viewSwitcher) viewSwitcher.style.display = 'none';
             if (trethMain) trethMain.style.overflowY = 'auto';
 
-            document.querySelectorAll('.smart-list-item').forEach(item => item.classList.remove('active'));
+            // smart list clean
 
             if (headerModuleTitle) headerModuleTitle.textContent = 'Thời gian';
             if (headerModuleSlogan) headerModuleSlogan.textContent = 'Làm việc sâu với phương pháp Pomodoro, đo lường chính xác thời gian thực tế.';
@@ -3356,7 +3474,7 @@ const qInput = qForm.querySelector('.quadrant-input');
             if (viewSwitcher) viewSwitcher.style.display = 'none';
             if (trethMain) trethMain.style.overflowY = 'auto';
 
-            document.querySelectorAll('.smart-list-item').forEach(item => item.classList.remove('active'));
+            // smart list clean
 
             if (headerModuleTitle) headerModuleTitle.textContent = 'Thói quen';
             if (headerModuleSlogan) headerModuleSlogan.textContent = 'Duy trì kỷ luật mỗi ngày để tạo nên sự thay đổi vượt bậc.';
@@ -3373,7 +3491,7 @@ const qInput = qForm.querySelector('.quadrant-input');
             if (viewSwitcher) viewSwitcher.style.display = 'none';
             if (trethMain) trethMain.style.overflowY = 'auto';
 
-            document.querySelectorAll('.smart-list-item').forEach(item => item.classList.remove('active'));
+            // smart list clean
 
             if (headerModuleTitle) headerModuleTitle.textContent = 'Ghi chú';
             if (headerModuleSlogan) headerModuleSlogan.textContent = 'Ghi lại ý tưởng tức thì, lưu trữ kiến thức và suy nghĩ sáng tạo.';
@@ -3390,7 +3508,7 @@ const qInput = qForm.querySelector('.quadrant-input');
             if (viewSwitcher) viewSwitcher.style.display = 'none';
             if (trethMain) trethMain.style.overflowY = 'auto';
 
-            document.querySelectorAll('.smart-list-item').forEach(item => item.classList.remove('active'));
+            // smart list clean
 
             if (headerModuleTitle) headerModuleTitle.textContent = 'Thống kê';
             if (headerModuleSlogan) headerModuleSlogan.textContent = 'Phân tích hiệu suất làm việc, tiến độ hoàn thành và phân bổ thời gian.';
@@ -3419,11 +3537,7 @@ const qInput = qForm.querySelector('.quadrant-input');
                 saveViewModeToStorage();
             }
 
-            const activeSmart = document.querySelector('.smart-list-item.active');
-            if (!activeSmart) {
-                const targetSmart = document.querySelector(`.smart-list-item[data-smart-filter="${currentSmartFilter || 'all'}"]`);
-                if (targetSmart) targetSmart.classList.add('active');
-            }
+// smart list active sync removed
 
             applyViewMode();
         }
@@ -7361,6 +7475,11 @@ let cpDebounceTimer = null;
             renderDropdownItems();
             popover.style.display = 'block';
             wrapper.classList.add('is-open');
+
+            const parentPill = wrapper.closest('.quick-pill-item');
+            if (parentPill) parentPill.classList.add('is-dropdown-open');
+            const parentSec = wrapper.closest('.treth-quick-add-section');
+            if (parentSec) parentSec.classList.add('is-dropdown-open');
             trigger.setAttribute('aria-expanded', 'true');
 
             // Kiểm tra không gian hiển thị dưới đáy để lật lên phía trên nếu tràn
@@ -7381,6 +7500,11 @@ let cpDebounceTimer = null;
             popover.style.display = 'none';
             wrapper.classList.remove('is-open', 'flip-up');
             trigger.setAttribute('aria-expanded', 'false');
+
+            const parentPill = wrapper.closest('.quick-pill-item');
+            if (parentPill) parentPill.classList.remove('is-dropdown-open');
+            const parentSec = wrapper.closest('.treth-quick-add-section');
+            if (parentSec) parentSec.classList.remove('is-dropdown-open');
         }
 
         function toggleDropdown(e) {

@@ -26,7 +26,7 @@ Bạn có thể tải file APK cài đặt trực tiếp về điện thoại đ
 👉 **[Tải file APK mới nhất tại GitHub Releases](https://github.com/vithao-gihub/treth-vthao/releases/latest)**
 
 ### Cách cài đặt trên điện thoại:
-1. Nhấp vào đường dẫn trên và tải file `TreTH-v3.1.0.apk` về điện thoại.
+1. Nhấp vào đường dẫn trên và tải file `TreTH-v4.0.0.apk` về điện thoại.
 2. Mở file APK vừa tải và chọn **Cài đặt**.
 3. Nếu máy hỏi quyền bảo mật, chọn **Cho phép cài đặt ứng dụng từ nguồn này**.
 4. Ứng dụng đã sẵn sàng trên màn hình chính!

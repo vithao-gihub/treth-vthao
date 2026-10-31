@@ -102,9 +102,7 @@ html[data-theme="dark"] .modal-card,
 html[data-theme="dark"] .stat-card, 
 html[data-theme="dark"] .kanban-column, 
 html[data-theme="dark"] .quadrant-card,
-html[data-theme="dark"] .calendar-view-container,
-html[data-theme="dark"] .filter-dropdown-panel,
-html[data-theme="dark"] .data-dropdown-panel {
+html[data-theme="dark"] .calendar-view-container {
   background: rgba(18, 26, 42, 0.96) !important;
   /* backdrop-filter: blur(16px) */
   border: 1px solid rgba(255, 255, 255, 0.06) !important;
@@ -119,9 +117,7 @@ html[data-theme="light"] .modal-card,
 html[data-theme="light"] .stat-card, 
 html[data-theme="light"] .kanban-column, 
 html[data-theme="light"] .quadrant-card,
-html[data-theme="light"] .calendar-view-container,
-html[data-theme="light"] .filter-dropdown-panel,
-html[data-theme="light"] .data-dropdown-panel {
+html[data-theme="light"] .calendar-view-container {
   background: var(--bg-surface, #FFFFFF) !important;
   /* backdrop-filter: blur(16px) */
   border: 1px solid var(--border-color, #E2E8F0) !important;
@@ -1145,4 +1141,284 @@ html[data-theme="light"] .btn-apply-filter *,
 html[data-theme="light"] .btn-empty-reset *,
 html[data-theme="light"] .cal-seg-btn.active * {
   color: #FFFFFF !important;
+}
+
+/* Floating Popovers Fix: Giữ nguyên position absolute/fixed và z-index cao để không bị thanh thêm việc đè lên */
+html[data-theme="dark"] .filter-dropdown-panel,
+html[data-theme="dark"] .data-dropdown-panel:not(.modal-overlay) {
+  background: rgba(18, 26, 42, 0.98) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: var(--cyber-radius, 16px) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5) !important;
+  position: absolute !important;
+  z-index: 1050 !important;
+  overflow: visible !important;
+}
+
+html[data-theme="light"] .filter-dropdown-panel,
+html[data-theme="light"] .data-dropdown-panel:not(.modal-overlay) {
+  background: #FFFFFF !important;
+  border: 1px solid var(--border-color, #E2E8F0) !important;
+  border-radius: var(--cyber-radius, 16px) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12) !important;
+  position: absolute !important;
+  z-index: 1050 !important;
+  overflow: visible !important;
+  color: var(--text-main, #0F172A);
+}
+/* === TRETH UI POLISH (LINEAR / NOTION / TODOIST STYLE) === */
+/* 1. XÓA HOÀN TOÀN HỌA TIẾT LÁ TRE / WATERMARK TRANG TRÍ */
+.card::after,
+.quadrant-card::after,
+.modal-card::after,
+.stat-card::after,
+.stat-card:nth-child(1)::after,
+.stat-card:nth-child(2)::after,
+.stat-card:nth-child(3)::after,
+.stat-card:nth-child(4)::after,
+.empty-state::after,
+.matrix-quadrant::after,
+.kanban-column::after,
+.treth-all-done-card::after,
+.task-item::after {
+  display: none !important;
+  content: none !important;
+  background-image: none !important;
+}
+
+/* 2. CHUẨN HÓA BẢNG MÀU TRUNG TÍNH (LIGHT & DARK MODE) */
+:root {
+  --bg-app-light: #F8FAFC;
+  --bg-surface-light: #FFFFFF;
+  --border-neutral-light: #E2E8F0;
+  --text-main-light: #0F172A;
+  --text-muted-light: #64748B;
+  --accent-teal: #0D9488;
+  --cyber-radius: 8px !important;
+  --radius-lg: 8px !important;
+  --radius-md: 6px !important;
+  --radius-sm: 4px !important;
+}
+
+/* Light Mode: Xám trung tính nhạt #F8FAFC, Card trắng tinh #FFFFFF, Viền 1px #E2E8F0 */
+html[data-theme="light"],
+html[data-theme="light"] body,
+html:not([data-theme="dark"]) body,
+body:not(.dark-mode) {
+  background-color: #F8FAFC !important;
+  background-image: none !important;
+  color: #0F172A !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+html[data-theme="light"] body::before,
+html:not([data-theme="dark"]) body::before,
+body:not(.dark-mode)::before {
+  display: none !important;
+}
+html[data-theme="light"] .treth-sidebar,
+html:not([data-theme="dark"]) .treth-sidebar,
+body:not(.dark-mode) .treth-sidebar {
+  background: #F8FAFC !important;
+  border-right: 1px solid #E2E8F0 !important;
+}
+html[data-theme="light"] .treth-topbar,
+html:not([data-theme="dark"]) .treth-topbar,
+body:not(.dark-mode) .treth-topbar {
+  background: #FFFFFF !important;
+  border-bottom: 1px solid #E2E8F0 !important;
+}
+html[data-theme="light"] .treth-quick-add-section,
+html[data-theme="light"] .matrix-quadrant,
+html[data-theme="light"] .quadrant-card,
+html[data-theme="light"] .kanban-column,
+html[data-theme="light"] .task-item,
+html[data-theme="light"] #filterDropdownPanel,
+body:not(.dark-mode) .treth-quick-add-section,
+body:not(.dark-mode) .matrix-quadrant,
+body:not(.dark-mode) .quadrant-card,
+body:not(.dark-mode) .kanban-column,
+body:not(.dark-mode) .task-item,
+body:not(.dark-mode) #filterDropdownPanel {
+  background-color: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Dark Mode: Slate/Zinc #0F172A, Card #1E293B, Viền #334155 */
+body.dark-mode,
+html[data-theme="dark"] body {
+  background-color: #0F172A !important;
+  color: #F8FAFC !important;
+}
+body.dark-mode .treth-sidebar,
+html[data-theme="dark"] .treth-sidebar {
+  background: #0F172A !important;
+  border-right: 1px solid #334155 !important;
+}
+body.dark-mode .treth-topbar,
+html[data-theme="dark"] .treth-topbar {
+  background: #1E293B !important;
+  border-bottom: 1px solid #334155 !important;
+}
+body.dark-mode .treth-quick-add-section,
+body.dark-mode .matrix-quadrant,
+body.dark-mode .quadrant-card,
+body.dark-mode .kanban-column,
+body.dark-mode .task-item,
+body.dark-mode #filterDropdownPanel,
+html[data-theme="dark"] .treth-quick-add-section,
+html[data-theme="dark"] .matrix-quadrant,
+html[data-theme="dark"] .quadrant-card,
+html[data-theme="dark"] .kanban-column,
+html[data-theme="dark"] .task-item,
+html[data-theme="dark"] #filterDropdownPanel {
+  background-color: #1E293B !important;
+  border: 1px solid #334155 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 3. THU GỌN BO GÓC & MẬT ĐỘ HIỂN THỊ (COMPACT SPACING) */
+/* Khung lớn: 8px (Override triệt để với selector độ ưu tiên cao) */
+html .matrix-quadrant,
+html .quadrant-card,
+html .kanban-column,
+html #filterDropdownPanel,
+html #dataModal .data-modal-container,
+html[data-theme="light"] .quadrant-card,
+html[data-theme="dark"] .quadrant-card,
+html[data-theme="light"] .card,
+html[data-theme="dark"] .card,
+html[data-theme="light"] .kanban-column,
+html[data-theme="dark"] .kanban-column {
+  border-radius: 8px !important;
+}
+
+/* Nút bấm, thẻ công việc, ô nhập liệu: 6px */
+html .task-item,
+html .task-card,
+html .btn,
+html .btn-primary,
+html .btn-quick-submit,
+html .btn-action,
+html .quick-pill-input,
+html .quick-pill-select,
+html .filter-select-control,
+html .form-control {
+  border-radius: 6px !important;
+}
+
+/* Thu gọn chiều cao 4 ô Ma trận Eisenhower để hiển thị vừa vặn 1 màn hình */
+.matrix-quadrant,
+.quadrant-card {
+  min-height: auto !important;
+  padding: 10px 12px !important;
+}
+
+/* Thu nhỏ khung Empty state tối giản, dịu mắt */
+.treth-all-done-card {
+  max-width: 380px !important;
+  padding: 24px 16px !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 8px !important;
+  background: #FFFFFF !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+  text-align: center;
+  margin: 1.5rem auto !important;
+}
+body.dark-mode .treth-all-done-card,
+html[data-theme="dark"] .treth-all-done-card {
+  border-color: #334155 !important;
+  background: #1E293B !important;
+}
+.treth-all-done-card .all-done-icon {
+  width: 24px !important;
+  height: 24px !important;
+  font-size: 20px !important;
+  margin: 0 auto 8px !important;
+  color: #0D9488 !important;
+}
+.treth-all-done-card h3 {
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  color: #64748B !important;
+  margin: 0 0 4px !important;
+}
+.treth-all-done-card p {
+  font-size: 12px !important;
+  color: #94A3B8 !important;
+  margin: 0 !important;
+}
+
+/* 4. TINH GỌN THẺ CÔNG VIỆC VỚI HOVER ACTIONS */
+.task-item,
+.task-card {
+  padding: 10px 12px !important;
+  margin-bottom: 8px !important;
+  gap: 8px !important;
+}
+.task-item .task-title,
+.task-card .card-title {
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  color: inherit !important;
+}
+.task-item .task-category,
+.task-item .badge-category {
+  font-size: 11px !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  background: rgba(148, 163, 184, 0.12) !important;
+  color: #64748B !important;
+  border: none !important;
+}
+
+/* Nút thao tác phụ mặc định ẩn, hiện khi hover */
+.task-item .task-actions-wrapper,
+.task-item .task-actions,
+.task-item .btn-reopen,
+.task-item .btn-delete,
+.task-item .task-item-btn-delete,
+.task-item .sync-badge {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease-in-out;
+}
+.task-item:hover .task-actions-wrapper,
+.task-item:hover .task-actions,
+.task-item:hover .btn-reopen,
+.task-item:hover .btn-delete,
+.task-item:hover .task-item-btn-delete,
+.task-item:hover .sync-badge {
+  opacity: 1;
+  pointer-events: auto;
+}
+@media (hover: none) {
+  .task-item .task-actions-wrapper,
+  .task-item .task-actions,
+  .task-item .btn-reopen,
+  .task-item .btn-delete,
+  .task-item .task-item-btn-delete,
+  .task-item .sync-badge {
+    opacity: 0.75;
+    pointer-events: auto;
+  }
+}
+
+/* 5. CHẤM TRÒN ƯU TIÊN (PRIORITY DOT INDICATOR) */
+.priority-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.priority-dot.high { background-color: #EF4444; }
+.priority-dot.medium { background-color: #F59E0B; }
+.priority-dot.low { background-color: #10B981; }
+.priority-dot.none { background-color: #94A3B8; }
+
+/* Typography & Titles */
+h1, h2, h3, h4, .module-title, .section-title {
+  letter-spacing: -0.01em;
 }
