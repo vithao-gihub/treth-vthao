@@ -449,6 +449,95 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Chuẩn hóa đối tượng Task lên chuẩn v4.0 (Tương thích ngược 100% với v1 - v3.1)
      */
+    /**
+     * Khử trùng lặp dữ liệu Loại việc (Categories Deduplication & Task Remap)
+     * Đảm bảo không bị nhân đôi Báo cáo, Kế hoạch, Công văn, Chương trình...
+     * và tự động chuyển các tasks tham chiếu ID cũ sang ID chuẩn mới.
+     */
+    function deduplicateAndMigrateCategories() {
+        let storedCategories = loadJSONFromStorage(CATEGORIES_STORAGE_KEY, null);
+        if (!Array.isArray(storedCategories) || storedCategories.length === 0) {
+            categories = [...defaultCategories];
+            saveCategoriesToStorage();
+            return;
+        }
+
+        const defaultByName = new Map();
+        defaultCategories.forEach(cat => {
+            defaultByName.set(cat.name.trim().toLowerCase(), cat);
+        });
+
+        const categoryIdRemap = new Map();
+        const uniqueMap = new Map();
+
+        storedCategories.forEach(cat => {
+            if (!cat || !cat.name) return;
+            const normName = cat.name.trim().toLowerCase();
+            const canonical = defaultByName.get(normName);
+
+            if (!uniqueMap.has(normName)) {
+                if (canonical) {
+                    const chosen = {
+                        ...cat,
+                        id: canonical.id,
+                        name: canonical.name,
+                        icon: canonical.icon,
+                        iconUrl: canonical.iconUrl || cat.iconUrl,
+                        color: canonical.color || cat.color
+                    };
+                    uniqueMap.set(normName, chosen);
+                    if (String(cat.id) !== String(canonical.id)) {
+                        categoryIdRemap.set(String(cat.id), canonical.id);
+                    }
+                } else {
+                    uniqueMap.set(normName, { ...cat });
+                }
+            } else {
+                const existing = uniqueMap.get(normName);
+                if (canonical) {
+                    if (existing.id !== canonical.id) {
+                        categoryIdRemap.set(String(existing.id), canonical.id);
+                        existing.id = canonical.id;
+                        existing.name = canonical.name;
+                        existing.icon = canonical.icon;
+                        existing.iconUrl = canonical.iconUrl;
+                        existing.color = canonical.color;
+                    }
+                    if (String(cat.id) !== String(canonical.id)) {
+                        categoryIdRemap.set(String(cat.id), canonical.id);
+                    }
+                } else {
+                    categoryIdRemap.set(String(cat.id), existing.id);
+                }
+            }
+        });
+
+        // Đảm bảo tối thiểu 18 loại việc chuẩn luôn hiện diện
+        defaultCategories.forEach(defCat => {
+            const normName = defCat.name.trim().toLowerCase();
+            if (!uniqueMap.has(normName)) {
+                uniqueMap.set(normName, { ...defCat });
+            }
+        });
+
+        categories = Array.from(uniqueMap.values());
+        saveCategoriesToStorage();
+
+        // Tự động remap các tasks tham chiếu ID cũ
+        if (categoryIdRemap.size > 0 && Array.isArray(tasks)) {
+            let tasksModified = false;
+            tasks.forEach(t => {
+                if (t && t.categoryId && categoryIdRemap.has(String(t.categoryId))) {
+                    t.categoryId = categoryIdRemap.get(String(t.categoryId));
+                    tasksModified = true;
+                }
+            });
+            if (tasksModified) {
+                saveTasksToStorage();
+            }
+        }
+    }
+
     function normalizeTaskV4(rawTask) {
         if (!rawTask || typeof rawTask !== 'object') return null;
         const todayISO = getTodayISO();
@@ -496,10 +585,12 @@ document.addEventListener('DOMContentLoaded', () => {
         tasks = [...defaultTasks];
     }
     tasks = tasks.map(t => normalizeTaskV4(t)).filter(Boolean);
+    deduplicateAndMigrateCategories();
 
     let currentViewMode = localStorage.getItem(VIEW_MODE_STORAGE_KEY) || 'list';
-    if (currentViewMode !== 'list' && currentViewMode !== 'matrix' && currentViewMode !== 'kanban' && currentViewMode !== 'calendar') {
+    if (currentViewMode === 'calendar' || (currentViewMode !== 'list' && currentViewMode !== 'matrix' && currentViewMode !== 'kanban')) {
         currentViewMode = 'list';
+        localStorage.setItem(VIEW_MODE_STORAGE_KEY, 'list');
     }
 
     function loadPomoStats() {
@@ -1110,7 +1201,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (filterCategorySelect) {
             const currentFilterVal = filterCategorySelect.value;
-            filterCategorySelect.innerHTML = '<option value="all">📁 Tất cả loại việc</option>';
+            filterCategorySelect.innerHTML = '<option value="all">🏷️ Tất cả loại việc</option>';
             categories.forEach(cat => {
                 filterCategorySelect.innerHTML += '<option value="' + escapeHTML(cat.id) + '">' + escapeHTML(cat.icon) + ' ' + escapeHTML(cat.name) + '</option>';
             });
@@ -1477,12 +1568,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function resetAllFilters() {
+    function resetAllFilters(resetSmart = false) {
         currentSearchQuery = '';
         currentStatusFilter = 'all';
         currentCategoryFilter = 'all';
         currentPriorityFilter = 'all';
         currentDueDateFilter = 'all';
+
+        if (resetSmart) {
+            currentSmartFilter = 'all';
+            document.querySelectorAll('.smart-list-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.smartFilter === 'all');
+            });
+        }
 
         if (searchTaskInput) searchTaskInput.value = '';
         if (filterCategorySelect) filterCategorySelect.value = 'all';
@@ -1496,12 +1594,23 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        if (currentViewMode === 'calendar') {
+            currentViewMode = 'list';
+            saveViewModeToStorage();
+            applyViewMode();
+        }
+
+        if (typeof window.__syncAllCustomDropdowns === 'function') {
+            window.__syncAllCustomDropdowns();
+        }
+
         updateActiveFiltersBadge();
+        updateSmartListBadges();
         renderTasks();
     }
 
     // Expose resetAllFilters to window so empty state button can call it
-    window.__resetAllAppFilters = resetAllFilters;
+    window.__resetAllAppFilters = () => resetAllFilters(true);
 
     function createTaskElement(task) {
         const isCompleted = task.status === 'completed';
@@ -1667,7 +1776,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3 class="empty-title">Không tìm thấy công việc phù hợp</h3>
                         <p class="empty-desc">Không có công việc nào khớp với các tiêu chí bộ lọc hoặc từ khóa tìm kiếm hiện tại.</p>
                         <button type="button" class="btn btn-primary btn-sm btn-empty-reset" onclick="window.__resetAllAppFilters && window.__resetAllAppFilters()">
-                            <i class="ri-refresh-line"></i>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-right: 6px;"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>
                             <span>Xóa bộ lọc để xem tất cả</span>
                         </button>
                     </div>
@@ -2148,6 +2257,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!name) {
             showToast('Vui lòng nhập tên loại việc!', 'warning');
+            catNameInput.focus();
+            return;
+        }
+
+        // Kiểm tra chống trùng tên loại việc (không phân biệt hoa thường sau khi trim)
+        const normCatName = name.toLowerCase();
+        const isDuplicateCat = categories.some(cat => 
+            String(cat.id) !== String(editingCategoryId || '') && 
+            cat.name.trim().toLowerCase() === normCatName
+        );
+        if (isDuplicateCat) {
+            showToast(`Loại việc "${name}" đã tồn tại! Vui lòng chọn tên khác.`, 'warning');
             catNameInput.focus();
             return;
         }
@@ -3160,7 +3281,10 @@ const qInput = qForm.querySelector('.quadrant-input');
 
         // Ẩn tất cả các module view trước
         if (moduleTasksView) moduleTasksView.style.display = 'none';
-        if (moduleCalendarView) moduleCalendarView.style.display = 'none';
+        if (moduleCalendarView) {
+            moduleCalendarView.style.display = 'none';
+            moduleCalendarView.classList.remove('active');
+        }
         if (moduleTimeView) moduleTimeView.style.display = 'none';
         if (moduleHabitsView) moduleHabitsView.style.display = 'none';
         if (moduleNotesView) moduleNotesView.style.display = 'none';
@@ -3182,7 +3306,10 @@ const qInput = qForm.querySelector('.quadrant-input');
         if (targetModule === 'calendar') {
             // MODULE LỊCH BIỂU: Phân tách module độc lập, ẩn toàn bộ Header & Quick-add của module Công việc
             if (moduleTasksView) moduleTasksView.style.display = 'none';
-            if (moduleCalendarView) moduleCalendarView.style.display = 'block';
+            if (moduleCalendarView) {
+                moduleCalendarView.style.display = 'block';
+                moduleCalendarView.classList.add('active');
+            }
             if (calendarViewContainer) calendarViewContainer.style.display = 'block';
             if (navBtnCalendar) navBtnCalendar.classList.add('active');
             if (btnOpenCatManager) btnOpenCatManager.style.display = 'none';
@@ -3271,6 +3398,10 @@ const qInput = qForm.querySelector('.quadrant-input');
             renderAnalyticsDashboard();
         } else {
             // Mặc định: tasks
+            if (moduleCalendarView) {
+                moduleCalendarView.style.display = 'none';
+                moduleCalendarView.classList.remove('active');
+            }
             if (moduleTasksView) moduleTasksView.style.display = 'block';
             if (navBtnTasks) navBtnTasks.classList.add('active');
             if (btnOpenCatManager) btnOpenCatManager.style.display = '';
@@ -3283,7 +3414,7 @@ const qInput = qForm.querySelector('.quadrant-input');
             if (headerModuleTitle) headerModuleTitle.textContent = 'Công việc';
             if (headerModuleSlogan) headerModuleSlogan.textContent = 'Tập trung vào điều quan trọng, hoàn thành từng mục tiêu nhỏ mỗi ngày.';
 
-            if (currentViewMode === 'calendar') {
+            if (currentViewMode === 'calendar' || !['list', 'matrix', 'kanban'].includes(currentViewMode)) {
                 currentViewMode = 'list';
                 saveViewModeToStorage();
             }
@@ -7079,4 +7210,280 @@ let cpDebounceTimer = null;
             }
         });
     }
+
+
+    // =========================================================================
+    // 13. GLOBAL TWO-WAY SYNCED CUSTOM DROPDOWN ENGINE (CYBER BAMBOO)
+    // =========================================================================
+    function upgradeSelectToCustomDropdown(select) {
+        if (!select || select._customDropdownWrapper) {
+            if (select && select._syncCustomDropdown) select._syncCustomDropdown();
+            return;
+        }
+
+        const isPill = select.classList.contains('quick-pill-select') || !!select.closest('.quick-pill-item');
+        const selectId = (select.id || '').toLowerCase();
+        const selectName = (select.getAttribute('name') || '').toLowerCase();
+        const isCategory = selectId.includes('category') || selectId.includes('cat') || selectName === 'categoryid';
+
+        // Ẩn thẻ select gốc trong DOM để vẫn tương thích với form submissions và event listeners
+        select.classList.add('treth-native-select-hidden');
+
+        // Wrapper
+        const wrapper = document.createElement('div');
+        wrapper.className = `treth-custom-dropdown ${isPill ? 'is-pill' : ''} ${isCategory ? 'is-category-dropdown' : ''}`;
+        wrapper.dataset.forSelect = select.id || select.name || '';
+
+        // Trigger button
+        const trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.className = 'custom-dropdown-trigger';
+        trigger.setAttribute('aria-haspopup', 'listbox');
+        trigger.setAttribute('aria-expanded', 'false');
+
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'custom-dropdown-content-label';
+
+        const arrowSpan = document.createElement('span');
+        arrowSpan.className = 'custom-dropdown-arrow';
+        arrowSpan.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+
+        trigger.appendChild(labelSpan);
+        trigger.appendChild(arrowSpan);
+        wrapper.appendChild(trigger);
+
+        // Popover
+        const popover = document.createElement('div');
+        popover.className = 'custom-dropdown-popover';
+        popover.setAttribute('role', 'listbox');
+        popover.style.display = 'none';
+
+        // Search input nếu là dropdown Loại việc
+        let searchInput = null;
+        if (isCategory) {
+            const searchWrap = document.createElement('div');
+            searchWrap.className = 'custom-dropdown-search-wrap';
+            searchWrap.innerHTML = `<i class="ri-search-line" aria-hidden="true"></i>`;
+            searchInput = document.createElement('input');
+            searchInput.type = 'text';
+            searchInput.className = 'custom-dropdown-search-input';
+            searchInput.placeholder = 'Tìm loại việc...';
+            searchInput.autocomplete = 'off';
+            searchWrap.appendChild(searchInput);
+            popover.appendChild(searchWrap);
+        }
+
+        // Options List (hỗ trợ lưới 2 cột cho Loại việc)
+        const list = document.createElement('ul');
+        list.className = `custom-dropdown-list ${isCategory ? 'is-grid-2col' : ''}`;
+        popover.appendChild(list);
+        wrapper.appendChild(popover);
+
+        // Chèn wrapper ngay sau thẻ select gốc
+        if (select.parentNode) {
+            select.parentNode.insertBefore(wrapper, select.nextSibling);
+        }
+
+        function updateTriggerLabel() {
+            let selectedOpt = select.options[select.selectedIndex];
+            if (!selectedOpt && select.options.length > 0) {
+                selectedOpt = select.options[0];
+            }
+            if (selectedOpt) {
+                labelSpan.textContent = selectedOpt.textContent.trim();
+            } else {
+                labelSpan.textContent = 'Chọn...';
+            }
+        }
+
+        function renderDropdownItems(filterText = '') {
+            list.innerHTML = '';
+            const normFilter = (filterText || '').trim().toLowerCase();
+            let matchCount = 0;
+
+            Array.from(select.options).forEach((opt, idx) => {
+                const text = opt.textContent.trim();
+                if (normFilter && !text.toLowerCase().includes(normFilter)) {
+                    return;
+                }
+                matchCount++;
+                const isSelected = String(opt.value) === String(select.value) || (!select.value && idx === 0 && !opt.value);
+
+                const item = document.createElement('li');
+                item.className = `custom-dropdown-item ${isSelected ? 'is-selected' : ''}`;
+                item.setAttribute('role', 'option');
+                item.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+                item.dataset.value = opt.value;
+
+                const left = document.createElement('span');
+                left.className = 'custom-dropdown-item-left';
+                left.textContent = text;
+
+                const check = document.createElement('span');
+                check.className = 'custom-dropdown-check';
+                check.innerHTML = isSelected ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>` : '';
+
+                item.appendChild(left);
+                item.appendChild(check);
+
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    select.value = opt.value;
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                    closeDropdown();
+                    updateTriggerLabel();
+                    renderDropdownItems();
+                });
+
+                list.appendChild(item);
+            });
+
+            if (matchCount === 0) {
+                const empty = document.createElement('li');
+                empty.className = 'custom-dropdown-empty';
+                empty.textContent = 'Không có mục phù hợp';
+                list.appendChild(empty);
+            }
+        }
+
+        function openDropdown() {
+            // Đóng tất cả dropdown khác đang mở
+            document.querySelectorAll('.treth-custom-dropdown.is-open').forEach(el => {
+                if (el !== wrapper) {
+                    el.classList.remove('is-open', 'flip-up');
+                    const p = el.querySelector('.custom-dropdown-popover');
+                    if (p) p.style.display = 'none';
+                    const t = el.querySelector('.custom-dropdown-trigger');
+                    if (t) t.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            renderDropdownItems();
+            popover.style.display = 'block';
+            wrapper.classList.add('is-open');
+            trigger.setAttribute('aria-expanded', 'true');
+
+            // Kiểm tra không gian hiển thị dưới đáy để lật lên phía trên nếu tràn
+            const rect = popover.getBoundingClientRect();
+            if (rect.bottom > window.innerHeight - 15) {
+                wrapper.classList.add('flip-up');
+            } else {
+                wrapper.classList.remove('flip-up');
+            }
+
+            if (searchInput) {
+                searchInput.value = '';
+                setTimeout(() => searchInput.focus(), 60);
+            }
+        }
+
+        function closeDropdown() {
+            popover.style.display = 'none';
+            wrapper.classList.remove('is-open', 'flip-up');
+            trigger.setAttribute('aria-expanded', 'false');
+        }
+
+        function toggleDropdown(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (wrapper.classList.contains('is-open')) {
+                closeDropdown();
+            } else {
+                openDropdown();
+            }
+        }
+
+        trigger.addEventListener('click', toggleDropdown);
+
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                renderDropdownItems(e.target.value);
+            });
+            searchInput.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        }
+
+        // Lắng nghe thay đổi từ native select để tự động đồng bộ ngược lại trigger
+        select.addEventListener('change', () => {
+            updateTriggerLabel();
+            renderDropdownItems();
+        });
+
+        select._customDropdownWrapper = wrapper;
+        select._syncCustomDropdown = () => {
+            updateTriggerLabel();
+            renderDropdownItems();
+        };
+
+        updateTriggerLabel();
+        renderDropdownItems();
+    }
+
+    function initGlobalCustomDropdowns(root = document) {
+        const selects = root.querySelectorAll('select:not(.treth-native-select-hidden)');
+        selects.forEach(select => upgradeSelectToCustomDropdown(select));
+    }
+
+    function syncAllCustomDropdowns(root = document) {
+        const selects = root.querySelectorAll('select');
+        selects.forEach(select => {
+            if (select._syncCustomDropdown) {
+                select._syncCustomDropdown();
+            } else {
+                upgradeSelectToCustomDropdown(select);
+            }
+        });
+    }
+
+    // Đóng dropdown khi click ngoài vùng chọn
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.treth-custom-dropdown')) {
+            document.querySelectorAll('.treth-custom-dropdown.is-open').forEach(el => {
+                el.classList.remove('is-open', 'flip-up');
+                const p = el.querySelector('.custom-dropdown-popover');
+                if (p) p.style.display = 'none';
+                const t = el.querySelector('.custom-dropdown-trigger');
+                if (t) t.setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
+
+    // Đóng dropdown khi nhấn phím Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.treth-custom-dropdown.is-open').forEach(el => {
+                el.classList.remove('is-open', 'flip-up');
+                const p = el.querySelector('.custom-dropdown-popover');
+                if (p) p.style.display = 'none';
+                const t = el.querySelector('.custom-dropdown-trigger');
+                if (t) t.setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
+
+    // Tự động nâng cấp các select được thêm vào động trong DOM (Modal, Calendar, v.v.)
+    const dropdownMutationObserver = new MutationObserver((mutations) => {
+        for (const m of mutations) {
+            if (m.type === 'childList') {
+                m.addedNodes.forEach(node => {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        if (node.tagName === 'SELECT') {
+                            upgradeSelectToCustomDropdown(node);
+                        } else if (typeof node.querySelectorAll === 'function') {
+                            node.querySelectorAll('select').forEach(s => upgradeSelectToCustomDropdown(s));
+                        }
+                    }
+                });
+            }
+        }
+    });
+    dropdownMutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    // Khởi tạo Custom Dropdowns toàn cục ngay sau khi load
+    initGlobalCustomDropdowns();
+
+    window.__initGlobalCustomDropdowns = initGlobalCustomDropdowns;
+    window.__syncAllCustomDropdowns = syncAllCustomDropdowns;
+
 });

@@ -761,7 +761,7 @@ html[data-theme="light"] .filter-dropdown-panel {
 }
 
 html[data-theme="light"] .filter-panel-title {
-  color: #4F46E5 !important;
+  color: #059669 !important;
   text-shadow: none !important;
 }
 
@@ -1016,5 +1016,133 @@ html[data-theme="light"] .cal-gmt-hint {
 .btn-quick-submit,
 .cal-btn-primary {
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyber)) !important;
+  color: #FFFFFF !important;
+}
+
+
+/* ==========================================================================
+   TRETH v3.1 - PRIMARY BUTTONS & FILTER BUTTON UNIFICATION (CYBER BAMBOO)
+   ========================================================================== */
+
+/* Thống nhất nút Bộ lọc khi Active / Hover / Has Active Filters */
+.btn-filter-toggle:hover,
+.btn-filter-toggle.active,
+.btn-filter-toggle.has-active-filter {
+  color: var(--accent-primary, #10B981) !important;
+  background-color: rgba(16, 185, 129, 0.12) !important;
+  border-color: var(--accent-primary, #10B981) !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2) !important;
+}
+
+/* ĐỒNG BỘ ĐỘ TƯƠNG PHẢN CHỮ TRÊN CÁC NÚT CHÍNH (PRIMARY BUTTONS) */
+/* Dark Mode: Chữ tối sắc nét #06120E trên nền gradient xanh Cyber Bamboo sáng */
+html[data-theme="dark"] .btn-primary,
+html[data-theme="dark"] .btn-quick-submit,
+html[data-theme="dark"] .cal-btn-primary,
+html[data-theme="dark"] #btnApplyFilter,
+html[data-theme="dark"] .btn-apply-filter,
+html[data-theme="dark"] .btn-empty-reset,
+html[data-theme="dark"] .cal-seg-btn.active {
+  background: linear-gradient(135deg, #10B981 0%, #06B6D4 100%) !important;
+  color: #06120E !important;
+  border: none !important;
+  font-weight: 600 !important;
+}
+
+html[data-theme="dark"] .btn-primary *,
+html[data-theme="dark"] .btn-quick-submit *,
+html[data-theme="dark"] .cal-btn-primary *,
+html[data-theme="dark"] #btnApplyFilter *,
+html[data-theme="dark"] .btn-apply-filter *,
+html[data-theme="dark"] .btn-empty-reset *,
+html[data-theme="dark"] .cal-seg-btn.active * {
+  color: #06120E !important;
+}
+
+/* Light Mode: Chữ trắng sáng #FFFFFF trên nền gradient xanh ngọc đậm */
+html[data-theme="light"] .btn-primary,
+html[data-theme="light"] .btn-quick-submit,
+html[data-theme="light"] .cal-btn-primary,
+html[data-theme="light"] #btnApplyFilter,
+html[data-theme="light"] .btn-apply-filter,
+html[data-theme="light"] .btn-empty-reset,
+html[data-theme="light"] .cal-seg-btn.active {
+  background: linear-gradient(135deg, #059669 0%, #0D9488 100%) !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  font-weight: 600 !important;
+}
+
+html[data-theme="light"] .btn-primary *,
+html[data-theme="light"] .btn-quick-submit *,
+html[data-theme="light"] .cal-btn-primary *,
+html[data-theme="light"] #btnApplyFilter *,
+html[data-theme="light"] .btn-apply-filter *,
+html[data-theme="light"] .btn-empty-reset *,
+html[data-theme="light"] .cal-seg-btn.active * {
+  color: #FFFFFF !important;
+}
+
+
+/* ==========================================================================
+   TRETH v3.1 - PRIMARY BUTTONS & FILTER BUTTON UNIFICATION (CYBER BAMBOO)
+   ========================================================================== */
+
+/* Thống nhất nút Bộ lọc khi Active / Hover / Has Active Filters */
+.btn-filter-toggle:hover,
+.btn-filter-toggle.active,
+.btn-filter-toggle.has-active-filter {
+  color: var(--accent-primary, #10B981) !important;
+  background-color: rgba(16, 185, 129, 0.12) !important;
+  border-color: var(--accent-primary, #10B981) !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2) !important;
+}
+
+/* ĐỒNG BỘ ĐỘ TƯƠNG PHẢN CHỮ TRÊN CÁC NÚT CHÍNH (PRIMARY BUTTONS) */
+/* Dark Mode: Chữ tối sắc nét #06120E trên nền gradient xanh Cyber Bamboo sáng */
+html[data-theme="dark"] .btn-primary,
+html[data-theme="dark"] .btn-quick-submit,
+html[data-theme="dark"] .cal-btn-primary,
+html[data-theme="dark"] #btnApplyFilter,
+html[data-theme="dark"] .btn-apply-filter,
+html[data-theme="dark"] .btn-empty-reset,
+html[data-theme="dark"] .cal-seg-btn.active {
+  background: linear-gradient(135deg, #10B981 0%, #06B6D4 100%) !important;
+  color: #06120E !important;
+  border: none !important;
+  font-weight: 600 !important;
+}
+
+html[data-theme="dark"] .btn-primary *,
+html[data-theme="dark"] .btn-quick-submit *,
+html[data-theme="dark"] .cal-btn-primary *,
+html[data-theme="dark"] #btnApplyFilter *,
+html[data-theme="dark"] .btn-apply-filter *,
+html[data-theme="dark"] .btn-empty-reset *,
+html[data-theme="dark"] .cal-seg-btn.active * {
+  color: #06120E !important;
+}
+
+/* Light Mode: Chữ trắng sáng #FFFFFF trên nền gradient xanh ngọc đậm */
+html[data-theme="light"] .btn-primary,
+html[data-theme="light"] .btn-quick-submit,
+html[data-theme="light"] .cal-btn-primary,
+html[data-theme="light"] #btnApplyFilter,
+html[data-theme="light"] .btn-apply-filter,
+html[data-theme="light"] .btn-empty-reset,
+html[data-theme="light"] .cal-seg-btn.active {
+  background: linear-gradient(135deg, #059669 0%, #0D9488 100%) !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  font-weight: 600 !important;
+}
+
+html[data-theme="light"] .btn-primary *,
+html[data-theme="light"] .btn-quick-submit *,
+html[data-theme="light"] .cal-btn-primary *,
+html[data-theme="light"] #btnApplyFilter *,
+html[data-theme="light"] .btn-apply-filter *,
+html[data-theme="light"] .btn-empty-reset *,
+html[data-theme="light"] .cal-seg-btn.active * {
   color: #FFFFFF !important;
 }
