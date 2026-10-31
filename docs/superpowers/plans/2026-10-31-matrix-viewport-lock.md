@@ -85,3 +85,4 @@
 - [ ] **Step 2: Run all existing acceptance suites to guarantee zero regression**
 - [ ] **Step 3: Verify 1:1 synchronization with `www/`**
 - [ ] **Step 4: Final commit of verified state**
+

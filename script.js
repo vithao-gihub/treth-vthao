@@ -1630,13 +1630,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const quadrantInfo = getQuadrantConfig(task.quadrant);
         const deadlineInfo = getDeadlineAndTermInfo(task.dueDate, task.status);
 
+        const isSubtaskExpanded = expandedSubtaskTaskIds.has(String(task.id));
         const li = document.createElement('li');
-        li.className = `task-item ${isCompleted ? 'is-completed' : ''} ${isMatrix ? 'is-matrix-task' : ''}`;
+        li.className = `task-item ${isCompleted ? 'is-completed' : ''} ${isMatrix ? 'is-matrix-task' : ''} ${isSubtaskExpanded ? 'has-subtasks-expanded' : ''}`;
         li.dataset.id = String(task.id);
         li.dataset.priority = task.priority;
         li.dataset.quadrant = task.quadrant || 'q2';
-
-        const isSubtaskExpanded = expandedSubtaskTaskIds.has(String(task.id));
         const isTouchDevice = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window);
         if (isMatrix && !isSubtaskExpanded && !isTouchDevice) {
             li.setAttribute('draggable', 'true');
@@ -2935,6 +2934,12 @@ const qInput = qForm.querySelector('.quadrant-input');
                 expandedSubtaskTaskIds.add(targetId);
             }
             renderTasks();
+            if (expandedSubtaskTaskIds.has(targetId)) {
+                setTimeout(() => {
+                    const openedInput = document.querySelector(`.task-item[data-id="${targetId}"] .subtask-input`);
+                    if (openedInput) openedInput.focus();
+                }, 50);
+            }
             return;
         }
 
